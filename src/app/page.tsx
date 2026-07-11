@@ -9,6 +9,7 @@ import { Faq } from "@/components/site/faq";
 import { Contact } from "@/components/site/contact";
 import { Footer } from "@/components/site/footer";
 import { WhatsAppFab } from "@/components/site/whatsapp-fab";
+import { MobileCtaBar, ScrollToTop } from "@/components/site/mobile-cta";
 import { SITE, ADDRESS, PHONES, EMAIL, DOCTOR } from "@/lib/site-info";
 
 // JSON-LD structured data: MedicalClinic (subtype of LocalBusiness)
@@ -142,6 +143,8 @@ export default function Home() {
       </main>
       <Footer />
       <WhatsAppFab />
+      <MobileCtaBar />
+      <ScrollToTop />
     </div>
   );
 }

@@ -105,3 +105,57 @@ Priority recommendations for next phase:
 - Add print/download single appointment slip (PDF) for patient confirmation.
 - Wire Supabase realtime for instant dashboard updates instead of 60s polling.
 - Add appointment reminders / SMS integration (future, paid).
+
+---
+Task ID: ROUND-3
+Agent: webDevReview cron (Z.ai Code)
+Task: QA + new features (admin create appointment, analytics dashboard, services polish, mobile CTA + scroll-to-top).
+
+Work Log:
+- Read worklog (ROUND-1 baseline + ROUND-2 polish complete). Project stable & enhanced.
+- QA: server verified up (home:200, admin:200). Lint clean. All 7 public sections present via curl HTML grep. Admin login renders "Secure Login". No console/page errors.
+- API regression tests passed: server validation (invalid phone→400, past date→400), CSV export (auth→200, no-auth→401), [id] endpoints (GET/PATCH/DELETE with auth, 401 without).
+- NEW FEATURE: Admin "Create Appointment" (walk-in/phone bookings)
+  - New API: POST /api/admin/appointments/create — auth-gated, reuses Zod booking schema for validation, allows optional status override (owner can create as "confirmed" directly). Verified: valid→201 with ref+status; no-auth→401.
+  - New component: CreateAppointmentDialog (src/components/admin/create-dialog.tsx) — emerald-gradient header with UserPlus icon, two grouped sections (Patient Details / Appointment Details), department card selector, date/slot pickers, initial-status dropdown, success state with ref display. Wired into dashboard header via "New" button (emerald).
+- NEW FEATURE: Dashboard Analytics Panel (recharts)
+  - New API: GET /api/admin/stats — auth-gated. Returns statusDist, deptDist, weekly (last 7 days counts), slotOccupancy (today's active appts per slot), summary totals. Verified: returns total/todayCount/upcomingCount.
+  - New component: AnalyticsPanel (src/components/admin/analytics.tsx) — 3-panel layout: (1) Weekly Booking Trend bar chart (7-day, teal bars, count tooltip), (2) Status Mix donut (pending/confirmed/done/cancelled with center total + legend), (3) Today's Slot Occupancy (4 progress bars per time slot). Auto-refreshes every 90s. Hidden when no data. Placed between KPI tiles and filters.
+- STYLING POLISH: Services cards (public site)
+  - Replaced flat icon backgrounds with gradient-filled icon tiles (teal, emerald-teal, emerald) + shadow.
+  - Added category tags (Medical / Diagnostics / Eyewear) as pill badges top-right.
+  - Icon hover: scale + rotate-3 micro-interaction.
+  - Number watermark uses slate-100→teal on hover.
+  - List check icons now in emerald-50→emerald-100 hover circles.
+  - Added "Book this service →" CTA at bottom of each card (scrolls to booking form).
+  - Refined card: rounded-3xl, flex flex-col for consistent heights, softer shadows.
+- NEW FEATURE: Mobile sticky CTA bar + scroll-to-top
+  - MobileCtaBar: fixed bottom bar (sm:hidden) with "Book" + "Call Now" buttons, appears after scrolling past 600px, respects safe-area-inset-bottom.
+  - ScrollToTop: floating round button (desktop, bottom-left) appears after 800px scroll, hover turns teal.
+  - Both added to page.tsx.
+- Dashboard header: "Export CSV" shortened to "Export", added emerald "New" button for create dialog.
+
+Stage Summary (Verification):
+- Public page: all 7 sections render (curl-verified). Services polish confirmed: "Book this service" CTA, category tags (Medical/Diagnostics/Eyewear), rotate-3 hover, gradient icon tiles all present in HTML.
+- Admin dashboard: renders (49KB SSR), "New" button present, greeting shows "Good Morning", analytics panel + create dialog wired as client components (82 JS chunks loaded).
+- API tests: /api/admin/stats → 200 (returns total:1, todayCount:0, upcomingCount:1); /api/admin/appointments/create valid → 201 ref #950144 status confirmed; no-auth → 401; test booking created then deleted to clean up.
+- Lint clean throughout.
+
+Environment note: Sandbox OOM (4GB, no swap) continues to make simultaneous browser+server verification difficult — next-server peaks ~2.8GB and gets OOM-killed when Chromium also runs. Verification done via curl + API tests + HTML grep, which are reliable. Production (Vercel) unaffected.
+
+Current project status: FURTHER ENHANCED. ROUND-3 adds 4 new feature areas (admin create dialog, analytics dashboard with charts, mobile sticky CTA, scroll-to-top) + services card polish. All ROUND-1/2 features remain functional.
+
+Unresolved issues / risks:
+- Sandbox OOM during dev (infra constraint, not code).
+- Telegram env vars not set in sandbox.
+- Owner creds are demo defaults — change in production.
+- Analytics panel hidden when 0 appointments (graceful, by design).
+- Admin list still capped at 500 (no pagination) — fine for current volume.
+
+Priority recommendations for next phase:
+- Add date-range filter to dashboard (custom start/end date pickers).
+- Add print/download single appointment slip (PDF) for patient confirmation.
+- Add "recent activity" log (status changes with timestamps).
+- Add appointment export filtered by current view (not just all).
+- Wire Supabase realtime for instant dashboard updates.
+- Add SMS/email reminders integration (future, paid).

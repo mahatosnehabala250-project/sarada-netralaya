@@ -7,7 +7,7 @@ import {
   Eye, CalendarDays, LogOut, ExternalLink, Search, Download, Loader2,
   Phone, CheckCircle2, Check, X, Inbox, Filter, RefreshCw, Clock,
   TrendingUp, Hourglass, CalendarCheck, UserCircle2, Menu, X as CloseIcon,
-  Eye as EyeIcon, ChevronRight,
+  Eye as EyeIcon, ChevronRight, UserPlus,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -21,6 +21,8 @@ import {
 import { greetingIST, fullTodayIST, formatDateLong, formatCreatedAtIST, timeAgoIST } from "@/lib/ist";
 import { PHONES, SITE } from "@/lib/site-info";
 import { AppointmentDetailDialog } from "@/components/admin/appointment-dialog";
+import { CreateAppointmentDialog, type NewAppt } from "@/components/admin/create-dialog";
+import { AnalyticsPanel } from "@/components/admin/analytics";
 
 type Appt = {
   id: string;
@@ -72,6 +74,7 @@ export function AdminDashboard() {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [dialogAppt, setDialogAppt] = useState<Appt | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [createOpen, setCreateOpen] = useState(false);
 
   useEffect(() => {
     setGreeting(greetingIST());
@@ -189,6 +192,13 @@ export function AdminDashboard() {
     fetchList(true);
   }
 
+  function onCreated(a: NewAppt) {
+    // prepend the new appointment and refresh KPIs/analytics
+    setItems((prev) => [a as Appt, ...prev]);
+    setTotal((t) => t + 1);
+    fetchList(true);
+  }
+
   return (
     <div className="min-h-screen bg-[#f6f8fa] flex">
       {/* Sidebar (desktop) */}
@@ -247,12 +257,19 @@ export function AdminDashboard() {
                 <RefreshCw className={`h-4 w-4 mr-1.5 ${refreshing ? "animate-spin" : ""}`} />
                 Refresh
               </Button>
+              <Button
+                size="sm"
+                onClick={() => setCreateOpen(true)}
+                className="bg-emerald-500 hover:bg-emerald-600 text-white"
+              >
+                <UserPlus className="h-4 w-4 mr-1.5" /> New
+              </Button>
               <TooltipProvider delayDuration={200}>
                 <Tooltip>
                   <TooltipTrigger asChild>
                     <a href="/api/admin/appointments/export">
                       <Button size="sm" className="bg-[#0b6e8f] hover:bg-[#084f67] text-white">
-                        <Download className="h-4 w-4 mr-1.5" /> Export CSV
+                        <Download className="h-4 w-4 mr-1.5" /> Export
                       </Button>
                     </a>
                   </TooltipTrigger>
@@ -268,6 +285,11 @@ export function AdminDashboard() {
             <KpiTile icon={Hourglass} label="Pending Review" value={kpis.pending} tone="amber" />
             <KpiTile icon={TrendingUp} label="Upcoming" value={kpis.upcoming} tone="sky" />
             <KpiTile icon={CheckCircle2} label="Completed" value={kpis.done} tone="emerald" />
+          </div>
+
+          {/* Analytics charts */}
+          <div className="mt-5">
+            <AnalyticsPanel />
           </div>
 
           {/* Filters */}
@@ -397,6 +419,13 @@ export function AdminDashboard() {
         onOpenChange={setDialogOpen}
         onUpdated={onDialogUpdated}
         onDeleted={onDialogDeleted}
+      />
+
+      {/* Create appointment dialog */}
+      <CreateAppointmentDialog
+        open={createOpen}
+        onOpenChange={setCreateOpen}
+        onCreated={onCreated}
       />
     </div>
   );
