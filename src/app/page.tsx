@@ -1,12 +1,14 @@
 import { SiteHeader } from "@/components/site/header";
 import { Hero } from "@/components/site/hero";
+import { StatsBand } from "@/components/site/stats-band";
 import { Services } from "@/components/site/services";
 import { Doctor } from "@/components/site/doctor";
+import { Testimonials } from "@/components/site/testimonials";
 import { BookingForm } from "@/components/site/booking-form";
+import { Faq } from "@/components/site/faq";
 import { Contact } from "@/components/site/contact";
 import { Footer } from "@/components/site/footer";
 import { WhatsAppFab } from "@/components/site/whatsapp-fab";
-import { TrustStrip } from "@/components/site/trust-strip";
 import { SITE, ADDRESS, PHONES, EMAIL, DOCTOR } from "@/lib/site-info";
 
 // JSON-LD structured data: MedicalClinic (subtype of LocalBusiness)
@@ -80,6 +82,38 @@ const breadcrumbLd = {
   ],
 };
 
+// FAQ structured data (rich result eligible)
+const faqLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: [
+    {
+      "@type": "Question",
+      name: "What is Topical Phaco cataract surgery?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "Topical Phaco is a modern, stitch-free cataract technique performed using only eye drops as anaesthesia — no injection and no patch. Most patients feel no pain and recover vision within a day.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "How do I book an appointment at Sarada Netralaya?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "You can book online via the appointment form on this page, call +91 70910 90014 / 90016, or chat on WhatsApp. Online bookings receive a 6-digit reference number.",
+      },
+    },
+    {
+      "@type": "Question",
+      name: "What are the timings of Sarada Netralaya?",
+      acceptedAnswer: {
+        "@type": "Answer",
+        text: "We are open Monday to Saturday, 10:00 AM to 7:30 PM. Sunday is closed.",
+      },
+    },
+  ],
+};
+
 export default function Home() {
   return (
     <div className="min-h-screen flex flex-col bg-white">
@@ -91,13 +125,19 @@ export default function Home() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbLd) }}
       />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqLd) }}
+      />
       <SiteHeader />
       <main className="flex-1">
         <Hero />
-        <TrustStrip />
+        <StatsBand />
         <Services />
         <Doctor />
+        <Testimonials />
         <BookingForm />
+        <Faq />
         <Contact />
       </main>
       <Footer />

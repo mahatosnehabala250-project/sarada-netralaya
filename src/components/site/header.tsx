@@ -10,6 +10,8 @@ import { PHONES } from "@/lib/site-info";
 const NAV = [
   { label: "Services", href: "#services" },
   { label: "Doctor", href: "#doctor" },
+  { label: "Reviews", href: "#testimonials" },
+  { label: "FAQ", href: "#faq" },
   { label: "Book Appointment", href: "#book" },
   { label: "Contact", href: "#contact" },
 ];

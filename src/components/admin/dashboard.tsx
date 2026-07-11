@@ -1,21 +1,26 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
   Eye, CalendarDays, LogOut, ExternalLink, Search, Download, Loader2,
   Phone, CheckCircle2, Check, X, Inbox, Filter, RefreshCw, Clock,
   TrendingUp, Hourglass, CalendarCheck, UserCircle2, Menu, X as CloseIcon,
+  Eye as EyeIcon, ChevronRight,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import {
+  Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { toast } from "sonner";
 import {
   DEPT_LABEL, STATUS_META, type Status, type Department,
 } from "@/lib/appointments";
 import { greetingIST, fullTodayIST, formatDateLong, formatCreatedAtIST, timeAgoIST } from "@/lib/ist";
 import { PHONES, SITE } from "@/lib/site-info";
+import { AppointmentDetailDialog } from "@/components/admin/appointment-dialog";
 
 type Appt = {
   id: string;
@@ -65,6 +70,8 @@ export function AdminDashboard() {
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [dialogAppt, setDialogAppt] = useState<Appt | null>(null);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
   useEffect(() => {
     setGreeting(greetingIST());
@@ -157,6 +164,31 @@ export function AdminDashboard() {
 
   const visibleItems = items;
 
+  const hasActiveFilters = department !== "all" || status !== "all" || qDebounced !== "";
+
+  function clearFilters() {
+    setDepartment("all");
+    setStatus("all");
+    setQ("");
+  }
+
+  function openDetail(a: Appt) {
+    setDialogAppt(a);
+    setDialogOpen(true);
+  }
+
+  function onDialogUpdated(updated: Appt) {
+    setItems((prev) => prev.map((a) => (a.id === updated.id ? updated : a)));
+    setDialogAppt(updated);
+    fetchList(true);
+  }
+
+  function onDialogDeleted(id: string) {
+    setItems((prev) => prev.filter((a) => a.id !== id));
+    setTotal((t) => Math.max(0, t - 1));
+    fetchList(true);
+  }
+
   return (
     <div className="min-h-screen bg-[#f6f8fa] flex">
       {/* Sidebar (desktop) */}
@@ -215,11 +247,18 @@ export function AdminDashboard() {
                 <RefreshCw className={`h-4 w-4 mr-1.5 ${refreshing ? "animate-spin" : ""}`} />
                 Refresh
               </Button>
-              <a href="/api/admin/appointments/export">
-                <Button size="sm" className="bg-[#0b6e8f] hover:bg-[#084f67] text-white">
-                  <Download className="h-4 w-4 mr-1.5" /> Export CSV
-                </Button>
-              </a>
+              <TooltipProvider delayDuration={200}>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <a href="/api/admin/appointments/export">
+                      <Button size="sm" className="bg-[#0b6e8f] hover:bg-[#084f67] text-white">
+                        <Download className="h-4 w-4 mr-1.5" /> Export CSV
+                      </Button>
+                    </a>
+                  </TooltipTrigger>
+                  <TooltipContent>Download all appointments as a CSV file</TooltipContent>
+                </Tooltip>
+              </TooltipProvider>
             </div>
           </div>
 
@@ -288,6 +327,14 @@ export function AdminDashboard() {
                   { value: "cancelled", label: "✕ Cancelled" },
                 ]}
               />
+              {hasActiveFilters && (
+                <button
+                  onClick={clearFilters}
+                  className="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-[#084f67]"
+                >
+                  <X className="h-3 w-3" /> Clear
+                </button>
+              )}
               <span className="ml-auto text-xs text-[#0f2f3a]/45">
                 Showing <span className="font-semibold text-[#084f67]">{visibleItems.length}</span> of {total}
               </span>
@@ -299,7 +346,7 @@ export function AdminDashboard() {
             {loading ? (
               <LoadingState />
             ) : visibleItems.length === 0 ? (
-              <EmptyState />
+              <EmptyState tab={tab} hasFilters={hasActiveFilters} onClear={clearFilters} />
             ) : (
               <>
                 {/* Desktop table */}
@@ -323,6 +370,7 @@ export function AdminDashboard() {
                             a={a}
                             busy={busyId === a.id}
                             onAction={updateStatus}
+                            onView={openDetail}
                           />
                         ))}
                       </tbody>
@@ -333,7 +381,7 @@ export function AdminDashboard() {
                 {/* Mobile cards */}
                 <div className="lg:hidden space-y-3">
                   {visibleItems.map((a) => (
-                    <ApptCard key={a.id} a={a} busy={busyId === a.id} onAction={updateStatus} />
+                    <ApptCard key={a.id} a={a} busy={busyId === a.id} onAction={updateStatus} onView={openDetail} />
                   ))}
                 </div>
               </>
@@ -341,6 +389,15 @@ export function AdminDashboard() {
           </div>
         </main>
       </div>
+
+      {/* Appointment detail / edit dialog */}
+      <AppointmentDetailDialog
+        appt={dialogAppt}
+        open={dialogOpen}
+        onOpenChange={setDialogOpen}
+        onUpdated={onDialogUpdated}
+        onDeleted={onDialogDeleted}
+      />
     </div>
   );
 }
@@ -455,14 +512,14 @@ function FilterDropdown({
 
 /* ---------- Table Row ---------- */
 function ApptRow({
-  a, busy, onAction,
-}: { a: Appt; busy: boolean; onAction: (id: string, s: Status) => void }) {
+  a, busy, onAction, onView,
+}: { a: Appt; busy: boolean; onAction: (id: string, s: Status) => void; onView: (a: Appt) => void }) {
   const st = a.status as Status;
   const meta = STATUS_META[st];
   return (
-    <tr className="hover:bg-[#f0f9fb]/50 transition-colors">
+    <tr className="hover:bg-[#f0f9fb]/50 transition-colors cursor-pointer group" onClick={() => onView(a)}>
       <td className="px-4 py-3">
-        <div className="font-semibold text-[#084f67]">{a.name}</div>
+        <div className="font-semibold text-[#084f67] group-hover:text-[#0b6e8f] transition-colors">{a.name}</div>
         <div className="text-xs text-[#0f2f3a]/55 flex items-center gap-1.5 mt-0.5">
           <span className="inline-flex items-center gap-1">
             <Phone className="h-3 w-3" />{a.phone}
@@ -488,8 +545,15 @@ function ApptRow({
           <span>{meta.emoji}</span> {meta.label}
         </span>
       </td>
-      <td className="px-4 py-3">
+      <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-end gap-1">
+          <button
+            onClick={() => onView(a)}
+            title="View / Edit details"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-[#084f67]"
+          >
+            <EyeIcon className="h-4 w-4" />
+          </button>
           <a
             href={`tel:${a.phone}`}
             className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-[#0b6e8f]/20 text-[#0b6e8f] hover:bg-[#0b6e8f]/5"
@@ -526,20 +590,20 @@ function ApptRow({
 
 /* ---------- Mobile Card ---------- */
 function ApptCard({
-  a, busy, onAction,
-}: { a: Appt; busy: boolean; onAction: (id: string, s: Status) => void }) {
+  a, busy, onAction, onView,
+}: { a: Appt; busy: boolean; onAction: (id: string, s: Status) => void; onView: (a: Appt) => void }) {
   const st = a.status as Status;
   const meta = STATUS_META[st];
   return (
     <div className="rounded-2xl bg-white border border-[#0b6e8f]/10 p-4 shadow-sm">
       <div className="flex items-start justify-between gap-2">
-        <div className="min-w-0">
+        <button onClick={() => onView(a)} className="min-w-0 text-left">
           <div className="font-bold text-[#084f67]">{a.name}</div>
           <div className="text-xs text-[#0f2f3a]/55 mt-0.5">
             {a.phone} {a.age != null && `· ${a.age} yrs`}
           </div>
-          <div className="text-[10px] text-[#0f2f3a]/35 mt-0.5">#{a.ref}</div>
-        </div>
+          <div className="text-[10px] text-[#0f2f3a]/35 mt-0.5">#{a.ref} · tap to view</div>
+        </button>
         <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-semibold shrink-0 ${meta.badge}`}>
           <span>{meta.emoji}</span> {meta.label}
         </span>
@@ -566,6 +630,12 @@ function ApptCard({
       )}
 
       <div className="mt-3 flex flex-wrap gap-2">
+        <button
+          onClick={() => onView(a)}
+          className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-[#084f67]"
+        >
+          <EyeIcon className="h-3.5 w-3.5" /> Details
+        </button>
         <a
           href={`tel:${a.phone}`}
           className="inline-flex items-center gap-1.5 rounded-lg border border-[#0b6e8f]/20 px-3 py-1.5 text-xs font-semibold text-[#0b6e8f] hover:bg-[#0b6e8f]/5"
@@ -626,7 +696,19 @@ function LoadingState() {
   );
 }
 
-function EmptyState() {
+function EmptyState({
+  tab, hasFilters, onClear,
+}: { tab: Tab; hasFilters: boolean; onClear: () => void }) {
+  const message = hasFilters
+    ? "No appointments match your current filters. Try clearing them or switching tabs."
+    : tab === "today"
+      ? "No appointments scheduled for today. Switch to 'Upcoming' to view future bookings."
+      : tab === "upcoming"
+        ? "No upcoming appointments. New bookings from the website will appear here automatically."
+        : tab === "past"
+          ? "No past appointments yet. Completed and past-date appointments will show up here."
+          : "There are no appointments in the system yet. Bookings made from the website will appear here.";
+
   return (
     <div className="rounded-2xl bg-white border border-[#0b6e8f]/10 p-10 shadow-sm">
       <div className="flex flex-col items-center justify-center text-center py-12">
@@ -634,10 +716,15 @@ function EmptyState() {
           <Inbox className="h-8 w-8" />
         </span>
         <h3 className="mt-4 text-lg font-bold text-[#084f67]">No appointments found</h3>
-        <p className="mt-1 text-sm text-[#0f2f3a]/55 max-w-sm">
-          There are no appointments matching your current filters. Try changing
-          the tab or clearing the search.
-        </p>
+        <p className="mt-1 text-sm text-[#0f2f3a]/55 max-w-sm">{message}</p>
+        {hasFilters && (
+          <button
+            onClick={onClear}
+            className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-[#0b6e8f] hover:bg-[#084f67] px-4 py-2 text-sm font-semibold text-white"
+          >
+            <X className="h-4 w-4" /> Clear all filters
+          </button>
+        )}
       </div>
     </div>
   );

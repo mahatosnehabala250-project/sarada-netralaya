@@ -1,51 +1,55 @@
 "use client";
 
 import Image from "next/image";
-import { CalendarCheck, Phone, Star, ShieldCheck, MapPin, Sparkles, Eye, Stethoscope, Zap } from "lucide-react";
+import {
+  CalendarCheck, Phone, Star, ShieldCheck, MapPin, Sparkles,
+  Eye, Stethoscope, Zap, Clock, Award,
+} from "lucide-react";
 import { SITE, PHONES, ADDRESS } from "@/lib/site-info";
 
-const BADGES = [
-  { icon: Star, label: `${SITE.rating} Rating`, sub: `${SITE.reviewsCount} Reviews`, tone: "amber" },
-  { icon: ShieldCheck, label: `${SITE.yearsExperience} Years`, sub: "of trusted care", tone: "teal" },
-  { icon: MapPin, label: "Sakchi", sub: "Jamshedpur", tone: "emerald" },
+const STATS = [
+  { icon: Star, value: SITE.rating, label: `${SITE.reviewsCount} Google Reviews`, tone: "amber" as const },
+  { icon: ShieldCheck, value: `${SITE.yearsExperience} Yrs`, label: "Trusted Eye Care", tone: "teal" as const },
+  { icon: Award, value: "FICO (U.K.)", label: "Qualified Surgeon", tone: "emerald" as const },
 ];
 
 export function Hero() {
   return (
-    <section id="top" className="relative overflow-hidden bg-gradient-to-br from-[#063b4f] via-[#084f67] to-[#0b6e8f]">
-      {/* Decorative glows */}
-      <div className="pointer-events-none absolute -top-24 -right-24 h-96 w-96 rounded-full bg-[#10b981]/20 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-32 -left-20 h-96 w-96 rounded-full bg-[#0ea5e9]/15 blur-3xl" />
+    <section id="top" className="relative overflow-hidden bg-gradient-to-br from-[#052f3f] via-[#074860] to-[#0b6e8f]">
+      {/* Decorative layers */}
+      <div className="pointer-events-none absolute -top-32 -right-24 h-[28rem] w-[28rem] rounded-full bg-emerald-400/15 blur-[100px]" />
+      <div className="pointer-events-none absolute -bottom-40 -left-24 h-[28rem] w-[28rem] rounded-full bg-cyan-400/10 blur-[100px]" />
       <div
-        className="pointer-events-none absolute inset-0 opacity-[0.05]"
+        className="pointer-events-none absolute inset-0 opacity-[0.04]"
         style={{
-          backgroundImage:
-            "radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)",
-          backgroundSize: "32px 32px",
+          backgroundImage: "radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)",
+          backgroundSize: "34px 34px",
         }}
       />
+      {/* top sheen */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-white/40 to-transparent" />
 
       <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14 sm:py-20 lg:py-24">
-        <div className="grid lg:grid-cols-2 gap-10 lg:gap-12 items-center">
+        <div className="grid lg:grid-cols-[1.05fr_0.95fr] gap-12 lg:gap-14 items-center">
           {/* Left: copy */}
           <div className="text-center lg:text-left">
-            <span className="inline-flex items-center gap-2 rounded-full border border-white/20 bg-white/10 px-3.5 py-1.5 text-xs font-semibold text-white backdrop-blur-sm">
-              <Sparkles className="h-3.5 w-3.5 text-[#6ee7b7]" />
+            <span className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/10 px-4 py-1.5 text-[11px] sm:text-xs font-semibold uppercase tracking-[0.12em] text-white backdrop-blur-sm">
+              <Sparkles className="h-3.5 w-3.5 text-emerald-300" />
               {SITE.tagline}
             </span>
 
-            <h1 className="mt-5 text-3xl sm:text-4xl lg:text-[2.9rem] font-bold leading-[1.1] tracking-tight text-white">
+            <h1 className="mt-6 text-[2rem] sm:text-5xl lg:text-[3.4rem] font-bold leading-[1.08] tracking-tight text-white">
               Caring for Your Eyes,
-              <span className="block bg-gradient-to-r from-[#6ee7b7] to-[#34d399] bg-clip-text text-transparent">
+              <span className="block mt-1 bg-gradient-to-r from-emerald-200 via-emerald-300 to-teal-200 bg-clip-text text-transparent">
                 Backed by 30+ Years of Trust
               </span>
             </h1>
 
-            <p className="mt-5 max-w-xl mx-auto lg:mx-0 text-base sm:text-lg leading-relaxed text-white/80">
+            <p className="mt-6 max-w-xl mx-auto lg:mx-0 text-base sm:text-lg leading-[1.7] text-white/75">
               Advanced eye care in the heart of Sakchi, Jamshedpur. From
-              painless <span className="text-white font-medium">Topical Phaco</span> cataract
+              painless <span className="text-white font-semibold">Topical Phaco</span> cataract
               surgery (no injection, no patch) to a fully equipped{" "}
-              <span className="text-white font-medium">laser facility</span> —
+              <span className="text-white font-semibold">laser facility</span> —
               your vision is in expert hands.
             </p>
 
@@ -57,33 +61,34 @@ export function Hero() {
                   e.preventDefault();
                   document.querySelector("#book")?.scrollIntoView({ behavior: "smooth" });
                 }}
-                className="group inline-flex items-center justify-center gap-2 rounded-xl bg-[#10b981] hover:bg-[#059669] px-6 py-3.5 text-base font-semibold text-white shadow-lg shadow-emerald-900/30 transition-all hover:shadow-xl hover:shadow-emerald-900/40 hover:-translate-y-0.5"
+                className="group inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-500 hover:bg-emerald-400 px-7 py-4 text-base font-semibold text-white shadow-[0_10px_30px_-8px_rgba(16,185,129,0.6)] transition-all hover:shadow-[0_14px_40px_-8px_rgba(16,185,129,0.7)] hover:-translate-y-0.5"
               >
                 <CalendarCheck className="h-5 w-5" />
                 Book Appointment Online
+                <span className="ml-0.5 transition-transform group-hover:translate-x-0.5">→</span>
               </a>
               <a
                 href={`tel:${PHONES.primaryTel}`}
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-white/10 hover:bg-white/20 border border-white/25 px-6 py-3.5 text-base font-semibold text-white backdrop-blur-sm transition-all hover:-translate-y-0.5"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-white/8 hover:bg-white/15 border border-white/20 px-7 py-4 text-base font-semibold text-white backdrop-blur-sm transition-all hover:-translate-y-0.5"
               >
-                <Phone className="h-5 w-5" />
+                <Phone className="h-5 w-5 text-emerald-300" />
                 {PHONES.primary}
               </a>
             </div>
 
-            {/* Trust badges */}
-            <div className="mt-9 grid grid-cols-3 gap-3 sm:gap-4 max-w-lg mx-auto lg:mx-0">
-              {BADGES.map((b) => (
+            {/* Stats row */}
+            <div className="mt-10 grid grid-cols-3 gap-3 sm:gap-4 max-w-xl mx-auto lg:mx-0">
+              {STATS.map((s) => (
                 <div
-                  key={b.label}
-                  className="rounded-xl border border-white/15 bg-white/10 backdrop-blur-sm p-3 sm:p-4 text-center"
+                  key={s.label}
+                  className="rounded-2xl border border-white/12 bg-white/[0.07] backdrop-blur-md p-3.5 sm:p-4 text-center hover:bg-white/[0.1] transition-colors"
                 >
-                  <b.icon className="mx-auto h-5 w-5 sm:h-6 sm:w-6 text-[#6ee7b7]" />
-                  <div className="mt-1.5 text-sm sm:text-base font-bold text-white leading-tight">
-                    {b.label}
+                  <s.icon className={`mx-auto h-5 w-5 sm:h-5 sm:w-5 ${TONE_TEXT[s.tone]}`} strokeWidth={2} />
+                  <div className="mt-1.5 text-base sm:text-lg font-bold text-white leading-tight tracking-tight">
+                    {s.value}
                   </div>
-                  <div className="text-[11px] sm:text-xs text-white/65 leading-tight">
-                    {b.sub}
+                  <div className="text-[10px] sm:text-[11px] text-white/55 leading-tight mt-0.5">
+                    {s.label}
                   </div>
                 </div>
               ))}
@@ -93,67 +98,81 @@ export function Hero() {
           {/* Right: visual */}
           <div className="relative hidden lg:block">
             <div className="relative mx-auto max-w-md">
+              {/* glow ring behind */}
+              <div className="absolute -inset-6 rounded-[2.5rem] bg-gradient-to-tr from-emerald-500/20 via-transparent to-cyan-400/15 blur-2xl" />
+
               {/* main framed visual */}
-              <div className="relative rounded-[2rem] overflow-hidden border border-white/20 shadow-2xl shadow-black/30">
-                <div className="aspect-[4/3] relative bg-gradient-to-br from-[#0b6e8f] to-[#063b4f]">
+              <div className="relative rounded-[2rem] overflow-hidden border border-white/15 shadow-2xl shadow-black/40 ring-1 ring-white/5">
+                <div className="aspect-[4/3] relative bg-gradient-to-br from-[#0b6e8f] to-[#052f3f]">
                   <Image
                     src="/images/hero-eye.png"
                     alt="Close-up of a healthy human eye — Sarada Netralaya eye care"
                     fill
                     priority
-                    sizes="(min-width: 1024px) 28rem, 100vw"
+                    sizes="(min-width: 1024px) 30rem, 100vw"
                     className="object-cover"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#063b4f]/70 via-transparent to-transparent" />
-                  <div className="absolute bottom-4 left-4 right-4 flex items-center justify-between">
-                    <span className="rounded-lg bg-white/15 backdrop-blur-md border border-white/20 px-3 py-1.5 text-xs font-semibold text-white">
-                      👁️ Advanced Ophthalmology
-                    </span>
-                    <span className="rounded-lg bg-[#10b981] px-3 py-1.5 text-xs font-bold text-white shadow-lg">
-                      30+ Yrs
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#052f3f]/85 via-[#052f3f]/10 to-transparent" />
+
+                  {/* bottom overlay info */}
+                  <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between gap-3">
+                    <div className="rounded-xl bg-white/10 backdrop-blur-md border border-white/20 px-3.5 py-2">
+                      <div className="text-[10px] uppercase tracking-wider text-white/60 font-semibold">Specialist</div>
+                      <div className="text-sm font-bold text-white">Advanced Ophthalmology</div>
+                    </div>
+                    <span className="rounded-lg bg-emerald-500 px-2.5 py-1 text-[11px] font-bold text-white shadow-lg shadow-emerald-900/40">
+                      EST. 30+ YRS
                     </span>
                   </div>
                 </div>
               </div>
 
               {/* floating feature chips */}
-              <div className="absolute -left-6 top-10 rounded-2xl bg-white shadow-xl p-3 flex items-center gap-2.5 max-w-[200px] animate-[float_4s_ease-in-out_infinite]">
-                <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#0b6e8f]/10 text-[#0b6e8f]">
-                  <Zap className="h-5 w-5" />
+              <div className="absolute -left-8 top-8 rounded-2xl bg-white shadow-[0_20px_50px_-12px_rgba(8,79,103,0.35)] p-3.5 flex items-center gap-3 max-w-[210px] ring-1 ring-black/5 animate-[float_4s_ease-in-out_infinite]">
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-50 text-teal-700 shrink-0">
+                  <Zap className="h-5 w-5" strokeWidth={2.1} />
                 </span>
                 <div className="leading-tight">
-                  <div className="text-xs font-bold text-[#084f67]">Latest Phaco</div>
-                  <div className="text-[10px] text-[#0f2f3a]/60">& Laser Facility</div>
+                  <div className="text-[13px] font-bold text-[#084f67]">Latest Phaco</div>
+                  <div className="text-[10.5px] text-slate-500">& Laser Facility</div>
                 </div>
               </div>
 
-              <div className="absolute -right-5 bottom-12 rounded-2xl bg-white shadow-xl p-3 flex items-center gap-2.5 max-w-[210px] animate-[float_4s_ease-in-out_infinite_0.8s]">
-                <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-emerald-100 text-emerald-700">
-                  <Stethoscope className="h-5 w-5" />
+              <div className="absolute -right-6 bottom-16 rounded-2xl bg-white shadow-[0_20px_50px_-12px_rgba(8,79,103,0.35)] p-3.5 flex items-center gap-3 max-w-[220px] ring-1 ring-black/5 animate-[float_4s_ease-in-out_infinite_0.9s]">
+                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700 shrink-0">
+                  <Stethoscope className="h-5 w-5" strokeWidth={2.1} />
                 </span>
                 <div className="leading-tight">
-                  <div className="text-xs font-bold text-[#084f67]">No Injection</div>
-                  <div className="text-[10px] text-[#0f2f3a]/60">No Patch Cataract Surgery</div>
+                  <div className="text-[13px] font-bold text-[#084f67]">No Injection</div>
+                  <div className="text-[10.5px] text-slate-500">No Patch Cataract Surgery</div>
                 </div>
               </div>
 
-              <div className="absolute -bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-[#10b981] text-white text-xs font-bold px-4 py-2 shadow-lg shadow-emerald-900/40 whitespace-nowrap">
-                ⭐ 4.9 · 329+ Google Reviews
+              <div className="absolute -bottom-3 left-1/2 -translate-x-1/2 rounded-full bg-white shadow-xl ring-1 ring-black/5 text-[11px] font-bold px-4 py-2 whitespace-nowrap flex items-center gap-1.5">
+                <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                <span className="text-slate-800">4.9</span>
+                <span className="text-slate-300">·</span>
+                <span className="text-slate-500 font-semibold">329+ Reviews</span>
               </div>
             </div>
           </div>
         </div>
 
         {/* Location strip */}
-        <div className="mt-12 lg:mt-16 flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-white/70 border-t border-white/10 pt-6">
-          <span className="inline-flex items-center gap-1.5">
-            <MapPin className="h-4 w-4 text-[#6ee7b7]" />
+        <div className="mt-14 lg:mt-20 flex flex-wrap items-center justify-center gap-x-7 gap-y-2.5 text-sm text-white/65 border-t border-white/10 pt-6">
+          <span className="inline-flex items-center gap-2">
+            <MapPin className="h-4 w-4 text-emerald-300" />
             {ADDRESS.short}
           </span>
-          <span className="hidden sm:inline text-white/30">•</span>
-          <span className="inline-flex items-center gap-1.5">
-            <Eye className="h-4 w-4 text-[#6ee7b7]" />
+          <span className="hidden sm:inline text-white/25">•</span>
+          <span className="inline-flex items-center gap-2">
+            <Clock className="h-4 w-4 text-emerald-300" />
             Mon–Sat · 10:00 AM – 7:30 PM
+          </span>
+          <span className="hidden sm:inline text-white/25">•</span>
+          <span className="inline-flex items-center gap-2">
+            <Eye className="h-4 w-4 text-emerald-300" />
+            Sunday Closed
           </span>
         </div>
       </div>
@@ -161,11 +180,15 @@ export function Hero() {
       <style>{`
         @keyframes float {
           0%, 100% { transform: translateY(0); }
-          50% { transform: translateY(-8px); }
+          50% { transform: translateY(-9px); }
         }
       `}</style>
     </section>
   );
 }
 
-
+const TONE_TEXT: Record<"amber" | "teal" | "emerald", string> = {
+  amber: "text-amber-300",
+  teal: "text-teal-300",
+  emerald: "text-emerald-300",
+};
