@@ -1,0 +1,37 @@
+// Sarada Netralaya — eye care hospital booking system
+// SQLite-backed (portable, zero-cost). See README for Supabase adaptation SQL.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Appointment {
+  id            String   @id @default(cuid())
+  // Short human-friendly booking reference, e.g. #482913
+  ref           String   @unique
+  name          String
+  // 10-digit Indian mobile, stored as text
+  phone         String
+  age           Int?
+  // "eye_care" | "optical"
+  department    String
+  // Calendar date in IST, stored as yyyy-mm-dd to avoid TZ ambiguity
+  preferredDate String
+  // Human label, e.g. "10:00 AM – 12:00 PM"
+  timeSlot      String
+  note          String?
+  // "pending" | "confirmed" | "done" | "cancelled"
+  status        String   @default("pending")
+  // Hashed IP for rate limiting (never the raw IP)
+  ipHash        String?
+  createdAt     DateTime @default(now())
+
+  @@index([preferredDate])
+  @@index([status])
+  @@index([phone])
+}

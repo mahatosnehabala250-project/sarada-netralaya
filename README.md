@@ -1,0 +1,243 @@
+# Sarada Netralaya — Eye Care Hospital Website + Booking System
+
+Production-ready website with online appointment booking and an owner dashboard for **Sarada Netralaya**, an eye care hospital in Sakchi, Jamshedpur (30+ years, 4.9★, 329+ reviews).
+
+> **Tagline:** *Passion for Excellence • Committed to Care*
+
+---
+
+## ✨ Features
+
+### Public website (`/`)
+- **Mobile-first, medical-trust design** in brand teal `#0b6e8f` / dark `#084f67` / accent green.
+- Sections: sticky header → hero (trust badges, CTAs) → trust strip → services (3 cards) → doctor profile → **online booking form** → contact (address, phones, email, Google Map) → footer.
+- **Floating WhatsApp** click-to-chat button.
+- **SEO**: title/meta/Open Graph, `MedicalClinic` + `BreadcrumbList` JSON-LD, `sitemap.xml`, `robots.txt`.
+
+### Booking system
+- Fields: Patient Name*, Mobile (10-digit, validated)*, Age, Department* (Eye Care / Optical), Preferred Date* (no past dates), Time Slot* (10–12, 12–2, 3–5, 5–7:30), Reason (optional).
+- **Client + server validation** (Zod).
+- **Anti-spam**: honeypot field + IP rate limiting (3 bookings / 10 min / IP).
+- On submit: persists to the database, shows a success card with a short **6-digit booking reference**, and fires a **Telegram notification** (fire-and-forget — never blocks/fails the booking).
+
+### Owner dashboard (`/admin`)
+- **Login screen** — branded gradient, card layout, demo creds shown.
+- **Dark sidebar** (logo, Appointments nav, View Website, owner chip, logout); collapses to a top bar on mobile.
+- **Header** — time-based IST greeting + full date.
+- **KPI tiles** — Today, Pending Review, Upcoming, Completed.
+- **Filters** — segmented tabs (Today / Upcoming / Past / All) + Department dropdown + Status dropdown + live search (name, phone, ref).
+- **Appointments table** (cards on mobile) with status pills (⏳ Pending / 📌 Confirmed / ✅ Done / ✕ Cancelled).
+- **Actions** per row: 📞 Call, Confirm, Mark Done, Cancel — with optimistic updates.
+- **Export CSV** of all appointments.
+- **Live data** — auto-refresh every 60s + refetch on window focus.
+- Loading & empty states.
+
+### Telegram notifications
+- On every new booking, a formatted message is sent to the owner's Telegram (token + chat id via env vars).
+- Failure is logged but **never** fails the booking.
+
+---
+
+## 🧱 Tech stack
+
+| Layer | Choice | Notes |
+|---|---|---|
+| Framework | **Next.js 16** (App Router) + **TypeScript** | |
+| Styling | **Tailwind CSS 4** + **shadcn/ui** + lucide-react | |
+| Database | **Prisma ORM** + **SQLite** (local dev) | Easily portable to **Supabase Postgres** — see below |
+| Auth | Cookie-based owner session (HMAC-signed) | Single owner account via env vars; no public signup |
+| Notifications | **Telegram Bot API** | Free, instant |
+| Realtime | Polling + refetch-on-focus | Lightweight, no WebSocket infra needed |
+
+> **Why SQLite locally?** Zero-cost, zero-config, file-based — bookings made from any patient device persist to the database and appear in the owner dashboard. For production, swap to Supabase Postgres using the included SQL (below) and Prisma's Postgres provider, or wire RLS directly.
+
+---
+
+## 🚀 Local development
+
+### 1. Prerequisites
+- Node.js 18+ and [Bun](https://bun.sh) (or npm/pnpm)
+- A terminal
+
+### 2. Install dependencies
+```bash
+bun install
+```
+
+### 3. Environment variables
+Create `.env.local` in the project root:
+
+```bash
+# Database (SQLite file — already configured in .env)
+DATABASE_URL=file:/home/z/my-project/db/custom.db
+
+# Owner dashboard login (single account)
+OWNER_EMAIL=owner@saradanetralaya.in
+OWNER_PASSWORD=Sarada@2026
+SESSION_SECRET=change-this-to-a-long-random-string
+
+# Telegram bot (optional — leave empty to skip notifications in dev)
+TELEGRAM_BOT_TOKEN=
+TELEGRAM_CHAT_ID=
+```
+
+### 4. Push the database schema
+```bash
+bun run db:push
+```
+
+### 5. Run the dev server
+```bash
+bun run dev
+```
+Open **http://localhost:3000** (preview the public site) and **http://localhost:3000/admin** (owner dashboard).
+
+### 6. Lint
+```bash
+bun run lint
+```
+
+---
+
+## 🗄️ Database schema
+
+Managed by Prisma (`prisma/schema.prisma`). The single `Appointment` model stores all booking data. SQLite is used locally; see the Supabase section to use Postgres in production.
+
+Run `bun run db:push` after any schema change.
+
+---
+
+## 🤖 Telegram bot setup
+
+Telegram notifications are free and instant. Set them up in 3 steps:
+
+### Step 1 — Create the bot
+1. Open Telegram and message **[@BotFather](https://t.me/BotFather)**.
+2. Send `/newbot`.
+3. Choose a name (e.g. `Sarada Netralaya Booking Bot`) and a username ending in `bot` (e.g. `sarada_booking_bot`).
+4. BotFather replies with an **HTTP API token** — copy it. This is `TELEGRAM_BOT_TOKEN`.
+
+### Step 2 — Get your chat id
+1. Send any message to your new bot (e.g. "hi") from your account.
+2. Open this URL in a browser (replace `<TOKEN>`):
+   ```
+   https://api.telegram.org/bot<TOKEN>/getUpdates
+   ```
+3. In the JSON response, find `"chat":{"id": 123456789, ...}`. That number is `TELEGRAM_CHAT_ID`.
+   - For a group chat, add the bot to the group and use the negative `id` shown.
+
+### Step 3 — Set env vars
+```bash
+TELEGRAM_BOT_TOKEN=123456:ABC-DEF...
+TELEGRAM_CHAT_ID=123456789
+```
+Restart the server. New bookings will now notify you instantly. If the vars are unset, notifications are silently skipped (bookings still work).
+
+### Test it manually
+```bash
+curl -s "https://api.telegram.org/bot<TOKEN>/sendMessage" \
+  -d chat_id=<CHAT_ID> \
+  -d text="🔔 Test from Sarada Netralaya"
+```
+
+---
+
+## ☁️ Production deployment (Vercel + Supabase)
+
+### Option A — Vercel with SQLite is NOT recommended (serverless = no persistent filesystem). Use Supabase Postgres.
+
+### Step 1 — Create a Supabase project
+1. Go to [supabase.com](https://supabase.com) → **New project**.
+2. Choose a region close to India (e.g. Singapore / Mumbai if available).
+3. Wait for it to provision.
+
+### Step 2 — Run the schema SQL
+Open the Supabase **SQL Editor** and paste the contents of [`supabase/schema.sql`](./supabase/schema.sql) (also shown below). This creates the `appointments` table, enums, indexes, and **Row Level Security** policies:
+- Anonymous role can **INSERT** only.
+- Authenticated owner can **SELECT / UPDATE**.
+- No public reads.
+
+### Step 3 — Wire Prisma to Postgres
+1. In `.env.local` (and Vercel env vars), set:
+   ```bash
+   DATABASE_URL=postgresql://postgres:<password>@db.<project>.supabase.co:5432/postgres
+   ```
+2. In `prisma/schema.prisma`, change the provider:
+   ```prisma
+   datasource db {
+     provider = "postgresql"
+     url      = env("DATABASE_URL")
+   }
+   ```
+3. Run `bun run db:push` to create the tables (or use Supabase SQL directly).
+4. **Alternative to Prisma:** use the `@supabase/supabase-js` client directly with the RLS policies from `supabase/schema.sql`.
+
+### Step 4 — Deploy to Vercel
+1. Push the repo to GitHub.
+2. Go to [vercel.com](https://vercel.com) → **Add New Project** → import the repo.
+3. Add all env vars (`DATABASE_URL`, `OWNER_EMAIL`, `OWNER_PASSWORD`, `SESSION_SECRET`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`).
+4. Deploy. Vercel auto-detects Next.js.
+
+### Step 5 — Connect the custom domain `saradanetralaya.in`
+1. In Vercel → **Project Settings → Domains** → add `saradanetralaya.in` and `www.saradanetralaya.in`.
+2. At your domain registrar, point DNS to Vercel:
+   - `A` record `@` → `76.76.21.21`
+   - `CNAME` record `www` → `cname.vercel-dns.com`
+3. Vercel provisions SSL automatically. Wait for DNS to propagate (minutes–hours).
+4. Update `SITE.url` in `src/lib/site-info.ts` if needed (already set to `https://saradanetralaya.in`).
+
+---
+
+## 📁 Project structure
+
+```
+prisma/
+  schema.prisma              # Appointment model
+supabase/
+  schema.sql                 # Postgres schema + RLS policies (production)
+src/
+  app/
+    page.tsx                 # Public landing page (+ JSON-LD)
+    admin/page.tsx           # Owner dashboard (gated by auth)
+    api/
+      appointments/route.ts        # POST: create booking
+      admin/login/route.ts         # POST: owner login
+      admin/logout/route.ts        # POST: owner logout
+      admin/appointments/route.ts  # GET (list) / PATCH (update status)
+      admin/appointments/export/route.ts  # GET: CSV export
+    sitemap.ts / robots.ts
+  components/
+    site/                    # header, hero, services, doctor, booking-form,
+                             # contact, footer, whatsapp-fab, trust-strip
+    admin/                   # login, dashboard
+    ui/                      # shadcn/ui components
+  lib/
+    db.ts                    # Prisma client
+    site-info.ts             # Business info (single source of truth)
+    ist.ts                   # IST date/time helpers
+    appointments.ts          # Zod schema, slots, statuses, rate limit, ref gen
+    telegram.ts              # Telegram notification (fire-and-forget)
+    auth.ts                  # Owner cookie-session auth
+```
+
+---
+
+## 🔐 Security notes
+- Owner password is compared in constant time; session tokens are HMAC-signed.
+- Session cookie is `httpOnly`, `sameSite=lax`, `secure` in production.
+- Booking API enforces honeypot + per-IP rate limit (3 / 10 min).
+- Phone numbers validated to 10-digit Indian mobile (`^[6-9]\d{9}$`).
+- IPs are hashed before storage (never stored raw).
+- All dates are handled as IST calendar strings to avoid UTC drift.
+
+---
+
+## 📝 Customisation
+- **Business info** — edit `src/lib/site-info.ts` (single source of truth).
+- **Brand colours** — search for `#0b6e8f` (primary), `#084f67` (dark), `#10b981` (accent).
+- **Time slots / departments / statuses** — `src/lib/appointments.ts`.
+- **Map location** — `src/components/site/contact.tsx` (`MAP_QUERY`).
+
+---
+
+© 2026 Sarada Netralaya. All rights reserved.
