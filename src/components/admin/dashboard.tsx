@@ -248,45 +248,53 @@ export function AdminDashboard() {
 
         {/* Content */}
         <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
-          {/* Header */}
-          <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold text-[#084f67]">
-                {greeting} <span className="inline-block">👋</span>
-              </h1>
-              <p className="text-sm text-[#0f2f3a]/55 mt-0.5">
-                {todayStr || "Loading date..."}
-              </p>
-            </div>
-            <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => fetchList(true)}
-                className="border-[#0b6e8f]/20 text-[#084f67] hover:bg-[#0b6e8f]/5"
-              >
-                <RefreshCw className={`h-4 w-4 mr-1.5 ${refreshing ? "animate-spin" : ""}`} />
-                Refresh
-              </Button>
-              <Button
-                size="sm"
-                onClick={() => setCreateOpen(true)}
-                className="bg-emerald-500 hover:bg-emerald-600 text-white"
-              >
-                <UserPlus className="h-4 w-4 mr-1.5" /> New
-              </Button>
-              <TooltipProvider delayDuration={200}>
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <a href={`/api/admin/appointments/export?${new URLSearchParams({ tab, department, status, q: qDebounced, ...(tab === "range" && dateFrom ? { dateFrom } : {}), ...(tab === "range" && dateTo ? { dateTo } : {}) }).toString()}`}>
-                      <Button size="sm" className="bg-[#0b6e8f] hover:bg-[#084f67] text-white">
-                        <Download className="h-4 w-4 mr-1.5" /> Export
-                      </Button>
-                    </a>
-                  </TooltipTrigger>
-                  <TooltipContent>Download the current filtered view as CSV</TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+          {/* Premium header banner */}
+          <div className="relative overflow-hidden rounded-2xl bg-gradient-to-br from-[#063b4f] via-[#074860] to-[#0b6e8f] p-5 sm:p-6 shadow-lg shadow-[#0b6e8f]/20">
+            <div className="pointer-events-none absolute -top-12 -right-8 h-40 w-40 rounded-full bg-emerald-400/20 blur-3xl" />
+            <div className="pointer-events-none absolute -bottom-16 -left-8 h-40 w-40 rounded-full bg-[#0ea5e9]/15 blur-3xl" />
+            <div className="relative flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div className="text-white">
+                <div className="flex items-center gap-2 text-emerald-300 text-xs font-bold uppercase tracking-[0.14em]">
+                  <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                  Dashboard
+                </div>
+                <h1 className="mt-1.5 text-2xl sm:text-[1.75rem] font-bold tracking-tight">
+                  {greeting} <span className="inline-block">👋</span>
+                </h1>
+                <p className="text-sm text-white/60 mt-0.5">
+                  {todayStr || "Loading date..."}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => fetchList(true)}
+                  className="bg-white/10 border-white/15 text-white hover:bg-white/20 hover:text-white backdrop-blur-sm"
+                >
+                  <RefreshCw className={`h-4 w-4 mr-1.5 ${refreshing ? "animate-spin" : ""}`} />
+                  Refresh
+                </Button>
+                <Button
+                  size="sm"
+                  onClick={() => setCreateOpen(true)}
+                  className="bg-emerald-500 hover:bg-emerald-400 text-white shadow-md shadow-emerald-900/30"
+                >
+                  <UserPlus className="h-4 w-4 mr-1.5" /> New
+                </Button>
+                <TooltipProvider delayDuration={200}>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <a href={`/api/admin/appointments/export?${new URLSearchParams({ tab, department, status, q: qDebounced, ...(tab === "range" && dateFrom ? { dateFrom } : {}), ...(tab === "range" && dateTo ? { dateTo } : {}) }).toString()}`}>
+                        <Button size="sm" className="bg-white/10 border border-white/15 text-white hover:bg-white/20 backdrop-blur-sm">
+                          <Download className="h-4 w-4 mr-1.5" /> Export
+                        </Button>
+                      </a>
+                    </TooltipTrigger>
+                    <TooltipContent>Download the current filtered view as CSV</TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
             </div>
           </div>
 
@@ -304,18 +312,18 @@ export function AdminDashboard() {
           </div>
 
           {/* Filters */}
-          <div className="mt-6 rounded-2xl bg-white border border-[#0b6e8f]/10 p-4 shadow-sm">
+          <div className="mt-6 rounded-2xl bg-white border border-slate-200/80 p-4 shadow-sm ring-1 ring-slate-100/50">
             {/* Tabs */}
             <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
-              <div className="inline-flex rounded-lg bg-[#f0f9fb] p-1 border border-[#0b6e8f]/10 self-start">
+              <div className="inline-flex rounded-xl bg-slate-100/80 p-1 self-start">
                 {TABS.map((t) => (
                   <button
                     key={t.id}
                     onClick={() => setTab(t.id)}
-                    className={`px-3.5 py-1.5 text-sm font-semibold rounded-md transition-all ${
+                    className={`px-3.5 py-1.5 text-[13px] font-semibold rounded-lg transition-all ${
                       tab === t.id
-                        ? "bg-white text-[#084f67] shadow-sm"
-                        : "text-[#0f2f3a]/55 hover:text-[#084f67]"
+                        ? "bg-white text-[#084f67] shadow-sm ring-1 ring-slate-200/50"
+                        : "text-slate-500 hover:text-[#084f67]"
                     }`}
                   >
                     {t.label}
@@ -417,7 +425,7 @@ export function AdminDashboard() {
             ) : (
               <>
                 {/* Desktop table */}
-                <div className="hidden lg:block rounded-2xl bg-white border border-[#0b6e8f]/10 shadow-sm overflow-hidden">
+                <div className="hidden lg:block rounded-2xl bg-white border border-slate-200/80 shadow-sm ring-1 ring-slate-100/50 overflow-hidden">
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
@@ -476,59 +484,75 @@ export function AdminDashboard() {
   );
 }
 
-/* ---------- Sidebar ---------- */
+/* ---------- Sidebar (premium dark with gradient + glow) ---------- */
 function SidebarContent({ onLogout }: { onLogout: () => void }) {
   return (
-    <div className="flex flex-col h-full">
-      <div className="p-5 border-b border-white/10">
-        <div className="flex items-center gap-2.5">
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#0b6e8f] to-[#10b981]">
+    <div className="flex flex-col h-full relative">
+      {/* ambient glow */}
+      <div className="pointer-events-none absolute -top-20 -right-10 h-48 w-48 rounded-full bg-emerald-500/15 blur-3xl" />
+      <div className="pointer-events-none absolute bottom-20 -left-10 h-48 w-48 rounded-full bg-[#0b6e8f]/30 blur-3xl" />
+
+      {/* Brand */}
+      <div className="relative p-5 border-b border-white/10">
+        <div className="flex items-center gap-3">
+          <span className="relative flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-[#0b6e8f] to-[#10b981] shadow-lg shadow-emerald-900/30">
             <Eye className="h-5 w-5 text-white" strokeWidth={2.3} />
+            <span className="absolute -bottom-0.5 -right-0.5 h-3 w-3 rounded-full bg-emerald-400 border-2 border-[#063b4f]" />
           </span>
           <div className="leading-none">
-            <div className="text-base font-bold">Sarada Netralaya</div>
-            <div className="text-[10px] uppercase tracking-[0.14em] text-white/50">Owner Panel</div>
+            <div className="text-[15px] font-bold tracking-tight">Sarada Netralaya</div>
+            <div className="text-[9.5px] uppercase tracking-[0.18em] text-emerald-300/70 mt-1 font-semibold">Owner Panel</div>
           </div>
         </div>
       </div>
 
-      <nav className="flex-1 p-3 space-y-1">
-        <div className="flex items-center gap-2.5 rounded-lg bg-white/10 px-3 py-2.5 text-sm font-semibold text-white">
-          <CalendarDays className="h-4 w-4" /> Appointments
-        </div>
-        <a
-          href="/admin/settings"
-          className="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-white/60 hover:text-white hover:bg-white/5"
-        >
-          <UserCircle2 className="h-4 w-4" /> Settings
+      {/* Nav */}
+      <nav className="relative flex-1 p-3 space-y-0.5">
+        <div className="px-2 pb-2 pt-1 text-[9px] font-bold uppercase tracking-[0.15em] text-white/30">Menu</div>
+        <a href="/admin" className="group flex items-center gap-3 rounded-lg bg-white/10 px-3 py-2.5 text-sm font-semibold text-white ring-1 ring-white/10">
+          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-emerald-500/20 text-emerald-300">
+            <CalendarDays className="h-4 w-4" />
+          </span>
+          Appointments
+          <span className="ml-auto h-1.5 w-1.5 rounded-full bg-emerald-400" />
         </a>
-        <a
-          href="/"
-          className="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-white/60 hover:text-white hover:bg-white/5"
-        >
-          <ExternalLink className="h-4 w-4" /> View Website
+        <a href="/admin/settings" className="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/55 hover:text-white hover:bg-white/5 transition-colors">
+          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-white/5 text-white/50 group-hover:text-white transition-colors">
+            <UserCircle2 className="h-4 w-4" />
+          </span>
+          Settings
         </a>
-        <a
-          href="/#book"
-          className="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-white/60 hover:text-white hover:bg-white/5"
-        >
-          <CalendarCheck className="h-4 w-4" /> Booking Form
+
+        <div className="px-2 pt-4 pb-2 text-[9px] font-bold uppercase tracking-[0.15em] text-white/30">Links</div>
+        <a href="/" className="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/55 hover:text-white hover:bg-white/5 transition-colors">
+          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-white/5 text-white/50 group-hover:text-white transition-colors">
+            <ExternalLink className="h-4 w-4" />
+          </span>
+          View Website
+        </a>
+        <a href="/#book" className="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/55 hover:text-white hover:bg-white/5 transition-colors">
+          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-white/5 text-white/50 group-hover:text-white transition-colors">
+            <CalendarCheck className="h-4 w-4" />
+          </span>
+          Booking Form
         </a>
       </nav>
 
-      <div className="p-3 border-t border-white/10">
-        <div className="flex items-center gap-2.5 rounded-lg px-3 py-2.5 mb-1">
-          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-white/15">
-            <UserCircle2 className="h-5 w-5 text-white" />
+      {/* User + logout */}
+      <div className="relative p-3 border-t border-white/10">
+        <div className="flex items-center gap-2.5 rounded-xl bg-white/[0.04] px-3 py-2.5 mb-1.5 ring-1 ring-white/5">
+          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-emerald-400 to-teal-600 text-white text-xs font-bold">
+            SN
           </span>
-          <div className="leading-tight min-w-0">
-            <div className="text-sm font-semibold text-white truncate">Owner</div>
-            <div className="text-[11px] text-white/50 truncate">{SITE.domain}</div>
+          <div className="leading-tight min-w-0 flex-1">
+            <div className="text-sm font-semibold text-white truncate">Sarada Owner</div>
+            <div className="text-[11px] text-white/45 truncate">{SITE.domain}</div>
           </div>
+          <span className="h-2 w-2 rounded-full bg-emerald-400 shrink-0" title="Online" />
         </div>
         <button
           onClick={onLogout}
-          className="w-full flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-rose-200 hover:text-white hover:bg-rose-500/20 transition-colors"
+          className="w-full flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-rose-200/80 hover:text-white hover:bg-rose-500/20 transition-colors"
         >
           <LogOut className="h-4 w-4" /> Logout
         </button>
@@ -537,12 +561,12 @@ function SidebarContent({ onLogout }: { onLogout: () => void }) {
   );
 }
 
-/* ---------- KPI Tile ---------- */
-const TONE_MAP: Record<string, { bg: string; text: string; ring: string }> = {
-  teal: { bg: "bg-[#0b6e8f]/10", text: "text-[#0b6e8f]", ring: "ring-[#0b6e8f]/15" },
-  amber: { bg: "bg-amber-100", text: "text-amber-700", ring: "ring-amber-200" },
-  sky: { bg: "bg-sky-100", text: "text-sky-700", ring: "ring-sky-200" },
-  emerald: { bg: "bg-emerald-100", text: "text-emerald-700", ring: "ring-emerald-200" },
+/* ---------- KPI Tile (premium card with gradient + sparkline dot) ---------- */
+const TONE_MAP: Record<string, { bg: string; text: string; ring: string; gradient: string; glow: string }> = {
+  teal: { bg: "bg-[#0b6e8f]/10", text: "text-[#0b6e8f]", ring: "ring-[#0b6e8f]/15", gradient: "from-[#0b6e8f] to-[#084f67]", glow: "shadow-[0_8px_24px_-8px_rgba(11,110,143,0.4)]" },
+  amber: { bg: "bg-amber-100", text: "text-amber-700", ring: "ring-amber-200", gradient: "from-amber-400 to-amber-600", glow: "shadow-[0_8px_24px_-8px_rgba(245,158,11,0.4)]" },
+  sky: { bg: "bg-sky-100", text: "text-sky-700", ring: "ring-sky-200", gradient: "from-sky-400 to-sky-600", glow: "shadow-[0_8px_24px_-8px_rgba(14,165,233,0.4)]" },
+  emerald: { bg: "bg-emerald-100", text: "text-emerald-700", ring: "ring-emerald-200", gradient: "from-emerald-400 to-emerald-600", glow: "shadow-[0_8px_24px_-8px_rgba(16,185,129,0.4)]" },
 };
 
 function KpiTile({
@@ -550,14 +574,23 @@ function KpiTile({
 }: { icon: typeof Eye; label: string; value: number; tone: keyof typeof TONE_MAP }) {
   const t = TONE_MAP[tone];
   return (
-    <div className="rounded-2xl bg-white border border-[#0b6e8f]/10 p-4 sm:p-5 shadow-sm hover:shadow-md transition-shadow">
-      <div className="flex items-center justify-between">
-        <span className={`flex h-10 w-10 items-center justify-center rounded-xl ${t.bg} ${t.text} ring-4 ${t.ring}`}>
-          <Icon className="h-5 w-5" />
-        </span>
-        <span className="text-3xl font-black text-[#084f67] tabular-nums">{value}</span>
+    <div className="group relative overflow-hidden rounded-2xl bg-white border border-slate-200/80 p-4 sm:p-5 shadow-sm hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300">
+      {/* gradient sheen on hover */}
+      <div className={`absolute inset-0 bg-gradient-to-br ${t.gradient} opacity-0 group-hover:opacity-[0.03] transition-opacity`} />
+      <div className="relative flex items-start justify-between">
+        <div>
+          <span className={`flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br ${t.gradient} text-white ${t.glow} group-hover:scale-105 transition-transform`}>
+            <Icon className="h-5 w-5" strokeWidth={2.2} />
+          </span>
+        </div>
+        <div className="text-right">
+          <div className="text-3xl sm:text-[2rem] font-black text-[#084f67] tabular-nums leading-none tracking-tight">{value}</div>
+          <div className={`mt-1.5 inline-flex items-center gap-1 rounded-full ${t.bg} ${t.text} px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider`}>
+            <span className={`h-1 w-1 rounded-full bg-current`} /> Live
+          </div>
+        </div>
       </div>
-      <p className="mt-3 text-xs sm:text-sm font-medium text-[#0f2f3a]/55 leading-tight">{label}</p>
+      <p className="relative mt-3.5 text-xs sm:text-[13px] font-semibold text-slate-500 leading-tight">{label}</p>
     </div>
   );
 }
