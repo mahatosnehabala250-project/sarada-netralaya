@@ -1,136 +1,127 @@
 "use client";
 
-import { Eye, Microscope, Glasses, Check, Stethoscope, Baby, EyeOff, Scan, Activity, Zap, MonitorSmartphone, Contact, ArrowRight, Sparkles } from "lucide-react";
-import type { LucideIcon } from "lucide-react";
+import { useState } from "react";
+import { ArrowRight, Eye, Microscope, Glasses, Plus, Minus } from "lucide-react";
 
-type Service = {
-  icon: LucideIcon;
+type ServiceGroup = {
+  num: string;
+  icon: typeof Eye;
   title: string;
-  subtitle: string;
-  accent: string;
-  iconWrap: string;
-  tag: string;
-  items: { icon: LucideIcon; label: string }[];
+  desc: string;
+  items: string[];
 };
 
-const SERVICES: Service[] = [
+const GROUPS: ServiceGroup[] = [
   {
+    num: "01",
     icon: Eye,
-    title: "Centre for Comprehensive Eye Care",
-    subtitle: "Complete medical eye services under one roof",
-    accent: "from-[#0b6e8f] to-[#084f67]",
-    iconWrap: "bg-gradient-to-br from-[#0b6e8f] to-[#084f67] text-white",
-    tag: "Medical",
+    title: "Comprehensive Eye Care",
+    desc: "Complete medical and surgical eye services — from routine examinations to advanced procedures.",
     items: [
-      { icon: Stethoscope, label: "Cataract — Topical Phaco (No Injection, No Patch)" },
-      { icon: Activity, label: "Glaucoma Evaluation & Management" },
-      { icon: Baby, label: "Pediatric Eye Diseases" },
-      { icon: EyeOff, label: "Squint Correction" },
-      { icon: Scan, label: "Retinal Diseases" },
-      { icon: Eye, label: "Oculoplasty" },
+      "Cataract — Topical Phaco (No Injection, No Patch)",
+      "Glaucoma Evaluation & Management",
+      "Pediatric Eye Diseases",
+      "Squint Correction",
+      "Retinal Diseases",
+      "Oculoplasty",
     ],
   },
   {
+    num: "02",
     icon: Microscope,
-    title: "Advanced Technology",
-    subtitle: "Precision diagnostics & modern surgical equipment",
-    accent: "from-[#084f67] to-[#063b4f]",
-    iconWrap: "bg-gradient-to-br from-emerald-500 to-teal-600 text-white",
-    tag: "Diagnostics",
+    title: "Advanced Diagnostics",
+    desc: "Precision instrumentation for accurate diagnosis and modern surgical outcomes.",
     items: [
-      { icon: Scan, label: "Optical Biometry (Premium Cataract Surgery)" },
-      { icon: Microscope, label: "OCT (Retina & Glaucoma Evaluation)" },
-      { icon: Activity, label: "HVF (Glaucoma Evaluation)" },
-      { icon: Zap, label: "Latest Phaco & Laser Facility" },
+      "Optical Biometry (Premium Cataract Surgery)",
+      "OCT — Retina & Glaucoma Evaluation",
+      "HVF — Glaucoma Visual Field Analysis",
+      "Latest Phaco & Laser Facility",
     ],
   },
   {
+    num: "03",
     icon: Glasses,
     title: "Optical Services",
-    subtitle: "Eyewear solutions for every need and budget",
-    accent: "from-[#10b981] to-[#059669]",
-    iconWrap: "bg-gradient-to-br from-[#10b981] to-[#059669] text-white",
-    tag: "Eyewear",
+    desc: "Eyewear solutions for every need and budget, with in-house computerized testing.",
     items: [
-      { icon: Glasses, label: "Eyeglasses for Every Budget" },
-      { icon: Contact, label: "Contact Lenses" },
-      { icon: MonitorSmartphone, label: "Computerized Eye Testing" },
-      { icon: Baby, label: "Kids' Frames" },
+      "Eyeglasses for Every Budget",
+      "Contact Lenses",
+      "Computerized Eye Testing",
+      "Kids' Frames",
     ],
   },
 ];
 
 export function Services() {
-  const goBook = () => document.querySelector("#book")?.scrollIntoView({ behavior: "smooth" });
+  const [open, setOpen] = useState<number | null>(0);
 
   return (
-    <section id="services" className="py-16 sm:py-24 bg-gradient-to-b from-white to-[#f0f9fb] relative overflow-hidden">
-      <div className="pointer-events-none absolute top-20 -right-16 h-64 w-64 rounded-full bg-teal-50 blur-3xl" />
-      <div className="relative mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-2xl mx-auto">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-[#0b6e8f]/10 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-[#0b6e8f] ring-1 ring-[#0b6e8f]/15">
-            <Sparkles className="h-3.5 w-3.5" /> Our Services
-          </span>
-          <h2 className="mt-4 text-3xl sm:text-4xl font-bold tracking-tight text-[#084f67]">
-            Complete Eye Care, Advanced Technology
-          </h2>
-          <p className="mt-3 text-base text-slate-600">
-            From routine eye testing to advanced surgical care — everything you
-            need for healthy vision, delivered with three decades of expertise.
+    <section id="services" className="py-20 sm:py-32 bg-[#faf8f3]">
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        {/* Section header */}
+        <div className="flex items-end justify-between mb-12 sm:mb-16">
+          <div>
+            <div className="flex items-center gap-3 mb-4">
+              <span className="text-xs font-bold uppercase tracking-[0.25em] text-[#0a3d4a]/40">01 — Care</span>
+            </div>
+            <h2 className="font-serif-display text-4xl sm:text-5xl font-bold tracking-tight text-[#0a3d4a] leading-[1.1]">
+              What we treat
+            </h2>
+          </div>
+          <p className="hidden sm:block max-w-xs text-sm text-[#0a3d4a]/55 leading-relaxed pb-2">
+            From routine eye testing to advanced surgical care — delivered with
+            three decades of expertise.
           </p>
         </div>
 
-        <div className="mt-12 grid gap-6 md:gap-7 lg:grid-cols-3">
-          {SERVICES.map((s, i) => (
-            <article
-              key={s.title}
-              className="group relative rounded-3xl bg-white border border-slate-200/80 p-6 sm:p-7 shadow-sm hover:shadow-xl hover:shadow-[#0b6e8f]/10 hover:-translate-y-1.5 transition-all duration-300 flex flex-col"
-            >
-              {/* top accent bar */}
-              <div className={`absolute inset-x-0 top-0 h-1.5 rounded-t-3xl bg-gradient-to-r ${s.accent}`} />
-
-              {/* tag */}
-              <span className="absolute top-5 right-5 rounded-full bg-slate-100 px-2.5 py-0.5 text-[10px] font-bold uppercase tracking-wider text-slate-500">
-                {s.tag}
-              </span>
-
-              <div className="flex items-center gap-4">
-                <span className={`flex h-14 w-14 items-center justify-center rounded-2xl ${s.iconWrap} shadow-md group-hover:scale-105 group-hover:rotate-3 transition-all`}>
-                  <s.icon className="h-7 w-7" strokeWidth={2.1} />
-                </span>
-                <div className="text-5xl font-black text-slate-100 leading-none group-hover:text-[#0b6e8f]/10 transition-colors">
-                  {String(i + 1).padStart(2, "0")}
-                </div>
+        {/* Editorial list */}
+        <div className="border-t border-[#0a3d4a]/10">
+          {GROUPS.map((g, i) => {
+            const isOpen = open === i;
+            return (
+              <div key={g.num} className="border-b border-[#0a3d4a]/10">
+                <button
+                  onClick={() => setOpen(isOpen ? null : i)}
+                  className="group w-full flex items-center gap-4 sm:gap-8 py-6 sm:py-8 text-left hover:bg-[#0a3d4a]/[0.02] transition-colors px-2 -mx-2"
+                >
+                  <span className="font-serif-display text-2xl sm:text-3xl font-bold text-[#0a3d4a]/25 tabular-nums w-12 shrink-0">
+                    {g.num}
+                  </span>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-serif-display text-2xl sm:text-3xl font-bold text-[#0a3d4a] leading-tight">
+                      {g.title}
+                    </h3>
+                    <p className="mt-1 text-sm text-[#0a3d4a]/50 hidden sm:block">{g.desc}</p>
+                  </div>
+                  <span className="shrink-0 flex h-9 w-9 items-center justify-center rounded-full border border-[#0a3d4a]/15 text-[#0a3d4a] group-hover:bg-[#0a3d4a] group-hover:text-[#faf8f3] transition-colors">
+                    {isOpen ? <Minus className="h-4 w-4" /> : <Plus className="h-4 w-4" />}
+                  </span>
+                </button>
+                {/* Expand */}
+                {isOpen && (
+                  <div className="pb-8 pl-16 sm:pl-20 pr-4 animate-[reveal-up_0.3s_ease-out]">
+                    <p className="sm:hidden text-sm text-[#0a3d4a]/50 mb-4">{g.desc}</p>
+                    <div className="grid sm:grid-cols-2 gap-x-8 gap-y-2">
+                      {g.items.map((item) => (
+                        <div key={item} className="flex items-center gap-2.5 py-1.5">
+                          <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 shrink-0" />
+                          <span className="text-sm text-[#0a3d4a]/80">{item}</span>
+                        </div>
+                      ))}
+                    </div>
+                    <a
+                      href="#book"
+                      onClick={(e) => { e.preventDefault(); document.querySelector("#book")?.scrollIntoView({ behavior: "smooth" }); }}
+                      className="mt-6 inline-flex items-center gap-1.5 text-sm font-bold text-[#0a3d4a] hover:gap-2.5 transition-all"
+                    >
+                      Book this service
+                      <ArrowRight className="h-4 w-4" />
+                    </a>
+                  </div>
+                )}
               </div>
-
-              <h3 className="mt-5 text-lg font-bold text-[#084f67] leading-snug">
-                {s.title}
-              </h3>
-              <p className="mt-1 text-sm text-slate-500">{s.subtitle}</p>
-
-              <ul className="mt-5 space-y-2.5 flex-1">
-                {s.items.map((it) => (
-                  <li key={it.label} className="flex items-start gap-2.5 group/item">
-                    <span className="mt-0.5 flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-emerald-50 group-hover/item:bg-emerald-100 transition-colors">
-                      <Check className="h-3.5 w-3.5 text-emerald-600" strokeWidth={3} />
-                    </span>
-                    <span className="text-sm text-slate-700 leading-relaxed">
-                      {it.label}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-
-              {/* CTA */}
-              <button
-                onClick={goBook}
-                className="mt-6 inline-flex items-center gap-1.5 text-sm font-bold text-[#0b6e8f] hover:text-[#084f67] group/cta"
-              >
-                Book this service
-                <ArrowRight className="h-4 w-4 transition-transform group-hover/cta:translate-x-1" />
-              </button>
-            </article>
-          ))}
+            );
+          })}
         </div>
       </div>
     </section>
