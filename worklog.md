@@ -370,3 +370,38 @@ Priority recommendations for next phase:
 - Add SMS/email appointment reminders.
 - Wire Supabase realtime for instant dashboard updates.
 - Add multi-doctor support.
+
+---
+Task ID: ROUND-7
+Agent: main (Z.ai Code) — user request
+Task: Show full formatted phone number to owner + ensure Telegram notifications fire immediately.
+
+Work Log:
+- PHONE FORMATTING (done):
+  - Added formatPhone() + telHref() helpers in src/lib/utils.ts: "9876543210" → "+91 98765 43210", tel:+919876543210
+  - Admin dashboard table row: phone now displays as "+91 98765 43210" in teal bold, clickable tel: link (was raw "9876543210")
+  - Admin mobile card: formatted phone, prominent teal display
+  - Appointment detail dialog: formatted phone (text-base, bold) + fixed WhatsApp link to strip non-digits
+  - Call action buttons: title shows "Call +91 98765 43210", href uses telHref()
+  - Verified via agent-browser on local: 6 tel links, first = "+91 98765 43210 | tel:+919876543210" ✓
+- TELEGRAM NOTIFICATION (code ready, env vars needed):
+  - Changed booking API from fire-and-forget (void) to awaited with 5s timeout via Promise.race — ensures delivery on Vercel serverless (fire-and-forget can be killed before completing)
+  - Added Telegram notification to admin create-appointment API (was missing)
+  - Improved Telegram message format: HTML with bold labels, clickable tel: link for phone, italic note, monospace ref
+  - Code is deployed and ready — ONLY needs TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID env vars on Vercel
+- Deployed to Vercel (dpl_7v7qoxUS6Cb9hLprZ4PL6DoyjaAt, READY).
+- Pushed to GitHub (commit 1efab6f).
+
+Stage Summary:
+- Phone formatting: verified locally — owner sees "+91 98765 43210" (clickable) ✓
+- Telegram: code awaits notification (max 5s) before returning booking response ✓. Needs env vars.
+- Production: deployed and live.
+
+Telegram setup (for user):
+The notification code is 100% ready. To activate instant Telegram notifications:
+1. Open Telegram, message @BotFather, send /newbot, get the HTTP API token
+2. Send any message to your new bot, then visit:
+   https://api.telegram.org/bot<TOKEN>/getUpdates to find your chat_id
+3. Give me the token + chat_id (or set TELEGRAM_BOT_TOKEN + TELEGRAM_CHAT_ID in
+   Vercel → Project → Settings → Environment Variables)
+Once set, every booking (from website or admin) instantly sends a Telegram message.
