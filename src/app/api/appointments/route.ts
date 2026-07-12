@@ -115,20 +115,26 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Telegram notification — fire-and-forget. We kick it off without awaiting
-  // so a slow/failing Telegram API never blocks the user response.
-  void notifyNewBooking({
-    ref: created.ref,
-    name: created.name,
-    age: created.age,
-    phone: created.phone,
-    department: created.department as "eye_care" | "optical",
-    preferredDate: created.preferredDate,
-    timeSlot: created.timeSlot,
-    note: created.note,
-  }).catch(() => {
-    /* swallow */
-  });
+  // Telegram notification — await with a short timeout so the message is
+  // actually delivered on serverless (fire-and-forget can be killed before
+  // completing on Vercel). Errors are swallowed so they never fail the booking.
+  try {
+    await Promise.race([
+      notifyNewBooking({
+        ref: created.ref,
+        name: created.name,
+        age: created.age,
+        phone: created.phone,
+        department: created.department as "eye_care" | "optical",
+        preferredDate: created.preferredDate,
+        timeSlot: created.timeSlot,
+        note: created.note,
+      }),
+      new Promise((resolve) => setTimeout(resolve, 5000)), // max 5s wait
+    ]);
+  } catch {
+    /* swallow — notification failure must never fail the booking */
+  }
 
   return NextResponse.json(
     {

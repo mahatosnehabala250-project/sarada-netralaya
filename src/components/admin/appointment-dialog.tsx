@@ -22,6 +22,7 @@ import {
   type Status, type Department,
 } from "@/lib/appointments";
 import { formatDateLong, formatCreatedAtIST, todayISTString } from "@/lib/ist";
+import { formatPhone, telHref } from "@/lib/utils";
 import { printAppointmentSlip } from "@/components/admin/print-slip";
 
 export type Appt = {
@@ -220,11 +221,11 @@ function ViewMode({ appt, onEdit }: { appt: Appt; onEdit: () => void }) {
           </div>
         </InfoBlock>
         <InfoBlock icon={Phone} label="Mobile">
-          <a href={`tel:${appt.phone}`} className="font-bold text-[#0b6e8f] hover:underline">
-            {appt.phone}
+          <a href={telHref(appt.phone)} className="font-bold text-[#0b6e8f] hover:underline text-base">
+            {formatPhone(appt.phone)}
           </a>
           <a
-            href={`https://wa.me/91${appt.phone}`}
+            href={`https://wa.me/91${appt.phone.replace(/\D/g, "").slice(-10)}`}
             target="_blank"
             rel="noopener noreferrer"
             className="text-xs text-emerald-600 hover:underline inline-flex items-center gap-1 mt-0.5"

@@ -20,6 +20,7 @@ import {
 } from "@/lib/appointments";
 import { greetingIST, fullTodayIST, formatDateLong, formatCreatedAtIST, timeAgoIST } from "@/lib/ist";
 import { PHONES, SITE } from "@/lib/site-info";
+import { formatPhone, telHref } from "@/lib/utils";
 import { AppointmentDetailDialog } from "@/components/admin/appointment-dialog";
 import { CreateAppointmentDialog, type NewAppt } from "@/components/admin/create-dialog";
 import { AnalyticsPanel } from "@/components/admin/analytics";
@@ -599,13 +600,16 @@ function ApptRow({
     <tr className="hover:bg-[#f0f9fb]/50 transition-colors cursor-pointer group" onClick={() => onView(a)}>
       <td className="px-4 py-3">
         <div className="font-semibold text-[#084f67] group-hover:text-[#0b6e8f] transition-colors">{a.name}</div>
-        <div className="text-xs text-[#0f2f3a]/55 flex items-center gap-1.5 mt-0.5">
-          <span className="inline-flex items-center gap-1">
-            <Phone className="h-3 w-3" />{a.phone}
-          </span>
-          {a.age != null && <span>· {a.age} yrs</span>}
+        <a
+          href={telHref(a.phone)}
+          onClick={(e) => e.stopPropagation()}
+          className="text-xs font-semibold text-[#0b6e8f] hover:underline inline-flex items-center gap-1 mt-0.5"
+        >
+          <Phone className="h-3 w-3" />{formatPhone(a.phone)}
+        </a>
+        <div className="text-[11px] text-[#0f2f3a]/45 mt-0.5">
+          {a.age != null && <span>{a.age} yrs · </span>}#{a.ref} · {timeAgoIST(a.createdAt)}
         </div>
-        <div className="text-[10px] text-[#0f2f3a]/35 mt-0.5">#{a.ref} · {timeAgoIST(a.createdAt)}</div>
       </td>
       <td className="px-4 py-3">
         <div className="font-medium text-[#0f2f3a]/85 text-[13px]">{formatDateLong(a.preferredDate)}</div>
@@ -634,9 +638,9 @@ function ApptRow({
             <EyeIcon className="h-4 w-4" />
           </button>
           <a
-            href={`tel:${a.phone}`}
+            href={telHref(a.phone)}
             className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-[#0b6e8f]/20 text-[#0b6e8f] hover:bg-[#0b6e8f]/5"
-            title="Call patient"
+            title={`Call ${formatPhone(a.phone)}`}
           >
             <Phone className="h-4 w-4" />
           </a>
@@ -685,8 +689,8 @@ function ApptCard({
       <div className="flex items-start justify-between gap-2">
         <button onClick={() => onView(a)} className="min-w-0 text-left">
           <div className="font-bold text-[#084f67]">{a.name}</div>
-          <div className="text-xs text-[#0f2f3a]/55 mt-0.5">
-            {a.phone} {a.age != null && `· ${a.age} yrs`}
+          <div className="text-xs font-semibold text-[#0b6e8f] mt-0.5">
+            {formatPhone(a.phone)} {a.age != null && <span className="text-[#0f2f3a]/55 font-normal">· {a.age} yrs</span>}
           </div>
           <div className="text-[10px] text-[#0f2f3a]/35 mt-0.5">#{a.ref} · tap to view</div>
         </button>
@@ -723,7 +727,7 @@ function ApptCard({
           <EyeIcon className="h-3.5 w-3.5" /> Details
         </button>
         <a
-          href={`tel:${a.phone}`}
+          href={telHref(a.phone)}
           className="inline-flex items-center gap-1.5 rounded-lg border border-[#0b6e8f]/20 px-3 py-1.5 text-xs font-semibold text-[#0b6e8f] hover:bg-[#0b6e8f]/5"
         >
           <Phone className="h-3.5 w-3.5" /> Call

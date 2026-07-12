@@ -20,20 +20,32 @@ const DEPT_LABEL: Record<string, string> = {
   optical: "Optical Services",
 };
 
-/** Format the Telegram message body. */
+/** Format a 10-digit Indian mobile as "+91 98765 43210" for display. */
+function formatPhone(phone: string): string {
+  const d = phone.replace(/\D/g, "");
+  if (d.length === 10 && /^[6-9]/.test(d)) return `+91 ${d.slice(0, 5)} ${d.slice(5)}`;
+  return phone;
+}
+
+/** Format the Telegram message body (HTML for bold labels). */
 export function formatBookingMessage(b: BookingNotifyInput): string {
   const agePart = b.age ? ` (${b.age} yrs)` : "";
   const dept = DEPT_LABEL[b.department] ?? b.department;
   const dateLabel = formatDateForMessage(b.preferredDate);
-  const note = b.note?.trim() ? `\n📝 "${b.note.trim()}"` : "";
+  const note = b.note?.trim() ? `\n📝 <i>"${escapeHtml(b.note.trim())}"</i>` : "";
+  const phone = formatPhone(b.phone);
   return (
-    `🔔 New Appointment — Sarada Netralaya\n` +
-    `👤 ${b.name}${agePart}\n` +
-    `📞 ${b.phone}\n` +
+    `🔔 <b>New Appointment — Sarada Netralaya</b>\n\n` +
+    `👤 <b>${escapeHtml(b.name)}${agePart}</b>\n` +
+    `📞 <a href="tel:${phone.replace(/\s/g, "")}">${phone}</a>\n` +
     `👁️ ${dept}\n` +
-    `📅 ${dateLabel}, ${b.timeSlot}${note}\n` +
-    `Ref: #${b.ref}`
+    `📅 ${dateLabel}, ${b.timeSlot}${note}\n\n` +
+    `Ref: <code>#${b.ref}</code>`
   );
+}
+
+function escapeHtml(s: string): string {
+  return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
 }
 
 function formatDateForMessage(dateStr: string): string {

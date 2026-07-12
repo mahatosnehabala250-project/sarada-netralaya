@@ -9,6 +9,7 @@ import {
   bookingSchema, generateUniqueRef, DEPARTMENTS, TIME_SLOTS, STATUSES, type Status,
 } from "@/lib/appointments";
 import { todayISTString } from "@/lib/ist";
+import { notifyNewBooking } from "@/lib/telegram";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -66,6 +67,25 @@ export async function POST(req: NextRequest) {
       ipHash: null, // owner-created, no IP
     },
   });
+
+  // Send Telegram notification (await with timeout for serverless reliability)
+  try {
+    await Promise.race([
+      notifyNewBooking({
+        ref: created.ref,
+        name: created.name,
+        age: created.age,
+        phone: created.phone,
+        department: created.department as "eye_care" | "optical",
+        preferredDate: created.preferredDate,
+        timeSlot: created.timeSlot,
+        note: created.note,
+      }),
+      new Promise((resolve) => setTimeout(resolve, 5000)),
+    ]);
+  } catch {
+    /* swallow */
+  }
 
   return NextResponse.json({ ok: true, item: created }, { status: 201 });
 }
