@@ -39,8 +39,8 @@ export function SiteHeader() {
       className={cn(
         "fixed top-0 inset-x-0 z-50 transition-all duration-500",
         scrolled
-          ? "bg-[#faf8f3]/95 backdrop-blur-md border-b border-[#0a3d4a]/10 py-2.5 sm:py-3"
-          : "bg-transparent py-4 sm:py-5"
+          ? "bg-[#faf8f3]/95 backdrop-blur-md border-b border-[#0a3d4a]/10 py-2.5 sm:py-3 shadow-sm"
+          : "bg-gradient-to-b from-black/40 to-transparent py-4 sm:py-5"
       )}
     >
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-3">
@@ -48,12 +48,12 @@ export function SiteHeader() {
         <a
           href="#top"
           onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}
-          className="flex items-baseline gap-2 group min-w-0"
+          className="flex items-center gap-2 group min-w-0"
         >
-          <span className={cn("font-serif-display text-lg sm:text-xl lg:text-2xl font-bold tracking-tight transition-colors truncate", scrolled ? "text-[#0a3d4a]" : "text-white")}>
+          <span className={cn("font-serif-display text-base sm:text-xl lg:text-2xl font-bold tracking-tight transition-colors whitespace-nowrap", scrolled ? "text-[#0a3d4a]" : "text-white")}>
             Sarada Netralaya
           </span>
-          <span className={cn("hidden lg:block text-[10px] uppercase tracking-[0.2em] font-semibold transition-colors shrink-0", scrolled ? "text-[#0a3d4a]/50" : "text-white/50")}>
+          <span className={cn("hidden sm:block text-[10px] uppercase tracking-[0.2em] font-semibold transition-colors shrink-0", scrolled ? "text-[#0a3d4a]/50" : "text-white/50")}>
             Est. 1995
           </span>
         </a>
