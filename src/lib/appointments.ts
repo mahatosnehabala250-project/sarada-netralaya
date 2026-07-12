@@ -107,8 +107,13 @@ export type BookingParsed = z.output<typeof bookingSchema>;
 export async function generateUniqueRef(): Promise<string> {
   for (let attempt = 0; attempt < 8; attempt++) {
     const ref = String(Math.floor(100000 + Math.random() * 900000));
-    const exists = await db.appointment.findUnique({ where: { ref } });
-    if (!exists) return ref;
+    try {
+      const exists = await db.appointment.findUnique({ where: { ref } });
+      if (!exists) return ref;
+    } catch {
+      // Table may not exist yet (serverless cold start) — just return the ref
+      return ref;
+    }
   }
   // Fallback with timestamp suffix to guarantee uniqueness
   return String(Date.now()).slice(-6);

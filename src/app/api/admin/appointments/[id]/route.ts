@@ -4,7 +4,8 @@
 // DELETE — permanently delete an appointment (owner only)
 
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { db } from "@/lib/db"
+import { ensureDbSchema } from "@/lib/db-ensure";
 import { isOwnerAuthenticated } from "@/lib/auth";
 import { STATUSES, DEPARTMENTS, TIME_SLOTS, type Status } from "@/lib/appointments";
 import { todayISTString } from "@/lib/ist";
@@ -25,6 +26,7 @@ export async function GET(
   const authFail = await ensureAuth();
   if (authFail) return authFail;
   const { id } = await params;
+  await ensureDbSchema();
   const item = await db.appointment.findUnique({ where: { id } });
   if (!item) return NextResponse.json({ error: "Not found" }, { status: 404 });
   return NextResponse.json({ item });
@@ -115,6 +117,7 @@ export async function PATCH(
     return NextResponse.json({ error: "No fields to update" }, { status: 400 });
   }
 
+  await ensureDbSchema();
   try {
     const updated = await db.appointment.update({ where: { id }, data });
     return NextResponse.json({ ok: true, item: updated });
@@ -130,6 +133,7 @@ export async function DELETE(
   const authFail = await ensureAuth();
   if (authFail) return authFail;
   const { id } = await params;
+  await ensureDbSchema();
   try {
     await db.appointment.delete({ where: { id } });
     return NextResponse.json({ ok: true });

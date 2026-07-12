@@ -3,6 +3,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { ensureDbSchema } from "@/lib/db-ensure";
 import { isOwnerAuthenticated } from "@/lib/auth";
 import { STATUSES, type Status } from "@/lib/appointments";
 import { todayISTString } from "@/lib/ist";
@@ -54,31 +55,46 @@ export async function GET(req: NextRequest) {
     where.preferredDate = { gte: dateFrom, lte: dateTo };
   }
 
-  const [items, total] = await Promise.all([
-    db.appointment.findMany({
-      where,
-      orderBy: [{ preferredDate: "asc" }, { createdAt: "asc" }],
-      take: 500,
-    }),
-    db.appointment.count({ where }),
-  ]);
+  await ensureDbSchema();
+
+  let items: Awaited<ReturnType<typeof db.appointment.findMany>> = [];
+  let total = 0;
+  try {
+    [items, total] = await Promise.all([
+      db.appointment.findMany({
+        where,
+        orderBy: [{ preferredDate: "asc" }, { createdAt: "asc" }],
+        take: 500,
+      }),
+      db.appointment.count({ where }),
+    ]);
+  } catch (dbErr) {
+    console.error("[admin/appointments list] DB error:", dbErr);
+    // Return empty state instead of 500 — dashboard shows "no appointments"
+  }
 
   // KPI counts (across all data, ignoring filters, for dashboard tiles)
-  const [
-    todayCount,
-    pendingCount,
-    upcomingCount,
-    doneCount,
-    cancelledCount,
-    totalCount,
-  ] = await Promise.all([
-    db.appointment.count({ where: { preferredDate: today } }),
-    db.appointment.count({ where: { status: "pending" } }),
-    db.appointment.count({ where: { preferredDate: { gte: today } } }),
-    db.appointment.count({ where: { status: "done" } }),
-    db.appointment.count({ where: { status: "cancelled" } }),
-    db.appointment.count(),
-  ]);
+  let todayCount = 0, pendingCount = 0, upcomingCount = 0, doneCount = 0,
+    cancelledCount = 0, totalCount = 0;
+  try {
+    [
+      todayCount,
+      pendingCount,
+      upcomingCount,
+      doneCount,
+      cancelledCount,
+      totalCount,
+    ] = await Promise.all([
+      db.appointment.count({ where: { preferredDate: today } }),
+      db.appointment.count({ where: { status: "pending" } }),
+      db.appointment.count({ where: { preferredDate: { gte: today } } }),
+      db.appointment.count({ where: { status: "done" } }),
+      db.appointment.count({ where: { status: "cancelled" } }),
+      db.appointment.count(),
+    ]);
+  } catch {
+    // DB unavailable — KPIs stay 0
+  }
 
   return NextResponse.json({
     items,

@@ -277,13 +277,13 @@ export function AdminDashboard() {
               <TooltipProvider delayDuration={200}>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <a href="/api/admin/appointments/export">
+                    <a href={`/api/admin/appointments/export?${new URLSearchParams({ tab, department, status, q: qDebounced, ...(tab === "range" && dateFrom ? { dateFrom } : {}), ...(tab === "range" && dateTo ? { dateTo } : {}) }).toString()}`}>
                       <Button size="sm" className="bg-[#0b6e8f] hover:bg-[#084f67] text-white">
                         <Download className="h-4 w-4 mr-1.5" /> Export
                       </Button>
                     </a>
                   </TooltipTrigger>
-                  <TooltipContent>Download all appointments as a CSV file</TooltipContent>
+                  <TooltipContent>Download the current filtered view as CSV</TooltipContent>
                 </Tooltip>
               </TooltipProvider>
             </div>

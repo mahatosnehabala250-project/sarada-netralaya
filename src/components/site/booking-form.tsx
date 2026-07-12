@@ -3,7 +3,7 @@
 import { useState } from "react";
 import {
   CalendarCheck, Loader2, CheckCircle2, Phone, AlertCircle,
-  CalendarDays, Clock, Eye, Glasses, ShieldCheck, User,
+  CalendarDays, Clock, Eye, Glasses, ShieldCheck, User, Search,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -432,6 +432,12 @@ function SuccessCard({
             className="inline-flex items-center justify-center gap-2 rounded-md bg-[#0b6e8f] hover:bg-[#084f67] px-5 py-2.5 text-sm font-semibold text-white shadow-sm"
           >
             <Phone className="h-4 w-4" /> Call to confirm faster
+          </a>
+          <a
+            href="/track"
+            className="inline-flex items-center justify-center gap-2 rounded-md border border-[#0b6e8f]/25 px-5 py-2.5 text-sm font-semibold text-[#084f67] hover:bg-[#0b6e8f]/5"
+          >
+            <Search className="h-4 w-4" /> Track Later
           </a>
           <Button
             variant="outline"

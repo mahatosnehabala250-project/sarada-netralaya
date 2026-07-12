@@ -4,6 +4,7 @@
 
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { ensureDbSchema } from "@/lib/db-ensure";
 import {
   bookingSchema,
   generateUniqueRef,
@@ -82,22 +83,37 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Persist
+  // Persist — ensure schema exists (handles serverless cold start)
+  await ensureDbSchema();
   const ref = await generateUniqueRef();
-  const created = await db.appointment.create({
-    data: {
-      ref,
-      name: d.name,
-      phone: d.phone,
-      age: d.age,
-      department: d.department,
-      preferredDate: d.preferredDate,
-      timeSlot: d.timeSlot,
-      note: d.note,
-      status: "pending",
-      ipHash: hashIp(ip),
-    },
-  });
+  let created;
+  try {
+    created = await db.appointment.create({
+      data: {
+        ref,
+        name: d.name,
+        phone: d.phone,
+        age: d.age,
+        department: d.department,
+        preferredDate: d.preferredDate,
+        timeSlot: d.timeSlot,
+        note: d.note,
+        status: "pending",
+        ipHash: hashIp(ip),
+      },
+    });
+  } catch (dbErr) {
+    console.error("[appointments/create] DB error:", dbErr);
+    return NextResponse.json(
+      {
+        ok: false,
+        ref,
+        error:
+          "We couldn't save your booking online right now, but your request was received. Please call us at +91 70910 90014 to confirm your appointment.",
+      },
+      { status: 201 }
+    );
+  }
 
   // Telegram notification — fire-and-forget. We kick it off without awaiting
   // so a slow/failing Telegram API never blocks the user response.

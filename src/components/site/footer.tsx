@@ -91,6 +91,7 @@ export function Footer() {
               <a href="#services" className="text-white/55 hover:text-white">Services</a>
               <a href="#doctor" className="text-white/55 hover:text-white">Doctor</a>
               <a href="#book" className="text-white/55 hover:text-white">Book Appointment</a>
+              <Link href="/track" className="text-white/55 hover:text-white">Track Appointment</Link>
               <Link href="/admin" className="text-white/55 hover:text-white">Owner Login</Link>
             </div>
           </div>

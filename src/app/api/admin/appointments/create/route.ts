@@ -2,7 +2,8 @@
 // (walk-in / phone bookings). Auth-gated. Validates all fields.
 
 import { NextRequest, NextResponse } from "next/server";
-import { db } from "@/lib/db";
+import { db } from "@/lib/db"
+import { ensureDbSchema } from "@/lib/db-ensure";
 import { isOwnerAuthenticated } from "@/lib/auth";
 import {
   bookingSchema, generateUniqueRef, DEPARTMENTS, TIME_SLOTS, STATUSES, type Status,
@@ -49,6 +50,7 @@ export async function POST(req: NextRequest) {
     status = raw.status as Status;
   }
 
+  await ensureDbSchema();
   const ref = await generateUniqueRef();
   const created = await db.appointment.create({
     data: {

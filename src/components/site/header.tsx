@@ -12,7 +12,8 @@ const NAV = [
   { label: "Doctor", href: "#doctor" },
   { label: "Reviews", href: "#testimonials" },
   { label: "FAQ", href: "#faq" },
-  { label: "Book Appointment", href: "#book" },
+  { label: "Book", href: "#book" },
+  { label: "Track", href: "/track" },
   { label: "Contact", href: "#contact" },
 ];
 
@@ -29,6 +30,12 @@ export function SiteHeader() {
 
   const go = (href: string) => {
     setOpen(false);
+    // Internal route (starts with /) — navigate via location
+    if (href.startsWith("/")) {
+      window.location.assign(href);
+      return;
+    }
+    // Anchor link — smooth scroll
     const el = document.querySelector(href);
     if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
   };
