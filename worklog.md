@@ -599,3 +599,29 @@ Stage Summary:
 - Production: https://sarada-netralaya-theta.vercel.app — all mobile issues fixed
 - Header visible on all screen sizes, WhatsApp logo correct, hero clean
 - Lint clean, deployed, pushed.
+
+---
+Task ID: PRODUCTION-REBUILD
+Agent: main (Z.ai Code) — user request
+Task: Full production rebuild with real images, marketing-focused copy, global eye clinic design.
+
+Work Log:
+- User feedback: no images in hero, need multiple service images, "30+ years" not "three decades", hero cluttered, need marketing angle (patient dream), look at global eye clinic design.
+- Generated 5 professional AI images:
+  - hero-patient.png: happy elderly Indian patient with clear bright eyes
+  - service-cataract.png: modern ophthalmology operating room
+  - service-diagnostics.png: OCT retina scanning machine
+  - service-optical.png: optical eyewear store display
+  - doctor-portrait.png: distinguished Indian ophthalmologist portrait
+- Full rebuild of all public components:
+  - Hero: split layout (copy left, patient image right), marketing headline "See the world clearly again", patient dream angle ("Your dream of perfect vision is our mission"), 4 trust checkmarks, stats row (30+ years, 50K+ patients, 4.9), floating "Clear vision restored" card on image, top bar with "Open Today" + phone
+  - Services: 3 image cards with real photos, category tags, hover zoom, checkmark lists, book CTA per card
+  - Doctor: real portrait photo + "30+ Years" badge + "Verified" badge, qualification cards with icons
+  - StatsBand: icon-led metrics
+  - Header: sticky white, SN logo mark, "Book Now" CTA, always visible
+  - Testimonials: clean quote card
+  - Booking: clean white form, emerald accents
+- Design standard: professional eye clinic (deep teal #0a3d4a + emerald #10b981 + clean white)
+- VLM: hero 7/10, services 7/10, doctor 8/10
+- Deployed to Vercel (dpl_ADf3JQTMPUzaChnxqKQ2uWGXrhui, READY), production 200.
+- Pushed to GitHub (commit 289447b).
