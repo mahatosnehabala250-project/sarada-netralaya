@@ -4,6 +4,7 @@ import { StatsBand } from "@/components/site/stats-band";
 import { Services } from "@/components/site/services";
 import { Doctor } from "@/components/site/doctor";
 import { Testimonials } from "@/components/site/testimonials";
+import { GalleryPreview } from "@/components/site/gallery-preview";
 import { BookingForm } from "@/components/site/booking-form";
 import { Faq } from "@/components/site/faq";
 import { Contact } from "@/components/site/contact";
@@ -137,6 +138,7 @@ export default function Home() {
         <Services />
         <Doctor />
         <Testimonials />
+        <GalleryPreview />
         <BookingForm />
         <Faq />
         <Contact />

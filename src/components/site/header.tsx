@@ -2,14 +2,15 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X, Phone, Calendar } from "lucide-react";
+import { Menu, X, Phone, Calendar, Eye } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { PHONES } from "@/lib/site-info";
 
 const NAV = [
   { label: "Services", href: "#services" },
   { label: "Doctor", href: "#doctor" },
-  { label: "Reviews", href: "#testimonials" },
+  { label: "Gallery", href: "/gallery" },
+  { label: "Reviews", href: "/reviews" },
   { label: "FAQ", href: "#faq" },
   { label: "Contact", href: "#contact" },
 ];
@@ -48,14 +49,14 @@ export function SiteHeader() {
         <a
           href="#top"
           onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}
-          className="flex items-center gap-2 shrink-0"
+          className="flex items-center gap-2.5 shrink-0"
         >
-          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#0a3d4a] text-white text-sm font-bold">
-            SN
+          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#0a3d4a] to-[#10b981] text-white shadow-md">
+            <Eye className="h-5 w-5" strokeWidth={2.4} />
           </span>
           <div className="leading-none">
-            <div className="text-base sm:text-lg font-bold text-[#0a3d4a]">Sarada Netralaya</div>
-            <div className="hidden sm:block text-[9px] uppercase tracking-[0.15em] text-slate-400 font-semibold">Eye Care Hospital</div>
+            <div className="text-lg sm:text-xl font-bold text-[#0a3d4a] whitespace-nowrap">Sarada Netralaya</div>
+            <div className="hidden sm:block text-[10px] uppercase tracking-[0.15em] text-[#10b981] font-semibold mt-0.5">Eye Care Hospital</div>
           </div>
         </a>
 
