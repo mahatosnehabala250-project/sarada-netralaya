@@ -512,3 +512,40 @@ Stage Summary:
 - Sidebar: improved hierarchy with accent bar + gradient active state.
 - Dialog: shows booking timestamp.
 - Lint clean throughout.
+
+---
+Task ID: FRONTEND-REBUILD
+Agent: main (Z.ai Code) — user request
+Task: Rebuild entire frontend from scratch with original design vision (ignoring previous guidance), keeping only clinic content.
+
+Work Log:
+- User requested: ignore previous frontend design guidance, rebuild everything from scratch with my own design, keep clinic info only.
+- Design concept: "Heritage Clinic" — premium editorial aesthetic for a 30-year eye care brand.
+- Design system:
+  - Typography: Playfair Display serif headlines + Geist sans body (added via next/font)
+  - Palette: warm ivory (#faf8f3) backgrounds + deep ink-teal (#0a3d4a) + emerald (#10b981) accent
+  - Section numbering (01—Care, 02—Surgeon, 03—Stories, 04—Book, 05—Questions, 06—Visit)
+  - Reveal animations, custom scrollbar, selection color, "Est. 1995" heritage mark
+- Rebuilt ALL public components from scratch:
+  - Header: minimal transparent→solid on scroll, wordmark + "Est. 1995", pill "Owner" button
+  - Hero: full-bleed dark with eye image at 50% opacity, large serif headline with italic emerald accent, minimal CTAs, trust strip with star rating
+  - StatsBand: inline 4-metric strip with serif numbers + dividers (was bulky cards)
+  - Services: editorial expandable list (not card grid) — large numbered rows with +/- toggles, items reveal on expand
+  - Doctor: magazine-style portrait feature — framed monogram panel with floating "30+ Years" badge, serif name, training card, qualifications list
+  - Testimonials: single large serif quote carousel with dots + prev/next nav (was grid)
+  - Booking: clean focused form on dark teal section, ivory card, success state with reference
+  - FAQ: refined accordion with circular +/- toggles, section number
+  - Contact: split layout — icon-led info column + map with floating label card
+  - Footer: minimal 3-column (brand/contact/links) with "Est. 1995"
+  - WhatsApp FAB + mobile CTA + scroll-to-top: updated to new palette
+- Lint clean throughout.
+- VLM ratings (new vs old): hero 8/10 (was 6), doctor 8/10, services 7/10, booking 7/10.
+- Deployed to Vercel (dpl_HXhxjVXfKk8QSa3THw9ydHRgn5oU, READY), production all 200.
+- Pushed to GitHub (commit fe7e6f0).
+
+Stage Summary:
+- Production: https://sarada-netralaya-theta.vercel.app — fully redesigned frontend
+- All 7 sections present, serif typography + ivory/ink-teal palette live
+- Editorial section numbering, reveal animations, refined details
+- Backend/admin/dashboard unchanged — only public frontend rebuilt
+- 17 files changed, 673 insertions, 1448 deletions (leaner, cleaner code)
