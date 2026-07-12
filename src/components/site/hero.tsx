@@ -116,35 +116,35 @@ export function Hero() {
 
                   {/* bottom overlay info */}
                   <div className="absolute bottom-4 left-4 right-4 flex items-end justify-between gap-3">
-                    <div className="rounded-xl bg-white/10 backdrop-blur-md border border-white/20 px-3.5 py-2">
-                      <div className="text-[10px] uppercase tracking-wider text-white/60 font-semibold">Specialist</div>
-                      <div className="text-sm font-bold text-white">Advanced Ophthalmology</div>
+                    <div className="rounded-xl bg-black/30 backdrop-blur-md border border-white/15 px-3.5 py-2">
+                      <div className="text-[9px] uppercase tracking-[0.12em] text-emerald-300 font-bold">Specialist</div>
+                      <div className="text-[13px] font-bold text-white leading-tight">Advanced Ophthalmology</div>
                     </div>
-                    <span className="rounded-lg bg-emerald-500 px-2.5 py-1 text-[11px] font-bold text-white shadow-lg shadow-emerald-900/40">
+                    <span className="rounded-lg bg-emerald-500 px-2.5 py-1.5 text-[10px] font-bold text-white shadow-lg shadow-emerald-900/40 tracking-wider">
                       EST. 30+ YRS
                     </span>
                   </div>
                 </div>
               </div>
 
-              {/* floating feature chips */}
-              <div className="absolute -left-8 top-8 rounded-2xl bg-white shadow-[0_20px_50px_-12px_rgba(8,79,103,0.35)] p-3.5 flex items-center gap-3 max-w-[210px] ring-1 ring-black/5 animate-[float_4s_ease-in-out_infinite]">
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-teal-50 text-teal-700 shrink-0">
-                  <Zap className="h-5 w-5" strokeWidth={2.1} />
+              {/* floating feature chips — 2 clean cards */}
+              <div className="absolute -left-6 top-10 rounded-2xl bg-white shadow-[0_20px_50px_-12px_rgba(8,79,103,0.4)] p-4 flex items-center gap-3 ring-1 ring-black/5 animate-[float_4s_ease-in-out_infinite]">
+                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-[#0b6e8f] to-[#084f67] text-white shrink-0 shadow-md">
+                  <Zap className="h-5 w-5" strokeWidth={2.2} />
                 </span>
                 <div className="leading-tight">
                   <div className="text-[13px] font-bold text-[#084f67]">Latest Phaco</div>
-                  <div className="text-[10.5px] text-slate-500">& Laser Facility</div>
+                  <div className="text-[10.5px] text-slate-500 mt-0.5">& Laser Facility</div>
                 </div>
               </div>
 
-              <div className="absolute -right-6 bottom-16 rounded-2xl bg-white shadow-[0_20px_50px_-12px_rgba(8,79,103,0.35)] p-3.5 flex items-center gap-3 max-w-[220px] ring-1 ring-black/5 animate-[float_4s_ease-in-out_infinite_0.9s]">
-                <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-50 text-emerald-700 shrink-0">
-                  <Stethoscope className="h-5 w-5" strokeWidth={2.1} />
+              <div className="absolute -right-5 bottom-20 rounded-2xl bg-white shadow-[0_20px_50px_-12px_rgba(8,79,103,0.4)] p-4 flex items-center gap-3 ring-1 ring-black/5 animate-[float_4s_ease-in-out_infinite_0.9s]">
+                <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-gradient-to-br from-emerald-500 to-emerald-600 text-white shrink-0 shadow-md">
+                  <Stethoscope className="h-5 w-5" strokeWidth={2.2} />
                 </span>
                 <div className="leading-tight">
                   <div className="text-[13px] font-bold text-[#084f67]">No Injection</div>
-                  <div className="text-[10.5px] text-slate-500">No Patch Cataract Surgery</div>
+                  <div className="text-[10.5px] text-slate-500 mt-0.5">No Patch Surgery</div>
                 </div>
               </div>
 
