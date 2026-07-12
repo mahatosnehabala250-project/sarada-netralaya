@@ -7,7 +7,7 @@ import { Eye, LogIn, Loader2, ArrowLeft, Lock, Mail, EyeOff } from "lucide-react
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { SITE } from "@/lib/site-info";
 
 export function AdminLogin() {
@@ -35,13 +35,16 @@ export function AdminLogin() {
         toast.error(data.error ?? "Login failed");
         return;
       }
-      toast.success("Welcome back!");
-      router.refresh();
+      toast.success("Welcome back! Loading dashboard...");
+      // Hard navigation is more reliable than router.refresh() for
+      // cookie-based session changes — guarantees the new cookie is sent.
+      window.location.href = "/admin";
     } catch {
       toast.error("Network error. Please try again.");
-    } finally {
       setLoading(false);
     }
+    // Note: setLoading(false) intentionally omitted on success — the page
+    // will navigate away, so the spinner stays visible until redirect.
   }
 
   return (

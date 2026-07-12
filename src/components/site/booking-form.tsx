@@ -9,7 +9,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import { TIME_SLOTS } from "@/lib/appointments";
 import { todayISTString } from "@/lib/ist";
 import { PHONES } from "@/lib/site-info";

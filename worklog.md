@@ -159,3 +159,52 @@ Priority recommendations for next phase:
 - Add appointment export filtered by current view (not just all).
 - Wire Supabase realtime for instant dashboard updates.
 - Add SMS/email reminders integration (future, paid).
+
+---
+Task ID: ROUND-4
+Agent: webDevReview cron (Z.ai Code) + user bug report
+Task: Fix "sign in does nothing" bug — sonner toast library crashes on React 19 / Next.js 16 Turbopack.
+
+Work Log:
+- User reported: "owner sign in mein sign pe click ke bad kuch nhi hua" (after clicking sign in, nothing happened).
+- QA investigation:
+  - Login API works correctly (curl: correct creds → {"ok":true} 200; wrong creds → 401).
+  - Login component code correct (fetch → toast.success → router.refresh).
+  - Tested via agent-browser: clicking Sign In DID actually log in and show the dashboard, BUT no visible feedback appeared.
+- Root cause: The layout rendered `<Toaster />` from `@/components/ui/toaster` (shadcn's radix-based toast), but ALL components use `toast` from `sonner` — a different library. The sonner `<Toaster />` was never mounted, so every `toast.success/error()` call was invisible.
+- First fix attempt: Changed layout to import `<Toaster />` from `@/components/ui/sonner` (the sonner wrapper). But the sonner Toaster didn't render at all.
+- Deep debugging:
+  - Added a visible marker `<span data-app-toaster-marker>` alongside the Toaster — marker rendered but sonner Toaster didn't.
+  - Console showed: `TypeError: Cannot convert undefined or null to object` + `[Fast Refresh] performing full reload because your application had an unrecoverable error`.
+  - Tried: deferred mounting (useEffect + mounted state) — same crash.
+  - Tried: error boundary to catch the error — boundary didn't catch it (error happens during module/component init, not render).
+  - Tried: importing Toaster directly from "sonner" package — same crash.
+  - Conclusion: sonner v2.0.7 has a runtime incompatibility with React 19.2.3 + Next.js 16 Turbopack. The component crashes on mount.
+- Final fix: Built a custom lightweight toast system as a drop-in replacement:
+  - `src/lib/toast.ts` — toast store with the same API as sonner (`toast.success()`, `toast.error()`, `toast.info()`, `toast.loading()`, `toast.dismiss()`). Uses an in-memory store + subscribe/emit pattern.
+  - `src/components/app-toaster.tsx` — client component that subscribes to the store and renders toasts with animated entrance, colored left-border per type (emerald/red/sky/amber), icon circle, dismiss button, ARIA roles (alert/status), top-center positioning.
+  - Updated `src/app/layout.tsx` to render `<AppToaster />`.
+  - Replaced `import { toast } from "sonner"` with `import { toast } from "@/lib/toast"` in all 5 consumer files (login, dashboard, appointment-dialog, create-dialog, booking-form).
+- Also improved login flow: changed `router.refresh()` to `window.location.href = "/admin"` (hard navigation) for more reliable cookie-based session transitions. Success toast "Welcome back! Loading dashboard..." appears briefly before redirect.
+- Fixed lint error: removed synchronous `setMounted(true)` in useEffect (react-hooks/set-state-in-effect rule) — the toast list starts empty so no hydration mismatch occurs.
+
+Stage Summary (Verification):
+- Error toast on wrong login: ✓ "✕ Invalid email or password" appears (red border, top-center). VLM-confirmed.
+- Success login flow: ✓ Click Sign In → brief success toast → hard redirect to dashboard ("Good Morning 👋" + KPIs + analytics + filters).
+- Booking form validation: ✓ Submitting empty form shows "✕ Name is required" toast. VLM-confirmed.
+- All toast calls across the app now work (login success/error, booking success/validation, dashboard status updates, create/delete confirmations).
+- Lint clean.
+
+Current project status: BUG FIXED. The "sign in does nothing" issue is resolved — toasts now provide visible feedback for all user actions. The root cause was a sonner/React-19 incompatibility, fixed by a custom toast system with the same API.
+
+Unresolved issues / risks:
+- Sandbox OOM (4GB, no swap) continues — not a code issue.
+- Telegram env vars not set in sandbox.
+- Owner creds are demo defaults.
+- Custom toast system is minimal (no promise/loading-to-success chaining like sonner). Adequate for current usage.
+
+Priority recommendations for next phase:
+- Add date-range filter to dashboard.
+- Add print appointment slip (PDF).
+- Wire Supabase realtime for instant dashboard updates.
+- Consider adding owner password change feature from dashboard settings.

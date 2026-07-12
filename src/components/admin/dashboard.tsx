@@ -14,7 +14,7 @@ import { Input } from "@/components/ui/input";
 import {
   Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,
 } from "@/components/ui/tooltip";
-import { toast } from "sonner";
+import { toast } from "@/lib/toast";
 import {
   DEPT_LABEL, STATUS_META, type Status, type Department,
 } from "@/lib/appointments";
