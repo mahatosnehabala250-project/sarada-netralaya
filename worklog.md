@@ -625,3 +625,25 @@ Work Log:
 - VLM: hero 7/10, services 7/10, doctor 8/10
 - Deployed to Vercel (dpl_ADf3JQTMPUzaChnxqKQ2uWGXrhui, READY), production 200.
 - Pushed to GitHub (commit 289447b).
+
+---
+Task ID: PAGES-IMAGES
+Agent: main (Z.ai Code) — user request
+Task: Fix header text + add Gallery, Reviews pages + generate facility images.
+
+Work Log:
+- Fixed header: replaced "SN" text logo with Eye icon in gradient box, "Sarada Netralaya" text-lg (was text-base, too small), whitespace-nowrap, "Eye Care Hospital" subtitle in emerald.
+- Generated 5 new professional images:
+  - operation-theater.png: Phaco surgery suite with microscope
+  - waiting-hall.png: patient waiting area with comfortable seating
+  - reception.png: clinic reception desk
+  - consult-room.png: examination room with slit lamp
+  - optical-lab.png: optical lab with frames display
+- New Gallery page (/gallery): 8 facility photos with category filter (All/Surgical/Diagnostics/Facility/Optical), lightbox viewer with click-to-zoom, hover zoom effect, category tags, descriptions.
+- New Reviews page (/reviews): 9 detailed patient testimonials with star ratings, dates, rating summary banner (4.9 stars, 329+ reviews), quote cards with avatars.
+- New GalleryPreview section on homepage: 4-image grid (operation theater, waiting area, consultation room, optical lab) linking to full gallery.
+- Updated header nav: added "Gallery" and "Reviews" links.
+- Updated footer: added Gallery and Reviews quick links.
+- Deployed to Vercel (dpl_8FPoChCyGvFZbyoS7U9Yb1mZGM3c, READY).
+- Verified: home:200, gallery:200, reviews:200.
+- Pushed to GitHub (commit 0c6ea09).
