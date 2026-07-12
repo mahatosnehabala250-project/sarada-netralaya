@@ -1,15 +1,14 @@
 // Owner authentication — simple cookie session.
 // Single owner account configured via env vars (OWNER_EMAIL / OWNER_PASSWORD),
-// hashed with a session secret. No public signup.
+// or a runtime-overridable password (see owner-settings.ts). No public signup.
 
 import { cookies } from "next/headers";
 import { createHmac, timingSafeEqual } from "crypto";
+import { getOwnerEmail, getOwnerPassword } from "@/lib/owner-settings";
 
 const SESSION_COOKIE = "sn_owner_session";
 const SESSION_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
 
-const OWNER_EMAIL = process.env.OWNER_EMAIL ?? "owner@saradanetralaya.in";
-const OWNER_PASSWORD = process.env.OWNER_PASSWORD ?? "Sarada@2026";
 const SESSION_SECRET =
   process.env.SESSION_SECRET ?? "dev-only-secret-change-me-in-production";
 
@@ -24,15 +23,15 @@ function safeEqual(a: string, b: string): boolean {
 /** Verify owner credentials. */
 export function verifyOwnerCredentials(email: string, password: string): boolean {
   return (
-    safeEqual(email.trim().toLowerCase(), OWNER_EMAIL.toLowerCase()) &&
-    safeEqual(password, OWNER_PASSWORD)
+    safeEqual(email.trim().toLowerCase(), getOwnerEmail().toLowerCase()) &&
+    safeEqual(password, getOwnerPassword())
   );
 }
 
 /** Create a signed session token and set the httpOnly cookie. */
 export async function createOwnerSession(): Promise<void> {
   const payload = {
-    email: OWNER_EMAIL,
+    email: getOwnerEmail(),
     issued: Date.now(),
     exp: Date.now() + SESSION_MAX_AGE * 1000,
   };
@@ -76,4 +75,5 @@ export async function clearOwnerSession(): Promise<void> {
   store.delete(SESSION_COOKIE);
 }
 
-export { SESSION_COOKIE, OWNER_EMAIL };
+export { SESSION_COOKIE };
+export { getOwnerEmail as OWNER_EMAIL };

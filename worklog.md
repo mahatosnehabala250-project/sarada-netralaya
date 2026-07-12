@@ -208,3 +208,65 @@ Priority recommendations for next phase:
 - Add print appointment slip (PDF).
 - Wire Supabase realtime for instant dashboard updates.
 - Consider adding owner password change feature from dashboard settings.
+
+---
+Task ID: ROUND-5
+Agent: webDevReview cron (Z.ai Code)
+Task: QA + new features (date-range filter, print appointment slip, owner settings/password change) + styling polish (Doctor card, Contact section).
+
+Work Log:
+- Read worklog (Round-4 fixed the sonner toast crash with a custom toast system). Project stable.
+- QA via agent-browser: login flow works (success toast + dashboard), error toast on wrong creds works, booking form validation toast works, dashboard analytics + table render with data. All 7 public sections present. Lint clean.
+- NEW FEATURE: Dashboard Date-Range Filter
+  - Extended GET /api/admin/appointments to accept dateFrom + dateTo params; new tab value "range" filters by preferredDate between the two dates (inclusive).
+  - Added "Date Range" tab to dashboard (5 tabs now: Today / Upcoming / Past / Date Range / All).
+  - When "Date Range" tab is active, a date-picker panel appears with From Date + To Date inputs, plus a live "N day(s) selected" indicator (emerald) or "Select both dates" prompt (amber).
+  - Clear-filters button now also resets date range.
+  - Verified: API returns correct count for 2026 range; UI shows 2 date inputs when tab active.
+- NEW FEATURE: Print Appointment Slip
+  - Created src/components/admin/print-slip.tsx — generates a print-friendly HTML slip (branded header, booking ref, patient details, department, consultant, date/slot, note, instructions, clinic footer with address/phone/hours) and prints via a hidden iframe (no page navigation).
+  - Added Printer button to: desktop table row actions, mobile card actions, and appointment detail dialog View mode.
+  - Slip includes patient instructions (bring ID, old spectacles, arrange driver for dilation) and IST timestamp.
+- NEW FEATURE: Owner Settings Page (/admin/settings) with Change Password
+  - Created src/lib/owner-settings.ts — runtime password store with file persistence (db/owner-settings.json). getOwnerPassword() returns override if set, else env var. setOwnerPassword() validates min 6 chars and persists.
+  - Updated src/lib/auth.ts to use the runtime store (getOwnerEmail/getOwnerPassword) instead of static env reads.
+  - New API: POST /api/admin/change-password — auth-gated, verifies current password, validates new (min 6, max 100, not same as current), sets new. Verified: wrong current → 403, too short → 400.
+  - New page /admin/settings + component AdminSettings — branded gradient page with Account Information card (email, session info) + Change Password form (current/new/confirm fields with show/hide toggles, live password-strength meter with 4-bar indicator + label, match validation, update button disabled until valid). Settings link added to admin sidebar.
+  - VLM-rated 7/10 (clean design, intuitive sectioning).
+- STYLING POLISH: Doctor card (public site)
+  - Richer portrait panel: 32px monogram with verified badge, gradient background with glow, location pin.
+  - Training highlight card with icon tile.
+  - Credentials list with descriptions (DOMS/DNB/FICO explained).
+  - Expertise tags row (6 areas: Phaco, Glaucoma, Retina, Squint, Oculoplasty, Comprehensive).
+  - Stats row + "Book Consultation" CTA button with arrow.
+  - Added "use client" (needed for the CTA onClick scroll).
+- STYLING POLISH: Contact section (public site)
+  - Added prominent "Quick Actions" gradient banner at top with Call Now + Book Online + WhatsApp buttons.
+  - Gradient icon tiles on all contact cards (instead of flat colors) with hover scale.
+  - Open/closed status dots (emerald/rose) on hours list.
+  - Map overlay label card (Sarada Netralaya · Sakchi, Jamshedpur) floating on the map.
+  - Refined borders, shadows, and hover states.
+
+Stage Summary (Verification):
+- All routes return 200: home, /admin, /admin/settings.
+- Date-range filter: API returns correct results for 2026 range; UI shows 2 date inputs when "Date Range" tab active; "N day(s) selected" indicator works.
+- Print slip: Printer button present on desktop rows (5 actions: View, Call, Print, Mark Done, Cancel), mobile cards, and detail dialog.
+- Change password API: wrong current → 403, too short → 400. Settings page renders with strength meter.
+- Login/logout flow still works (toasts visible).
+- Lint clean throughout.
+- VLM: settings page 7/10.
+
+Current project status: FURTHER ENHANCED. Round-5 adds 3 major features (date-range filter, print slip, owner settings/password change) + Doctor and Contact card polish. All previous features remain functional.
+
+Unresolved issues / risks:
+- Sandbox OOM (4GB, no swap) continues — not a code issue.
+- Password change persists to db/owner-settings.json (sandbox only); in production (Vercel/serverless) env vars are the source of truth — documented in the settings UI note.
+- Print slip uses hidden iframe approach — works in all modern browsers.
+- Telegram env vars not set in sandbox.
+
+Priority recommendations for next phase:
+- Add dashboard export filtered by current view (not just all).
+- Add appointment reminders (SMS/email) integration.
+- Wire Supabase realtime for instant dashboard updates.
+- Add a public "Check Appointment Status" page where patients can look up their booking by ref + phone.
+- Add multi-doctor support if the clinic expands.

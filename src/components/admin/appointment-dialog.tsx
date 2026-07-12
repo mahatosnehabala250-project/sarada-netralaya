@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import {
   Loader2, Phone, Save, Trash2, X, CalendarDays, Clock,
-  Eye, Glasses, User, FileText, AlertCircle, ExternalLink,
+  Eye, Glasses, User, FileText, AlertCircle, ExternalLink, Printer,
 } from "lucide-react";
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription,
@@ -22,6 +22,7 @@ import {
   type Status, type Department,
 } from "@/lib/appointments";
 import { formatDateLong, formatCreatedAtIST, todayISTString } from "@/lib/ist";
+import { printAppointmentSlip } from "@/components/admin/print-slip";
 
 export type Appt = {
   id: string;
@@ -263,6 +264,9 @@ function ViewMode({ appt, onEdit }: { appt: Appt; onEdit: () => void }) {
       )}
 
       <div className="mt-6 flex flex-wrap gap-2 justify-end">
+        <Button variant="outline" onClick={() => printAppointmentSlip(appt)} className="border-slate-200 text-slate-700">
+          <Printer className="h-4 w-4 mr-1.5" /> Print Slip
+        </Button>
         <Button variant="outline" onClick={onEdit} className="border-slate-200 text-slate-700">
           <FileText className="h-4 w-4 mr-1.5" /> Edit / Reschedule
         </Button>

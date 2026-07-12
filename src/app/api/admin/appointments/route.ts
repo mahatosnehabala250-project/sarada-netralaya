@@ -23,10 +23,12 @@ export async function GET(req: NextRequest) {
   if (authFail) return authFail;
 
   const url = req.nextUrl;
-  const tab = url.searchParams.get("tab") ?? "all"; // today|upcoming|past|all
+  const tab = url.searchParams.get("tab") ?? "all"; // today|upcoming|past|all|range
   const department = url.searchParams.get("department") ?? "all"; // all|eye_care|optical
   const status = url.searchParams.get("status") ?? "all"; // all|pending|confirmed|done|cancelled
   const q = url.searchParams.get("q")?.trim() ?? "";
+  const dateFrom = url.searchParams.get("dateFrom")?.trim() ?? ""; // yyyy-MM-dd
+  const dateTo = url.searchParams.get("dateTo")?.trim() ?? ""; // yyyy-MM-dd
 
   const today = todayISTString();
 
@@ -47,6 +49,9 @@ export async function GET(req: NextRequest) {
     where.preferredDate = { gte: today };
   } else if (tab === "past") {
     where.preferredDate = { lt: today };
+  } else if (tab === "range" && dateFrom && dateTo) {
+    // custom date range (inclusive both ends)
+    where.preferredDate = { gte: dateFrom, lte: dateTo };
   }
 
   const [items, total] = await Promise.all([

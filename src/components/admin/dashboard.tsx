@@ -7,7 +7,7 @@ import {
   Eye, CalendarDays, LogOut, ExternalLink, Search, Download, Loader2,
   Phone, CheckCircle2, Check, X, Inbox, Filter, RefreshCw, Clock,
   TrendingUp, Hourglass, CalendarCheck, UserCircle2, Menu, X as CloseIcon,
-  Eye as EyeIcon, ChevronRight, UserPlus,
+  Eye as EyeIcon, ChevronRight, UserPlus, AlertCircle, Printer,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -23,6 +23,7 @@ import { PHONES, SITE } from "@/lib/site-info";
 import { AppointmentDetailDialog } from "@/components/admin/appointment-dialog";
 import { CreateAppointmentDialog, type NewAppt } from "@/components/admin/create-dialog";
 import { AnalyticsPanel } from "@/components/admin/analytics";
+import { printAppointmentSlip } from "@/components/admin/print-slip";
 
 type Appt = {
   id: string;
@@ -43,12 +44,13 @@ type Kpis = {
   done: number; cancelled: number; total: number;
 };
 
-type Tab = "today" | "upcoming" | "past" | "all";
+type Tab = "today" | "upcoming" | "past" | "all" | "range";
 
 const TABS: { id: Tab; label: string }[] = [
   { id: "today", label: "Today" },
   { id: "upcoming", label: "Upcoming" },
   { id: "past", label: "Past" },
+  { id: "range", label: "Date Range" },
   { id: "all", label: "All" },
 ];
 
@@ -65,6 +67,8 @@ export function AdminDashboard() {
   const [status, setStatus] = useState<"all" | Status>("all");
   const [q, setQ] = useState("");
   const [qDebounced, setQDebounced] = useState("");
+  const [dateFrom, setDateFrom] = useState("");
+  const [dateTo, setDateTo] = useState("");
 
   // Greeting computed after mount (avoid hydration mismatch)
   const [greeting, setGreeting] = useState("Good Morning");
@@ -94,6 +98,10 @@ export function AdminDashboard() {
       const params = new URLSearchParams({
         tab, department, status, q: qDebounced,
       });
+      if (tab === "range") {
+        if (dateFrom) params.set("dateFrom", dateFrom);
+        if (dateTo) params.set("dateTo", dateTo);
+      }
       const res = await fetch(`/api/admin/appointments?${params}`, { cache: "no-store" });
       if (res.status === 401) {
         router.refresh();
@@ -109,7 +117,7 @@ export function AdminDashboard() {
       setLoading(false);
       setRefreshing(false);
     }
-  }, [tab, department, status, qDebounced]);
+  }, [tab, department, status, qDebounced, dateFrom, dateTo]);
 
   useEffect(() => {
     fetchList();
@@ -167,12 +175,14 @@ export function AdminDashboard() {
 
   const visibleItems = items;
 
-  const hasActiveFilters = department !== "all" || status !== "all" || qDebounced !== "";
+  const hasActiveFilters = department !== "all" || status !== "all" || qDebounced !== "" || (tab === "range" && (dateFrom !== "" || dateTo !== ""));
 
   function clearFilters() {
     setDepartment("all");
     setStatus("all");
     setQ("");
+    setDateFrom("");
+    setDateTo("");
   }
 
   function openDetail(a: Appt) {
@@ -361,6 +371,40 @@ export function AdminDashboard() {
                 Showing <span className="font-semibold text-[#084f67]">{visibleItems.length}</span> of {total}
               </span>
             </div>
+
+            {/* Date range pickers (only when tab === "range") */}
+            {tab === "range" && (
+              <div className="mt-3 flex flex-wrap items-end gap-3 rounded-lg bg-[#f0f9fb] border border-[#0b6e8f]/10 p-3">
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-[#0b6e8f]/70 mb-1">From Date</label>
+                  <Input
+                    type="date"
+                    value={dateFrom}
+                    onChange={(e) => setDateFrom(e.target.value)}
+                    className="h-9 w-auto bg-white border-[#0b6e8f]/20 focus-visible:ring-[#0b6e8f]/30 text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-[#0b6e8f]/70 mb-1">To Date</label>
+                  <Input
+                    type="date"
+                    value={dateTo}
+                    min={dateFrom || undefined}
+                    onChange={(e) => setDateTo(e.target.value)}
+                    className="h-9 w-auto bg-white border-[#0b6e8f]/20 focus-visible:ring-[#0b6e8f]/30 text-sm"
+                  />
+                </div>
+                {dateFrom && dateTo ? (
+                  <span className="text-xs text-emerald-700 font-medium inline-flex items-center gap-1 pb-2">
+                    <CheckCircle2 className="h-3.5 w-3.5" /> {Math.round((new Date(dateTo).getTime() - new Date(dateFrom).getTime()) / 86400000) + 1} day(s) selected
+                  </span>
+                ) : (
+                  <span className="text-xs text-amber-600 font-medium inline-flex items-center gap-1 pb-2">
+                    <AlertCircle className="h-3.5 w-3.5" /> Select both dates to filter
+                  </span>
+                )}
+              </div>
+            )}
           </div>
 
           {/* List */}
@@ -451,6 +495,12 @@ function SidebarContent({ onLogout }: { onLogout: () => void }) {
         <div className="flex items-center gap-2.5 rounded-lg bg-white/10 px-3 py-2.5 text-sm font-semibold text-white">
           <CalendarDays className="h-4 w-4" /> Appointments
         </div>
+        <a
+          href="/admin/settings"
+          className="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-white/60 hover:text-white hover:bg-white/5"
+        >
+          <UserCircle2 className="h-4 w-4" /> Settings
+        </a>
         <a
           href="/"
           className="flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-white/60 hover:text-white hover:bg-white/5"
@@ -590,6 +640,13 @@ function ApptRow({
           >
             <Phone className="h-4 w-4" />
           </a>
+          <button
+            onClick={() => printAppointmentSlip(a)}
+            title="Print appointment slip"
+            className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-[#084f67]"
+          >
+            <Printer className="h-4 w-4" />
+          </button>
           {st === "pending" && (
             <ActionBtn busy={busy} onClick={() => onAction(a.id, "confirmed")} title="Confirm" className="border-sky-200 text-sky-700 hover:bg-sky-50">
               <Check className="h-4 w-4" />
@@ -671,6 +728,12 @@ function ApptCard({
         >
           <Phone className="h-3.5 w-3.5" /> Call
         </a>
+        <button
+          onClick={() => printAppointmentSlip(a)}
+          className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-[#084f67]"
+        >
+          <Printer className="h-3.5 w-3.5" /> Slip
+        </button>
         {st === "pending" && (
           <ActionBtn busy={busy} onClick={() => onAction(a.id, "confirmed")} title="Confirm" className="border-sky-200 text-sky-700 hover:bg-sky-50 !px-3 !h-8 text-xs">
             <Check className="h-3.5 w-3.5" /> Confirm
