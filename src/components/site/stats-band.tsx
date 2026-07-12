@@ -10,17 +10,17 @@ const METRICS = [
 export function StatsBand() {
   return (
     <section className="bg-[#0a3d4a] border-y border-white/5">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-y-8 gap-x-4">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-8 sm:py-10 lg:py-12">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-y-6 sm:gap-y-8 gap-x-4">
           {METRICS.map((m, i) => (
             <div
               key={m.label}
               className={`text-center lg:text-left ${i > 0 ? "lg:border-l lg:border-white/10 lg:pl-6" : ""}`}
             >
-              <div className="font-serif-display text-4xl sm:text-5xl font-bold text-emerald-300 tracking-tight">
+              <div className="font-serif-display text-3xl sm:text-4xl lg:text-5xl font-bold text-emerald-300 tracking-tight">
                 {m.value}
               </div>
-              <div className="mt-1.5 text-xs sm:text-[13px] text-white/50 font-medium uppercase tracking-wider">
+              <div className="mt-1 sm:mt-1.5 text-[11px] sm:text-xs lg:text-[13px] text-white/50 font-medium uppercase tracking-wider">
                 {m.label}
               </div>
             </div>

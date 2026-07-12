@@ -18,23 +18,23 @@ export function Faq() {
   const [open, setOpen] = useState<number | null>(0);
 
   return (
-    <section id="faq" className="py-20 sm:py-32 bg-[#faf8f3]">
+    <section id="faq" className="py-14 sm:py-20 lg:py-32 bg-[#faf8f3]">
       <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
-        <div className="text-center mb-12">
-          <span className="text-xs font-bold uppercase tracking-[0.25em] text-[#0a3d4a]/40">05 — Questions</span>
-          <h2 className="mt-4 font-serif-display text-4xl sm:text-5xl font-bold tracking-tight text-[#0a3d4a]">
+        <div className="text-center mb-10 sm:mb-12">
+          <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] sm:tracking-[0.25em] text-[#0a3d4a]/40">05 — Questions</span>
+          <h2 className="mt-3 sm:mt-4 font-serif-display text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#0a3d4a]">
             Good to know
           </h2>
         </div>
 
-        <div className="space-y-2">
+        <div className="space-y-1">
           {FAQS.map((f, i) => {
             const isOpen = open === i;
             return (
               <div key={i} className="border-b border-[#0a3d4a]/10">
                 <button
                   onClick={() => setOpen(isOpen ? null : i)}
-                  className="flex w-full items-start gap-4 py-5 text-left group"
+                  className="flex w-full items-start gap-3 sm:gap-4 py-4 sm:py-5 text-left group min-h-[52px]"
                 >
                   <span className="shrink-0 flex h-7 w-7 items-center justify-center rounded-full border border-[#0a3d4a]/15 text-[#0a3d4a] mt-0.5 group-hover:bg-[#0a3d4a] group-hover:text-[#faf8f3] transition-colors">
                     {isOpen ? <Minus className="h-3.5 w-3.5" /> : <Plus className="h-3.5 w-3.5" />}
@@ -44,7 +44,7 @@ export function Faq() {
                   </span>
                 </button>
                 {isOpen && (
-                  <p className="pb-5 pl-11 pr-2 text-sm text-[#0a3d4a]/60 leading-relaxed animate-[reveal-up_0.3s_ease-out]">
+                  <p className="pb-4 sm:pb-5 pl-10 sm:pl-11 pr-2 text-sm text-[#0a3d4a]/60 leading-relaxed animate-[reveal-up_0.3s_ease-out]">
                     {f.a}
                   </p>
                 )}
@@ -54,13 +54,13 @@ export function Faq() {
         </div>
 
         {/* CTA */}
-        <div className="mt-10 text-center">
+        <div className="mt-8 sm:mt-10 text-center">
           <p className="text-sm text-[#0a3d4a]/50 mb-4">Still have a question? We're a call away.</p>
-          <div className="flex flex-wrap gap-2 justify-center">
-            <a href={`tel:${PHONES.primaryTel}`} className="inline-flex items-center gap-2 rounded-full bg-[#0a3d4a] text-[#faf8f3] px-5 py-2.5 text-sm font-bold hover:bg-[#082e38]">
+          <div className="flex flex-col xs:flex-row flex-wrap gap-2 justify-center">
+            <a href={`tel:${PHONES.primaryTel}`} className="inline-flex items-center justify-center gap-2 rounded-full bg-[#0a3d4a] text-[#faf8f3] px-5 py-3 text-sm font-bold hover:bg-[#082e38] min-h-[44px]">
               <Phone className="h-4 w-4" /> {PHONES.primary}
             </a>
-            <a href={`https://wa.me/${PHONES.whatsapp}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 rounded-full bg-emerald-500 text-[#0a3d4a] px-5 py-2.5 text-sm font-bold hover:bg-emerald-400">
+            <a href={`https://wa.me/${PHONES.whatsapp}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 rounded-full bg-emerald-500 text-[#0a3d4a] px-5 py-3 text-sm font-bold hover:bg-emerald-400 min-h-[44px]">
               <MessageCircle className="h-4 w-4" /> WhatsApp
             </a>
           </div>

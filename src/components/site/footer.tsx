@@ -5,12 +5,12 @@ import { SITE, ADDRESS, PHONES, EMAIL } from "@/lib/site-info";
 export function Footer() {
   return (
     <footer className="mt-auto bg-[#082e38] text-white">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-14">
-        <div className="grid gap-10 lg:grid-cols-[1.5fr_1fr_1fr]">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+        <div className="grid gap-8 sm:gap-10 lg:grid-cols-[1.5fr_1fr_1fr]">
           {/* Brand */}
           <div>
-            <div className="flex items-baseline gap-2">
-              <span className="font-serif-display text-xl font-bold">Sarada Netralaya</span>
+            <div className="flex items-baseline gap-2 flex-wrap">
+              <span className="font-serif-display text-lg sm:text-xl font-bold">Sarada Netralaya</span>
               <span className="text-[10px] uppercase tracking-[0.2em] text-white/40">Est. 1995</span>
             </div>
             <p className="mt-3 text-sm text-white/50 max-w-xs leading-relaxed">
@@ -26,14 +26,14 @@ export function Footer() {
 
           {/* Contact */}
           <div>
-            <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-300/50 mb-4">Contact</div>
-            <ul className="space-y-3 text-sm">
+            <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-300/50 mb-3 sm:mb-4">Contact</div>
+            <ul className="space-y-2.5 sm:space-y-3 text-sm">
               <li className="flex items-start gap-2 text-white/60">
                 <MapPin className="h-4 w-4 mt-0.5 shrink-0 text-white/30" />
                 <span>{ADDRESS.short}</span>
               </li>
               <li>
-                <a href={`tel:${PHONES.primaryTel}`} className="flex items-center gap-2 text-white/60 hover:text-white">
+                <a href={`tel:${PHONES.primaryTel}`} className="flex items-center gap-2 text-white/60 hover:text-white min-h-[36px]">
                   <Phone className="h-4 w-4 text-white/30" /> {PHONES.primary}
                 </a>
               </li>
@@ -47,8 +47,8 @@ export function Footer() {
 
           {/* Links */}
           <div>
-            <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-300/50 mb-4">Quick Links</div>
-            <ul className="space-y-2.5 text-sm">
+            <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-300/50 mb-3 sm:mb-4">Quick Links</div>
+            <ul className="space-y-2 sm:space-y-2.5 text-sm">
               <li><a href="#services" className="text-white/60 hover:text-white">Care</a></li>
               <li><a href="#doctor" className="text-white/60 hover:text-white">Surgeon</a></li>
               <li><a href="#book" className="text-white/60 hover:text-white">Book Appointment</a></li>
@@ -58,8 +58,8 @@ export function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 pt-6 border-t border-white/8 flex flex-col sm:flex-row items-center justify-between gap-3">
-          <p className="text-xs text-white/40">© 2026 Sarada Netralaya. All rights reserved.</p>
+        <div className="mt-10 sm:mt-12 pt-6 border-t border-white/8 flex flex-col sm:flex-row items-center justify-between gap-3">
+          <p className="text-xs text-white/40 text-center sm:text-left">© 2026 Sarada Netralaya. All rights reserved.</p>
           <p className="text-xs text-white/30">{ADDRESS.city}, {ADDRESS.state}</p>
         </div>
       </div>
