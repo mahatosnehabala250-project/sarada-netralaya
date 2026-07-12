@@ -478,3 +478,37 @@ Work Log:
 Stage Summary:
 - Production: https://sarada-netralaya-theta.vercel.app/admin + /admin/settings
 - All pages redesigned, lint clean, deployed, pushed.
+
+---
+Task ID: ROUND-8
+Agent: webDevReview cron (Z.ai Code)
+Task: QA + new features (Recent Activity feed, bulk actions, sidebar hierarchy fix, dialog polish).
+
+Work Log:
+- QA: server up, lint clean, all routes 200, all 7 public sections present. Login + dashboard verified via agent-browser (no errors).
+- BUG FOUND + FIXED: ReferenceError "Cannot access 'visibleItems' before initialization" — the bulk-selection code referenced `visibleItems` before it was declared. Fixed by using `items` array (which `visibleItems` is assigned from) in the selection logic.
+- NEW FEATURE: Recent Activity feed (dashboard)
+  - New API: GET /api/admin/activity — returns latest 8 bookings (by createdAt desc) with formatted timeAgo.
+  - New component: ActivityFeed — timeline UI with colored status dots, status pills, clickable formatted phone, department icon, ref number, time-ago, and click-to-open-detail. Auto-refreshes every 60s. "Live" badge with pulse.
+  - Wired into dashboard below the appointments list; clicking an activity item opens the appointment detail dialog.
+- NEW FEATURE: Bulk actions (dashboard)
+  - Select-all checkbox in table header + per-row checkboxes.
+  - Bulk action bar (teal gradient) appears when rows selected: "N selected" + Confirm all / Mark all done / Cancel all + Clear.
+  - Optimistic updates + parallel PATCH requests + toast confirmation.
+  - Selected rows highlighted with teal tint + ring.
+- SIDEBAR FIX (per VLM feedback):
+  - Active nav item now has left accent bar (emerald) + gradient background + bold text + ring.
+  - Inactive items: dimmed icons (white/40) + lighter text (white/50) for stronger hierarchy.
+- DIALOG POLISH:
+  - Added "Booked" InfoBlock in appointment detail view mode with full timestamp + time-ago.
+- Verified: activity API returns bookings with "just now"; dashboard shows Recent Activity heading + 2 checkboxes + 1 row; bulk bar appears with Confirm/Mark Done/Cancel buttons.
+- Deployed to Vercel (dpl_65TJakf3ZYqKEc4GZn62PJmrPKau, READY), production all 200.
+- Pushed to GitHub (commit 860047a).
+
+Stage Summary:
+- Production: all routes 200, deployed, pushed.
+- Recent Activity feed: live, auto-refreshing, clickable.
+- Bulk actions: select-all + per-row + bulk confirm/done/cancel with optimistic updates.
+- Sidebar: improved hierarchy with accent bar + gradient active state.
+- Dialog: shows booking timestamp.
+- Lint clean throughout.
