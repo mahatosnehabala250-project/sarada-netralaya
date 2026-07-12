@@ -1,79 +1,132 @@
 "use client";
 
 import Image from "next/image";
-import { ArrowRight, Phone, Star } from "lucide-react";
+import { ArrowRight, Phone, Star, CheckCircle2 } from "lucide-react";
 import { SITE, PHONES } from "@/lib/site-info";
 
 export function Hero() {
   return (
-    <section id="top" className="relative min-h-[100svh] flex items-center overflow-hidden bg-[#0a3d4a]">
-      {/* Background image */}
-      <div className="absolute inset-0">
-        <Image
-          src="/images/hero-eye.png"
-          alt="Close-up of a healthy human eye"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover opacity-40"
-        />
-        <div className="absolute inset-0 bg-gradient-to-br from-[#0a3d4a] via-[#0a3d4a]/80 to-[#0a3d4a]/50" />
+    <section id="top" className="relative bg-white overflow-hidden">
+      {/* Top bar */}
+      <div className="bg-[#0a3d4a] text-white text-xs sm:text-sm py-2">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-3">
+          <span className="flex items-center gap-1.5">
+            <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+            Open Today · 10 AM – 7:30 PM
+          </span>
+          <a href={`tel:${PHONES.primaryTel}`} className="hidden sm:flex items-center gap-1.5 font-semibold hover:text-emerald-300 transition-colors">
+            <Phone className="h-3 w-3" /> {PHONES.primary}
+          </a>
+        </div>
       </div>
 
-      {/* Content */}
-      <div className="relative mx-auto max-w-7xl px-5 sm:px-6 lg:px-8 py-28 sm:py-32 w-full">
-        <div className="max-w-2xl">
-          {/* Eyebrow */}
-          <div className="flex items-center gap-3 mb-5 reveal" style={{ animationDelay: "0.1s" }}>
-            <span className="h-px w-10 bg-emerald-400" />
-            <span className="text-emerald-300 text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em]">
-              Eye Care · Since 1995
-            </span>
-          </div>
-
-          {/* Headline */}
-          <h1 className="font-serif-display text-4xl sm:text-6xl lg:text-7xl font-bold leading-[1.1] tracking-tight text-white reveal" style={{ animationDelay: "0.2s" }}>
-            Caring for
-            <br />
-            <span className="italic text-emerald-300">your vision</span>
-            <br />
-            with trust.
-          </h1>
-
-          {/* Subtext */}
-          <p className="mt-6 max-w-lg text-base sm:text-lg leading-relaxed text-white/70 reveal" style={{ animationDelay: "0.3s" }}>
-            Advanced eye care in Sakchi, Jamshedpur — from painless Topical Phaco
-            cataract surgery to a fully equipped laser facility.
-          </p>
-
-          {/* CTAs */}
-          <div className="mt-8 flex flex-col sm:flex-row gap-3 reveal" style={{ animationDelay: "0.4s" }}>
-            <a
-              href="#book"
-              onClick={(e) => { e.preventDefault(); document.querySelector("#book")?.scrollIntoView({ behavior: "smooth" }); }}
-              className="group inline-flex items-center justify-center gap-2 rounded-full bg-emerald-500 hover:bg-emerald-400 px-7 py-4 text-sm font-bold text-[#0a3d4a] transition-all hover:gap-3 min-h-[52px]"
-            >
-              Book Appointment
-              <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-0.5" />
-            </a>
-            <a
-              href={`tel:${PHONES.primaryTel}`}
-              className="inline-flex items-center justify-center gap-2 rounded-full border border-white/25 text-white px-7 py-4 text-sm font-bold hover:bg-white/10 transition-colors min-h-[52px]"
-            >
-              <Phone className="h-4 w-4" />
-              Call Now
-            </a>
-          </div>
-
-          {/* Trust badges — clean, simple */}
-          <div className="mt-10 flex items-center gap-5 reveal" style={{ animationDelay: "0.5s" }}>
-            <div className="flex items-center gap-1.5">
-              <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-              <span className="text-sm font-bold text-white">{SITE.rating}</span>
-              <span className="text-xs text-white/50">({SITE.reviewsCount})</span>
+      {/* Hero content */}
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 sm:py-16 lg:py-20">
+        <div className="grid lg:grid-cols-2 gap-8 lg:gap-12 items-center">
+          {/* Left — copy */}
+          <div className="order-2 lg:order-1">
+            {/* Rating badge */}
+            <div className="inline-flex items-center gap-2 rounded-full bg-amber-50 border border-amber-200 px-3 py-1.5 mb-5">
+              <div className="flex">
+                {[0,1,2,3,4].map((i) => (
+                  <Star key={i} className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
+                ))}
+              </div>
+              <span className="text-xs font-bold text-amber-800">{SITE.rating} · {SITE.reviewsCount} Google Reviews</span>
             </div>
-            <span className="h-4 w-px bg-white/20" />
-            <span className="text-sm text-white/70">{SITE.yearsExperience} years</span>
+
+            {/* Headline */}
+            <h1 className="text-3xl sm:text-4xl lg:text-5xl xl:text-6xl font-bold leading-[1.1] tracking-tight text-[#0a3d4a]">
+              See the world
+              <br />
+              <span className="text-[#10b981]">clearly again.</span>
+            </h1>
+
+            {/* Subtext */}
+            <p className="mt-5 text-base sm:text-lg text-slate-600 leading-relaxed max-w-lg">
+              Your dream of perfect vision is our mission. At Sarada Netralaya,
+              we've helped <strong className="text-[#0a3d4a]">50,000+ patients</strong> see
+              clearly with painless cataract surgery, advanced retina care, and
+              expert glaucoma treatment — for over <strong className="text-[#0a3d4a]">30+ years</strong>.
+            </p>
+
+            {/* Trust points */}
+            <div className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-w-md">
+              {[
+                "Painless Phaco surgery (no injection)",
+                "30+ years of trusted eye care",
+                "FICO (U.K.) qualified surgeon",
+                "Same-day appointment available",
+              ].map((point) => (
+                <div key={point} className="flex items-start gap-2">
+                  <CheckCircle2 className="h-4 w-4 text-[#10b981] shrink-0 mt-0.5" />
+                  <span className="text-sm text-slate-700">{point}</span>
+                </div>
+              ))}
+            </div>
+
+            {/* CTAs */}
+            <div className="mt-8 flex flex-col sm:flex-row gap-3">
+              <a
+                href="#book"
+                onClick={(e) => { e.preventDefault(); document.querySelector("#book")?.scrollIntoView({ behavior: "smooth" }); }}
+                className="group inline-flex items-center justify-center gap-2 rounded-xl bg-[#10b981] hover:bg-[#059669] px-7 py-4 text-base font-bold text-white shadow-lg shadow-emerald-600/20 transition-all hover:shadow-xl hover:shadow-emerald-600/30 min-h-[52px]"
+              >
+                Book Free Appointment
+                <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-0.5" />
+              </a>
+              <a
+                href={`tel:${PHONES.primaryTel}`}
+                className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-[#0a3d4a] text-[#0a3d4a] px-7 py-4 text-base font-bold hover:bg-[#0a3d4a] hover:text-white transition-colors min-h-[52px]"
+              >
+                <Phone className="h-5 w-5" />
+                {PHONES.primary}
+              </a>
+            </div>
+
+            {/* Stats row */}
+            <div className="mt-8 flex items-center gap-6 pt-6 border-t border-slate-100">
+              <div>
+                <div className="text-2xl font-bold text-[#0a3d4a]">30+</div>
+                <div className="text-xs text-slate-500 font-medium">Years</div>
+              </div>
+              <div className="h-8 w-px bg-slate-200" />
+              <div>
+                <div className="text-2xl font-bold text-[#0a3d4a]">50K+</div>
+                <div className="text-xs text-slate-500 font-medium">Patients</div>
+              </div>
+              <div className="h-8 w-px bg-slate-200" />
+              <div>
+                <div className="text-2xl font-bold text-[#0a3d4a]">4.9★</div>
+                <div className="text-xs text-slate-500 font-medium">Rating</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Right — image */}
+          <div className="order-1 lg:order-2 relative">
+            <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-[#0a3d4a]/20 aspect-[4/3]">
+              <Image
+                src="/images/hero-patient.png"
+                alt="Happy patient with clear vision after treatment at Sarada Netralaya"
+                fill
+                priority
+                sizes="(min-width: 1024px) 40rem, 100vw"
+                className="object-cover"
+              />
+              {/* Floating rating card */}
+              <div className="absolute bottom-4 left-4 right-4 sm:left-4 sm:right-auto rounded-xl bg-white/95 backdrop-blur-sm shadow-xl p-3.5 flex items-center gap-3 max-w-[260px]">
+                <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-full bg-emerald-100">
+                  <CheckCircle2 className="h-6 w-6 text-emerald-600" />
+                </div>
+                <div>
+                  <div className="text-sm font-bold text-[#0a3d4a]">Clear vision restored</div>
+                  <div className="text-xs text-slate-500">Same day recovery · No pain</div>
+                </div>
+              </div>
+            </div>
+            {/* Decorative accent */}
+            <div className="absolute -top-3 -right-3 -z-10 h-32 w-32 rounded-full bg-emerald-200/40 blur-2xl" />
           </div>
         </div>
       </div>
