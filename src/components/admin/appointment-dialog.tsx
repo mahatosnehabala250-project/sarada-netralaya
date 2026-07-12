@@ -21,7 +21,7 @@ import {
   DEPT_LABEL, STATUS_META, TIME_SLOTS, DEPARTMENTS,
   type Status, type Department,
 } from "@/lib/appointments";
-import { formatDateLong, formatCreatedAtIST, todayISTString } from "@/lib/ist";
+import { formatDateLong, formatCreatedAtIST, timeAgoIST, todayISTString } from "@/lib/ist";
 import { formatPhone, telHref } from "@/lib/utils";
 import { printAppointmentSlip } from "@/components/admin/print-slip";
 
@@ -248,6 +248,10 @@ function ViewMode({ appt, onEdit }: { appt: Appt; onEdit: () => void }) {
           <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-semibold ${STATUS_META[st].badge}`}>
             <span>{STATUS_META[st].emoji}</span> {STATUS_META[st].label}
           </span>
+        </InfoBlock>
+        <InfoBlock icon={Clock} label="Booked">
+          <div className="font-semibold text-slate-800 text-sm">{formatCreatedAtIST(appt.createdAt)}</div>
+          <div className="text-[11px] text-slate-400 mt-0.5">{timeAgoIST(appt.createdAt)}</div>
         </InfoBlock>
       </div>
 

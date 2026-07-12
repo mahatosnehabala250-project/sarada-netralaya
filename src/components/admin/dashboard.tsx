@@ -24,6 +24,7 @@ import { formatPhone, telHref } from "@/lib/utils";
 import { AppointmentDetailDialog } from "@/components/admin/appointment-dialog";
 import { CreateAppointmentDialog, type NewAppt } from "@/components/admin/create-dialog";
 import { AnalyticsPanel } from "@/components/admin/analytics";
+import { ActivityFeed } from "@/components/admin/activity-feed";
 import { printAppointmentSlip } from "@/components/admin/print-slip";
 
 type Appt = {
@@ -77,6 +78,52 @@ export function AdminDashboard() {
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [busyId, setBusyId] = useState<string | null>(null);
+  const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [bulkBusy, setBulkBusy] = useState(false);
+
+  const allSelected = items.length > 0 && items.every((a) => selected.has(a.id));
+  const someSelected = selected.size > 0;
+
+  function toggleSelect(id: string) {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+  function toggleSelectAll() {
+    if (allSelected) setSelected(new Set());
+    else setSelected(new Set(items.map((a) => a.id)));
+  }
+  function clearSelection() { setSelected(new Set()); }
+
+  async function bulkUpdate(newStatus: Status) {
+    const ids = Array.from(selected);
+    if (ids.length === 0) return;
+    setBulkBusy(true);
+    // optimistic
+    setItems((prev) => prev.map((a) => (selected.has(a.id) ? { ...a, status: newStatus } : a)));
+    try {
+      await Promise.all(
+        ids.map((id) =>
+          fetch("/api/admin/appointments", {
+            method: "PATCH",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ id, status: newStatus }),
+          }).catch(() => null)
+        )
+      );
+      toast.success(`${ids.length} appointment${ids.length > 1 ? "s" : ""} marked as ${STATUS_META[newStatus].label}`);
+      clearSelection();
+      fetchList(true);
+    } catch {
+      toast.error("Bulk update failed");
+      fetchList(true);
+    } finally {
+      setBulkBusy(false);
+    }
+  }
   const [dialogAppt, setDialogAppt] = useState<Appt | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
@@ -424,12 +471,57 @@ export function AdminDashboard() {
               <EmptyState tab={tab} hasFilters={hasActiveFilters} onClear={clearFilters} />
             ) : (
               <>
+                {/* Bulk action bar */}
+                {someSelected && (
+                  <div className="mb-3 flex items-center gap-3 rounded-xl bg-[#0b6e8f] px-4 py-2.5 shadow-md shadow-[#0b6e8f]/20 animate-[fadeIn_0.2s_ease-out]">
+                    <span className="text-sm font-bold text-white">{selected.size} selected</span>
+                    <div className="h-4 w-px bg-white/20" />
+                    <button
+                      onClick={() => bulkUpdate("confirmed")}
+                      disabled={bulkBusy}
+                      className="inline-flex items-center gap-1 rounded-md bg-white/15 hover:bg-white/25 px-2.5 py-1 text-xs font-semibold text-white disabled:opacity-50"
+                    >
+                      <Check className="h-3 w-3" /> Confirm all
+                    </button>
+                    <button
+                      onClick={() => bulkUpdate("done")}
+                      disabled={bulkBusy}
+                      className="inline-flex items-center gap-1 rounded-md bg-white/15 hover:bg-white/25 px-2.5 py-1 text-xs font-semibold text-white disabled:opacity-50"
+                    >
+                      <CheckCircle2 className="h-3 w-3" /> Mark all done
+                    </button>
+                    <button
+                      onClick={() => bulkUpdate("cancelled")}
+                      disabled={bulkBusy}
+                      className="inline-flex items-center gap-1 rounded-md bg-rose-500/30 hover:bg-rose-500/40 px-2.5 py-1 text-xs font-semibold text-white disabled:opacity-50"
+                    >
+                      <X className="h-3 w-3" /> Cancel all
+                    </button>
+                    {bulkBusy && <Loader2 className="h-4 w-4 animate-spin text-white" />}
+                    <button
+                      onClick={clearSelection}
+                      className="ml-auto text-xs font-medium text-white/60 hover:text-white"
+                    >
+                      Clear
+                    </button>
+                  </div>
+                )}
+
                 {/* Desktop table */}
                 <div className="hidden lg:block rounded-2xl bg-white border border-slate-200/80 shadow-sm ring-1 ring-slate-100/50 overflow-hidden">
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
                         <tr className="bg-[#f0f9fb] text-left text-xs uppercase tracking-wider text-[#0b6e8f]/70">
+                          <th className="px-4 py-3 w-8">
+                            <input
+                              type="checkbox"
+                              checked={allSelected}
+                              onChange={toggleSelectAll}
+                              className="h-4 w-4 rounded border-slate-300 text-[#0b6e8f] focus:ring-[#0b6e8f]/30 cursor-pointer"
+                              aria-label="Select all"
+                            />
+                          </th>
                           <th className="px-4 py-3 font-semibold">Patient</th>
                           <th className="px-4 py-3 font-semibold">Date & Time</th>
                           <th className="px-4 py-3 font-semibold">Dept</th>
@@ -444,6 +536,8 @@ export function AdminDashboard() {
                             key={a.id}
                             a={a}
                             busy={busyId === a.id}
+                            selected={selected.has(a.id)}
+                            onToggleSelect={toggleSelect}
                             onAction={updateStatus}
                             onView={openDetail}
                           />
@@ -461,6 +555,14 @@ export function AdminDashboard() {
                 </div>
               </>
             )}
+          </div>
+
+          {/* Recent Activity feed */}
+          <div className="mt-6">
+            <ActivityFeed onView={(id) => {
+              const appt = items.find((a) => a.id === id);
+              if (appt) openDetail(appt);
+            }} />
           </div>
         </main>
       </div>
@@ -480,6 +582,9 @@ export function AdminDashboard() {
         onOpenChange={setCreateOpen}
         onCreated={onCreated}
       />
+      <style>{`
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
+      `}</style>
     </div>
   );
 }
@@ -509,15 +614,16 @@ function SidebarContent({ onLogout }: { onLogout: () => void }) {
       {/* Nav */}
       <nav className="relative flex-1 p-3 space-y-0.5">
         <div className="px-2 pb-2 pt-1 text-[9px] font-bold uppercase tracking-[0.15em] text-white/30">Menu</div>
-        <a href="/admin" className="group flex items-center gap-3 rounded-lg bg-white/10 px-3 py-2.5 text-sm font-semibold text-white ring-1 ring-white/10">
-          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-emerald-500/20 text-emerald-300">
+        <a href="/admin" className="group relative flex items-center gap-3 rounded-lg bg-gradient-to-r from-emerald-500/20 to-transparent px-3 py-2.5 text-sm font-bold text-white ring-1 ring-emerald-400/20 overflow-hidden">
+          <span className="absolute left-0 top-1/2 -translate-y-1/2 h-7 w-1 rounded-r-full bg-emerald-400" />
+          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-emerald-500/25 text-emerald-300 shadow-sm">
             <CalendarDays className="h-4 w-4" />
           </span>
           Appointments
           <span className="ml-auto h-1.5 w-1.5 rounded-full bg-emerald-400" />
         </a>
-        <a href="/admin/settings" className="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/55 hover:text-white hover:bg-white/5 transition-colors">
-          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-white/5 text-white/50 group-hover:text-white transition-colors">
+        <a href="/admin/settings" className="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-white/50 hover:text-white/90 hover:bg-white/[0.06] transition-colors">
+          <span className="flex h-7 w-7 items-center justify-center rounded-md bg-white/5 text-white/40 group-hover:bg-white/10 group-hover:text-white/70 transition-colors">
             <UserCircle2 className="h-4 w-4" />
           </span>
           Settings
@@ -625,12 +731,21 @@ function FilterDropdown({
 
 /* ---------- Table Row ---------- */
 function ApptRow({
-  a, busy, onAction, onView,
-}: { a: Appt; busy: boolean; onAction: (id: string, s: Status) => void; onView: (a: Appt) => void }) {
+  a, busy, onAction, onView, selected, onToggleSelect,
+}: { a: Appt; busy: boolean; onAction: (id: string, s: Status) => void; onView: (a: Appt) => void; selected?: boolean; onToggleSelect?: (id: string) => void }) {
   const st = a.status as Status;
   const meta = STATUS_META[st];
   return (
-    <tr className="hover:bg-[#f0f9fb]/50 transition-colors cursor-pointer group" onClick={() => onView(a)}>
+    <tr className={`hover:bg-[#f0f9fb]/50 transition-colors cursor-pointer group ${selected ? "bg-[#0b6e8f]/[0.04] ring-inset ring-2 ring-[#0b6e8f]/20" : ""}`} onClick={() => onView(a)}>
+      <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+        <input
+          type="checkbox"
+          checked={selected ?? false}
+          onChange={() => onToggleSelect?.(a.id)}
+          className="h-4 w-4 rounded border-slate-300 text-[#0b6e8f] focus:ring-[#0b6e8f]/30 cursor-pointer"
+          aria-label={`Select ${a.name}`}
+        />
+      </td>
       <td className="px-4 py-3">
         <div className="font-semibold text-[#084f67] group-hover:text-[#0b6e8f] transition-colors">{a.name}</div>
         <a
