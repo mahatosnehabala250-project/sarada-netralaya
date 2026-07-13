@@ -709,3 +709,36 @@ Stage Summary (Verification):
 - All routes 200 on production ✓
 - Deployed to Vercel (dpl_DFRwUE1L8XLpGdQz7hnEGUmDhLFZ, READY)
 - Pushed to GitHub (commit b891e8b)
+
+---
+Task ID: SECURITY-AUDIT-FIX
+Agent: main (Z.ai Code) — user request
+Task: Security audit + fix all bugs.
+
+Work Log:
+Comprehensive security audit found 9 real exploitable issues + 4 hardening gaps. All fixed:
+
+CRITICAL (3):
+1. SESSION_SECRET had public hardcoded fallback → fail-closed in production (throws if missing/<32 chars)
+2. Password change didn't invalidate old sessions → now compares token issued vs passwordChangedAt
+3. OWNER_PASSWORD had public fallback in production → now required (throws if missing)
+
+HIGH (4):
+4. Lookup IDOR: permissive phone check + no per-ref lockout → strict phone (exact 10 or last-4 only), per-ref lockout (5 fails = 15min), ref format validation, IP sanity
+5. Activity feed exposed full phone numbers → returns phoneLast4 only, Prisma select excludes age/note/ipHash
+6. CSP allowed unsafe-eval → removed, added object-src none, frame-ancestors none, upgrade-insecure-requests, COOP, HSTS preload
+7. /admin in sitemap → removed, added /book /gallery /reviews
+
+MEDIUM (2):
+8. Admin pages no noindex → X-Robots-Tag: noindex, nofollow + metadata.robots
+9. Session cookie sameSite lax → strict
+
+HARDENING (4):
+10. Deleted unused /api/route.ts (Hello World scaffold)
+11. print-slip.tsx: escapeHtml ALL interpolations
+12. Added error.tsx, global-error.tsx, not-found.tsx (no stack traces)
+13. .env.example: documented production requirements
+
+New files: src/lib/session-secret.ts, src/app/error.tsx, src/app/global-error.tsx, src/app/not-found.tsx
+Verified: all routes 200, 404 page works, unauthed API → 401, login → 200, admin noindex header present, sitemap has 0 /admin references, tsc 0 errors, lint clean.
+Deployed to Vercel (dpl_wbMmmbjbGcw8sqBhf6sy9rEWxsxu, READY). Pushed to GitHub (commit 5148d26).
