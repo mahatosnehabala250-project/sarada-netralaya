@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { MapPin, Phone, Mail, Star } from "lucide-react";
 import { SITE, ADDRESS, PHONES, EMAIL } from "@/lib/site-info";
 
@@ -9,9 +10,14 @@ export function Footer() {
         <div className="grid gap-8 sm:gap-10 lg:grid-cols-[1.5fr_1fr_1fr]">
           {/* Brand */}
           <div>
-            <div className="flex items-baseline gap-2 flex-wrap">
-              <span className="font-serif-display text-lg sm:text-xl font-bold">Sarada Netralaya</span>
-              <span className="text-[10px] uppercase tracking-[0.2em] text-white/40">Est. 1995</span>
+            <div className="flex items-center gap-2.5 flex-wrap">
+              <span className="flex h-10 w-10 items-center justify-center rounded-xl overflow-hidden shrink-0">
+                <Image src="/images/logo.png" alt="Sarada Netralaya logo" width={40} height={40} className="object-cover" />
+              </span>
+              <div className="leading-none">
+                <span className="font-serif-display text-lg sm:text-xl font-bold">Sarada Netralaya</span>
+                <span className="block text-[10px] uppercase tracking-[0.2em] text-white/40 mt-1">Est. 1995</span>
+              </div>
             </div>
             <p className="mt-3 text-sm text-white/50 max-w-xs leading-relaxed">
               {SITE.tagline}

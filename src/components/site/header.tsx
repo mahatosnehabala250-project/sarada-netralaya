@@ -2,7 +2,8 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { Menu, X, Phone, Calendar, Eye } from "lucide-react";
+import { Menu, X, Phone, Calendar } from "lucide-react";
+import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { PHONES } from "@/lib/site-info";
 
@@ -51,8 +52,8 @@ export function SiteHeader() {
           onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}
           className="flex items-center gap-2.5 shrink-0"
         >
-          <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-[#0a3d4a] to-[#10b981] text-white shadow-md">
-            <Eye className="h-5 w-5" strokeWidth={2.4} />
+          <span className="flex h-10 w-10 items-center justify-center rounded-xl overflow-hidden shadow-md shrink-0">
+            <Image src="/images/logo.png" alt="Sarada Netralaya logo" width={40} height={40} className="object-cover" />
           </span>
           <div className="leading-none">
             <div className="text-lg sm:text-xl font-bold text-[#0a3d4a] whitespace-nowrap">Sarada Netralaya</div>

@@ -48,15 +48,8 @@ export const metadata: Metadata = {
   publisher: "Sarada Netralaya",
   alternates: { canonical: SITE_URL },
   icons: {
-    icon: [
-      {
-        url:
-          "data:image/svg+xml," +
-          encodeURIComponent(
-            '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="22" fill="#0b6e8f"/><ellipse cx="50" cy="50" rx="34" ry="20" fill="none" stroke="#fff" stroke-width="6"/><circle cx="50" cy="50" r="11" fill="#34d399"/><circle cx="54" cy="46" r="3.5" fill="#0b6e8f"/></svg>'
-          ),
-      },
-    ],
+    icon: [{ url: "/images/logo.png", type: "image/png" }],
+    apple: [{ url: "/images/logo.png" }],
   },
   openGraph: {
     title:

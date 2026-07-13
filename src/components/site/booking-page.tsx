@@ -80,8 +80,8 @@ export function BookingPage() {
             <ArrowLeft className="h-4 w-4" /> Back to Home
           </Link>
           <div className="flex items-center gap-2">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-gradient-to-br from-[#0a3d4a] to-[#10b981]">
-              <CalendarCheck className="h-4 w-4 text-white" />
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg overflow-hidden shrink-0">
+              <Image src="/images/logo.png" alt="Sarada Netralaya" width={32} height={32} className="object-cover" />
             </span>
             <span className="font-bold text-white text-sm sm:text-base">Book Appointment</span>
           </div>

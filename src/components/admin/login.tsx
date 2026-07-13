@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { Eye, LogIn, Loader2, ArrowLeft, Lock, Mail, EyeOff } from "lucide-react";
+import { LogIn, Loader2, ArrowLeft, Lock, Mail, EyeOff, Eye } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -60,9 +61,8 @@ export function AdminLogin() {
         <div className="w-full max-w-md">
           {/* Brand */}
           <div className="text-center mb-8">
-            <span className="relative inline-flex h-16 w-16 items-center justify-center rounded-2xl bg-gradient-to-br from-[#0b6e8f] to-[#10b981] shadow-2xl shadow-emerald-900/30">
-              <Eye className="h-8 w-8 text-white" strokeWidth={2.3} />
-              <span className="absolute -bottom-1 -right-1 h-4 w-4 rounded-full bg-emerald-400 border-2 border-[#052f3f]" />
+            <span className="relative inline-flex h-16 w-16 items-center justify-center rounded-2xl overflow-hidden shadow-2xl shadow-emerald-900/30">
+              <Image src="/images/logo.png" alt="Sarada Netralaya" width={64} height={64} className="object-cover" />
             </span>
             <h1 className="mt-5 text-2xl font-bold text-white tracking-tight">Sarada Netralaya</h1>
             <div className="mt-1.5 inline-flex items-center gap-1.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/15 px-3 py-1 text-[11px] font-semibold text-white/80">
