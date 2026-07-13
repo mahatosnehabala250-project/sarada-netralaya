@@ -147,25 +147,27 @@ export function AdminLogin() {
             </form>
           </div>
 
-          {/* Demo creds — outside the card, as a subtle glass box */}
-          <div className="mt-4 rounded-xl bg-white/[0.06] backdrop-blur-sm border border-white/10 p-3.5 text-xs">
-            <div className="flex items-center gap-1.5 text-emerald-300 font-bold uppercase tracking-wider text-[10px] mb-1.5">
-              <Lock className="h-3 w-3" /> Demo Credentials
-            </div>
-            <div className="grid grid-cols-2 gap-2 text-white/70">
-              <div>
-                <span className="text-white/40">Email:</span>
-                <br />
-                <code className="text-emerald-300 font-mono text-[11px]">owner@saradanetralaya.in</code>
+          {/* Demo creds — only shown in development, never in production */}
+          {process.env.NODE_ENV !== "production" && (
+            <div className="mt-4 rounded-xl bg-white/[0.06] backdrop-blur-sm border border-white/10 p-3.5 text-xs">
+              <div className="flex items-center gap-1.5 text-emerald-300 font-bold uppercase tracking-wider text-[10px] mb-1.5">
+                <Lock className="h-3 w-3" /> Demo Credentials (Dev Only)
               </div>
-              <div>
-                <span className="text-white/40">Password:</span>
-                <br />
-                <code className="text-emerald-300 font-mono text-[11px]">Sarada@2026</code>
+              <div className="grid grid-cols-2 gap-2 text-white/70">
+                <div>
+                  <span className="text-white/40">Email:</span>
+                  <br />
+                  <code className="text-emerald-300 font-mono text-[11px]">owner@saradanetralaya.in</code>
+                </div>
+                <div>
+                  <span className="text-white/40">Password:</span>
+                  <br />
+                  <code className="text-emerald-300 font-mono text-[11px]">Sarada@2026</code>
+                </div>
               </div>
+              <p className="mt-2 text-[10px] text-white/35">Set OWNER_EMAIL / OWNER_PASSWORD in production via Vercel env vars.</p>
             </div>
-            <p className="mt-2 text-[10px] text-white/35">Set OWNER_EMAIL / OWNER_PASSWORD in production via Vercel env vars.</p>
-          </div>
+          )}
 
           <div className="mt-6 text-center">
             <Link

@@ -109,9 +109,9 @@ export async function POST(req: NextRequest) {
         ok: false,
         ref,
         error:
-          "We couldn't save your booking online right now, but your request was received. Please call us at +91 70910 90014 to confirm your appointment.",
+          "We couldn't save your booking online right now. Please call us at +91 70910 90014 to book your appointment.",
       },
-      { status: 201 }
+      { status: 503 }
     );
   }
 
