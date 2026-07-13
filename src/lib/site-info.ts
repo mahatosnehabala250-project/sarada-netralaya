@@ -25,6 +25,27 @@ export const ADDRESS = {
   short: "Sakchi, Jamshedpur – 831001",
 } as const;
 
+export const BRANCHES = [
+  {
+    name: "Sakchi (Main)",
+    area: "Sakchi, Jamshedpur",
+    address: "Swastik Ambika Tower, H.No. 33, Near HDFC Bank, Kashidih New Layout Area, New Baradwari, Sakchi, Jamshedpur – 831001",
+    phones: ["+91 70910 90014", "+91 70910 90016"],
+    phoneTels: ["+917091090014", "+917091090016"],
+    mapQuery: "Swastik Ambika Tower, Sakchi, Jamshedpur, Jharkhand 831001",
+    isMain: true,
+  },
+  {
+    name: "Chandil",
+    area: "Chandil, Jharkhand",
+    address: "Chandil, Jharkhand (Address to be updated)",
+    phones: ["+91 70910 90014"],
+    phoneTels: ["+917091090014"],
+    mapQuery: "Chandil, Jharkhand",
+    isMain: false,
+  },
+] as const;
+
 export const PHONES = {
   primary: "+91 70910 90014",
   primaryTel: "+917091090014",
