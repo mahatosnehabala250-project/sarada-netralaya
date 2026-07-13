@@ -1,10 +1,9 @@
 // Owner authentication — simple cookie session.
-// Single owner account configured via env vars (OWNER_EMAIL / OWNER_PASSWORD),
-// or a runtime-overridable password (see owner-settings.ts). No public signup.
+// Passwords are verified via bcrypt (constant-time, never stored plaintext).
 
 import { cookies } from "next/headers";
 import { createHmac, timingSafeEqual } from "crypto";
-import { getOwnerEmail, getOwnerPassword } from "@/lib/owner-settings";
+import { getOwnerEmail, verifyPassword } from "@/lib/owner-settings";
 
 const SESSION_COOKIE = "sn_owner_session";
 const SESSION_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
@@ -12,7 +11,7 @@ const SESSION_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
 const SESSION_SECRET =
   process.env.SESSION_SECRET ?? "dev-only-secret-change-me-in-production";
 
-/** Constant-time string compare. */
+/** Constant-time string compare for email matching. */
 function safeEqual(a: string, b: string): boolean {
   const ab = Buffer.from(a);
   const bb = Buffer.from(b);
@@ -20,12 +19,11 @@ function safeEqual(a: string, b: string): boolean {
   return timingSafeEqual(ab, bb);
 }
 
-/** Verify owner credentials. */
+/** Verify owner credentials — email via constant-time, password via bcrypt. */
 export function verifyOwnerCredentials(email: string, password: string): boolean {
-  return (
-    safeEqual(email.trim().toLowerCase(), getOwnerEmail().toLowerCase()) &&
-    safeEqual(password, getOwnerPassword())
-  );
+  const emailMatch = safeEqual(email.trim().toLowerCase(), getOwnerEmail().toLowerCase());
+  if (!emailMatch) return false;
+  return verifyPassword(password);
 }
 
 /** Create a signed session token and set the httpOnly cookie. */

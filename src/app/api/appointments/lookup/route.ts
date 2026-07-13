@@ -1,17 +1,38 @@
 // POST /api/appointments/lookup — public endpoint for patients to check
 // their appointment status by booking reference + phone (last 4 digits).
 // Returns limited info (no full phone, no IP). Does NOT require auth.
+// Rate limited to prevent brute-force enumeration of patient data.
 
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { ensureDbSchema } from "@/lib/db-ensure";
+import { checkRateLimit } from "@/lib/appointments";
 import { DEPT_LABEL, STATUS_META, type Status, type Department } from "@/lib/appointments";
 import { formatDateLong } from "@/lib/ist";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
+function getClientIp(req: NextRequest): string {
+  const fwd = req.headers.get("x-forwarded-for");
+  if (fwd) return fwd.split(",")[0].trim();
+  const real = req.headers.get("x-real-ip");
+  if (real) return real.trim();
+  return "unknown";
+}
+
 export async function POST(req: NextRequest) {
+  // Rate limit: 5 lookups per 10 minutes per IP (stricter than booking)
+  const ip = getClientIp(req);
+  const lookupRateKey = `lookup::${ip}`;
+  const rl = checkRateLimit(lookupRateKey);
+  if (!rl.ok) {
+    return NextResponse.json(
+      { error: `Too many attempts. Please try again in ${Math.ceil(rl.retryAfterSec / 60)} minute(s).` },
+      { status: 429 }
+    );
+  }
+
   let body: { ref?: string; phone?: string };
   try {
     body = await req.json();

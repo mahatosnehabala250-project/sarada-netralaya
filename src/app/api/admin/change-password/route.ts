@@ -2,8 +2,8 @@
 // Auth-gated. Validates the current password, then sets the new one.
 
 import { NextRequest, NextResponse } from "next/server";
-import { isOwnerAuthenticated, verifyOwnerCredentials } from "@/lib/auth";
-import { getOwnerEmail, setOwnerPassword, getOwnerPassword } from "@/lib/owner-settings";
+import { isOwnerAuthenticated } from "@/lib/auth";
+import { verifyPassword, setOwnerPassword } from "@/lib/owner-settings";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -43,8 +43,8 @@ export async function POST(req: NextRequest) {
     );
   }
 
-  // Verify current password
-  if (!verifyOwnerCredentials(getOwnerEmail(), currentPassword)) {
+  // Verify current password via bcrypt
+  if (!verifyPassword(currentPassword)) {
     return NextResponse.json(
       { error: "Current password is incorrect" },
       { status: 403 }

@@ -11,7 +11,12 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 function csvEscape(value: unknown): string {
-  const s = value == null ? "" : String(value);
+  let s = value == null ? "" : String(value);
+  // CSV injection protection: prefix dangerous leading chars with a single quote
+  // so Excel/LibreOffice doesn't interpret them as formulas
+  if (/^[=+\-@\t\r]/.test(s)) {
+    s = "'" + s;
+  }
   if (/[",\n\r]/.test(s)) {
     return `"${s.replace(/"/g, '""')}"`;
   }
