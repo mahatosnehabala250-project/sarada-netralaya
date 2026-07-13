@@ -647,3 +647,25 @@ Work Log:
 - Deployed to Vercel (dpl_8FPoChCyGvFZbyoS7U9Yb1mZGM3c, READY).
 - Verified: home:200, gallery:200, reviews:200.
 - Pushed to GitHub (commit 0c6ea09).
+
+---
+Task ID: PHASE-1-SECURITY
+Agent: main (Z.ai Code) — user request
+Task: Fix 5 critical security issues from comprehensive audit.
+
+Work Log:
+- C1 (CRITICAL): Fixed /admin/settings auth bypass — was rendering AdminSettings (with owner email, clinic info, password change form) to ALL visitors regardless of auth. Now renders AdminLogin when not authenticated.
+- C2 (CRITICAL): Demo credentials (owner@saradanetralaya.in / Sarada@2026) were publicly visible on /admin login page. Now gated behind process.env.NODE_ENV !== "production" — hidden in production, shown only in dev.
+- H10 (HIGH): Booking API returned HTTP 201 (success) even when DB insert failed — patient saw "success" with a fake reference number but no booking was saved. Now returns HTTP 503 with error message. Client correctly shows error toast.
+- X3 (HIGH): No security headers were set. Added to next.config.ts: X-Frame-Options: DENY (clickjacking), X-Content-Type-Options: nosniff (MIME), Referrer-Policy, Content-Security-Policy (XSS), Strict-Transport-Security (HTTPS), Permissions-Policy (camera/mic/geo disabled).
+- X1 (CRITICAL): next.config.ts had typescript.ignoreBuildErrors: true (no type checking in production builds) and reactStrictMode: false. Removed ignoreBuildErrors, enabled reactStrictMode. Excluded examples/skills/mini-services/download from tsconfig (pre-existing type errors in scaffold files, not app code). Verified: npx tsc --noEmit passes with 0 errors.
+
+Stage Summary (Verification):
+- /admin/settings: shows "Secure Login" when unauthenticated ✓
+- /admin: demo credentials count = 0 in production ✓
+- Security headers: all 5 present (X-Frame-Options, X-Content-Type-Options, Referrer-Policy, CSP, HSTS) ✓
+- TypeScript: 0 type errors ✓
+- Lint: clean ✓
+- All routes: 200 ✓
+- Deployed to Vercel (dpl_GjHLWPBHMiqj11bLzwqQqJpHF4H5, READY)
+- Pushed to GitHub (commit aa85a04)
