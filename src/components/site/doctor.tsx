@@ -19,7 +19,7 @@ export function Doctor() {
           {/* Portrait */}
           <div className="relative order-2 lg:order-1">
             <div className="relative max-w-md mx-auto">
-              <div className="relative aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl shadow-[#0047AB]/15">
+              <div className="relative aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl shadow-[#0A5CFF]/15">
                 <Image
                   src="/images/doctor-real.jpg"
                   alt={`${DOCTOR.name} — ${DOCTOR.role}`}
@@ -29,27 +29,27 @@ export function Doctor() {
                 />
               </div>
               {/* Experience badge */}
-              <div className="absolute -bottom-4 -right-2 sm:-right-4 rounded-2xl bg-[#0047AB] text-white px-5 py-4 shadow-xl">
+              <div className="absolute -bottom-4 -right-2 sm:-right-4 rounded-2xl bg-[#0A5CFF] text-white px-5 py-4 shadow-xl">
                 <div className="text-3xl font-bold leading-none">30+</div>
                 <div className="text-[10px] font-bold uppercase tracking-wider mt-1">Years Experience</div>
               </div>
               {/* Verified badge */}
               <div className="absolute top-4 -left-2 sm:-left-4 flex items-center gap-1.5 rounded-full bg-white shadow-lg px-3 py-1.5">
-                <BadgeCheck className="h-4 w-4 text-[#0047AB]" />
-                <span className="text-xs font-bold text-[#0047AB]">Verified</span>
+                <BadgeCheck className="h-4 w-4 text-[#0A5CFF]" />
+                <span className="text-xs font-bold text-[#0A5CFF]">Verified</span>
               </div>
             </div>
           </div>
 
           {/* Bio */}
           <div className="order-1 lg:order-2">
-            <span className="inline-block text-xs font-bold uppercase tracking-[0.2em] text-[#0047AB] mb-3">
+            <span className="inline-block text-xs font-bold uppercase tracking-[0.2em] text-[#0A5CFF] mb-3">
               Meet Your Surgeon
             </span>
-            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#0047AB] leading-tight">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#0A5CFF] leading-tight">
               {DOCTOR.name}
             </h2>
-            <p className="mt-2 text-[#0047AB] font-semibold text-sm sm:text-base">
+            <p className="mt-2 text-[#0A5CFF] font-semibold text-sm sm:text-base">
               {DOCTOR.role} · {DOCTOR.qualifications}
             </p>
 
@@ -59,12 +59,12 @@ export function Doctor() {
 
             {/* Training */}
             <div className="mt-6 flex items-start gap-3 rounded-xl bg-slate-50 border border-slate-200 p-4">
-              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#0047AB] text-white">
+              <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#0A5CFF] text-white">
                 <Stethoscope className="h-5 w-5" />
               </span>
               <div>
                 <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Specialist Training</div>
-                <div className="text-sm text-[#0047AB] font-semibold mt-0.5">{DOCTOR.training}</div>
+                <div className="text-sm text-[#0A5CFF] font-semibold mt-0.5">{DOCTOR.training}</div>
               </div>
             </div>
 
@@ -72,8 +72,8 @@ export function Doctor() {
             <div className="mt-6 grid sm:grid-cols-3 gap-3">
               {QUALS.map((q) => (
                 <div key={q.label} className="rounded-xl border border-slate-200 bg-white p-3.5 text-center">
-                  <q.icon className="mx-auto h-5 w-5 text-[#0047AB]" />
-                  <div className="mt-1.5 text-sm font-bold text-[#0047AB]">{q.label}</div>
+                  <q.icon className="mx-auto h-5 w-5 text-[#0A5CFF]" />
+                  <div className="mt-1.5 text-sm font-bold text-[#0A5CFF]">{q.label}</div>
                   <div className="text-[10px] text-slate-400 mt-0.5 leading-tight">{q.desc}</div>
                 </div>
               ))}
@@ -81,7 +81,7 @@ export function Doctor() {
 
             <Link
               href="/book"
-              className="mt-7 inline-flex items-center gap-2 rounded-xl bg-[#0047AB] hover:bg-[#003a8c] text-white px-6 py-3.5 text-sm font-bold transition-colors min-h-[48px]"
+              className="mt-7 inline-flex items-center gap-2 rounded-xl bg-[#0A5CFF] hover:bg-[#094FCC] text-white px-6 py-3.5 text-sm font-bold transition-colors min-h-[48px]"
             >
               Book a consultation
               <ArrowRight className="h-4 w-4" />

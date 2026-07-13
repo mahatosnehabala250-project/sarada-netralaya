@@ -21,8 +21,8 @@ export function Faq() {
     <section id="faq" className="py-14 sm:py-20 lg:py-32 bg-[#faf8f3]">
       <div className="mx-auto max-w-3xl px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-10 sm:mb-12">
-          <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] sm:tracking-[0.25em] text-[#0047AB]/40">05 — Questions</span>
-          <h2 className="mt-3 sm:mt-4 font-serif-display text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#0047AB]">
+          <span className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.2em] sm:tracking-[0.25em] text-[#0A5CFF]/40">05 — Questions</span>
+          <h2 className="mt-3 sm:mt-4 font-serif-display text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#0A5CFF]">
             Good to know
           </h2>
         </div>
@@ -31,20 +31,20 @@ export function Faq() {
           {FAQS.map((f, i) => {
             const isOpen = open === i;
             return (
-              <div key={i} className="border-b border-[#0047AB]/10">
+              <div key={i} className="border-b border-[#0A5CFF]/10">
                 <button
                   onClick={() => setOpen(isOpen ? null : i)}
                   className="flex w-full items-start gap-3 sm:gap-4 py-4 sm:py-5 text-left group min-h-[52px]"
                 >
-                  <span className="shrink-0 flex h-7 w-7 items-center justify-center rounded-full border border-[#0047AB]/15 text-[#0047AB] mt-0.5 group-hover:bg-[#0047AB] group-hover:text-[#faf8f3] transition-colors">
+                  <span className="shrink-0 flex h-7 w-7 items-center justify-center rounded-full border border-[#0A5CFF]/15 text-[#0A5CFF] mt-0.5 group-hover:bg-[#0A5CFF] group-hover:text-[#faf8f3] transition-colors">
                     {isOpen ? <Minus className="h-3.5 w-3.5" /> : <Plus className="h-3.5 w-3.5" />}
                   </span>
-                  <span className={`flex-1 text-base sm:text-lg font-semibold pt-0.5 transition-colors ${isOpen ? "text-[#0047AB]" : "text-[#0047AB]/80"}`}>
+                  <span className={`flex-1 text-base sm:text-lg font-semibold pt-0.5 transition-colors ${isOpen ? "text-[#0A5CFF]" : "text-[#0A5CFF]/80"}`}>
                     {f.q}
                   </span>
                 </button>
                 {isOpen && (
-                  <p className="pb-4 sm:pb-5 pl-10 sm:pl-11 pr-2 text-sm text-[#0047AB]/60 leading-relaxed animate-[reveal-up_0.3s_ease-out]">
+                  <p className="pb-4 sm:pb-5 pl-10 sm:pl-11 pr-2 text-sm text-[#0A5CFF]/60 leading-relaxed animate-[reveal-up_0.3s_ease-out]">
                     {f.a}
                   </p>
                 )}
@@ -55,12 +55,12 @@ export function Faq() {
 
         {/* CTA */}
         <div className="mt-8 sm:mt-10 text-center">
-          <p className="text-sm text-[#0047AB]/50 mb-4">Still have a question? We're a call away.</p>
+          <p className="text-sm text-[#0A5CFF]/50 mb-4">Still have a question? We're a call away.</p>
           <div className="flex flex-col xs:flex-row flex-wrap gap-2 justify-center">
-            <a href={`tel:${PHONES.primaryTel}`} className="inline-flex items-center justify-center gap-2 rounded-full bg-[#0047AB] text-[#faf8f3] px-5 py-3 text-sm font-bold hover:bg-[#003a8c] min-h-[44px]">
+            <a href={`tel:${PHONES.primaryTel}`} className="inline-flex items-center justify-center gap-2 rounded-full bg-[#0A5CFF] text-[#faf8f3] px-5 py-3 text-sm font-bold hover:bg-[#094FCC] min-h-[44px]">
               <Phone className="h-4 w-4" /> {PHONES.primary}
             </a>
-            <a href={`https://wa.me/${PHONES.whatsapp}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 rounded-full bg-emerald-500 text-[#0047AB] px-5 py-3 text-sm font-bold hover:bg-emerald-400 min-h-[44px]">
+            <a href={`https://wa.me/${PHONES.whatsapp}`} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 rounded-full bg-emerald-500 text-[#0A5CFF] px-5 py-3 text-sm font-bold hover:bg-emerald-400 min-h-[44px]">
               <MessageCircle className="h-4 w-4" /> WhatsApp
             </a>
           </div>

@@ -1,3 +1,6 @@
+"use client";
+
+import { motion } from "framer-motion";
 import { UserCheck, Cpu, ShieldCheck, HeartHandshake } from "lucide-react";
 
 const FEATURES = [
@@ -9,23 +12,33 @@ const FEATURES = [
 
 export function Features() {
   return (
-    <section className="bg-white py-10 sm:py-14">
+    <section className="bg-gradient-to-b from-white to-[#F8FBFF] py-14 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-8">
+        <motion.div
+          initial="hidden"
+          whileInView="visible"
+          viewport={{ once: true, margin: "-50px" }}
+          variants={{ hidden: { opacity: 0 }, visible: { opacity: 1, transition: { staggerChildren: 0.1 } } }}
+          className="grid grid-cols-2 lg:grid-cols-4 gap-5 sm:gap-6"
+        >
           {FEATURES.map((f) => (
-            <div key={f.title} className="text-center">
-              <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-[#E6F0FF] text-[#0047AB]">
+            <motion.div
+              key={f.title}
+              variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } } }}
+              className="group rounded-3xl bg-white/70 backdrop-blur-md border border-white/60 p-5 sm:p-6 text-center shadow-lg shadow-[#0A5CFF]/5 hover:shadow-xl hover:shadow-[#0A5CFF]/10 hover:-translate-y-1 transition-all duration-300"
+            >
+              <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#0A5CFF] to-[#22D3EE] text-white shadow-md shadow-[#0A5CFF]/20 group-hover:scale-110 transition-transform">
                 <f.icon className="h-6 w-6" />
               </span>
-              <h3 className="mt-3 text-sm sm:text-base font-bold text-[#0047AB] uppercase tracking-wide">
+              <h3 className="mt-4 text-sm sm:text-base font-bold text-[#0A5CFF] uppercase tracking-wide">
                 {f.title}
               </h3>
-              <p className="mt-1 text-xs sm:text-sm text-[#333333] leading-snug">
+              <p className="mt-1.5 text-xs sm:text-sm text-[#333] leading-snug">
                 {f.desc}
               </p>
-            </div>
+            </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

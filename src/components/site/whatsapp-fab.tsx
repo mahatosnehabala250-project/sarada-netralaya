@@ -21,16 +21,16 @@ export function WhatsAppFab() {
   return (
     <div className="fixed bottom-20 sm:bottom-5 right-4 sm:right-5 z-50 flex flex-col items-end gap-2">
       {tooltip && (
-        <div className="relative max-w-[180px] rounded-xl rounded-br-sm bg-white shadow-xl border border-[#0047AB]/10 px-3 py-2">
+        <div className="relative max-w-[180px] rounded-xl rounded-br-sm bg-white shadow-xl border border-[#0A5CFF]/10 px-3 py-2">
           <button
             onClick={() => setTooltip(false)}
-            className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-[#0047AB] text-white"
+            className="absolute -top-2 -right-2 flex h-5 w-5 items-center justify-center rounded-full bg-[#0A5CFF] text-white"
             aria-label="Close"
           >
             <X className="h-3 w-3" />
           </button>
-          <p className="text-xs font-bold text-[#0047AB]">Need help? 👋</p>
-          <p className="text-[10px] text-[#0047AB]/55 mt-0.5">Chat on WhatsApp</p>
+          <p className="text-xs font-bold text-[#0A5CFF]">Need help? 👋</p>
+          <p className="text-[10px] text-[#0A5CFF]/55 mt-0.5">Chat on WhatsApp</p>
         </div>
       )}
       <a

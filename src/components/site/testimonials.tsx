@@ -48,10 +48,10 @@ export function Testimonials() {
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-10 sm:mb-14">
-          <span className="inline-block text-xs font-bold uppercase tracking-[0.2em] text-[#0047AB] mb-3">
+          <span className="inline-block text-xs font-bold uppercase tracking-[0.2em] text-[#0A5CFF] mb-3">
             Patient Stories
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#0047AB]">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#0A5CFF]">
             Loved by thousands
           </h2>
           <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-white border border-amber-200 px-4 py-2 shadow-sm">
@@ -60,14 +60,14 @@ export function Testimonials() {
                 <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
               ))}
             </div>
-            <span className="text-sm font-bold text-[#0047AB]">{SITE.rating}</span>
+            <span className="text-sm font-bold text-[#0A5CFF]">{SITE.rating}</span>
             <span className="text-sm text-slate-500">· {SITE.reviewsCount} Google reviews</span>
           </div>
         </div>
 
         {/* Quote card */}
-        <div className="relative rounded-2xl bg-white border border-slate-200 shadow-lg p-6 sm:p-10">
-          <Quote className="absolute top-6 left-6 h-10 w-10 text-[#0047AB]/15" fill="currentColor" />
+        <div className="relative rounded-3xl bg-white/70 backdrop-blur-md border border-white/60 shadow-xl shadow-[#0A5CFF]/8 p-8 sm:p-10">
+          <Quote className="absolute top-6 left-6 h-10 w-10 text-[#0A5CFF]/15" fill="currentColor" />
 
           <div key={active} className="reveal">
             <p className="text-lg sm:text-xl lg:text-2xl leading-relaxed text-slate-700 font-medium relative z-10 pl-8 sm:pl-10">
@@ -76,11 +76,11 @@ export function Testimonials() {
 
             <div className="mt-6 sm:mt-8 flex items-center justify-between gap-4 pl-8 sm:pl-10">
               <div className="flex items-center gap-3 min-w-0">
-                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#0047AB] text-white font-bold">
+                <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#0A5CFF] text-white font-bold">
                   {t.initials}
                 </span>
                 <div className="min-w-0">
-                  <div className="font-bold text-[#0047AB] truncate">{t.name}</div>
+                  <div className="font-bold text-[#0A5CFF] truncate">{t.name}</div>
                   <div className="text-xs text-slate-400 truncate">{t.detail}</div>
                 </div>
               </div>
@@ -89,14 +89,14 @@ export function Testimonials() {
                 <button
                   onClick={() => go(-1)}
                   aria-label="Previous"
-                  className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full border border-slate-200 text-slate-500 hover:bg-[#0047AB] hover:text-white hover:border-[#0047AB] transition-colors"
+                  className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full border border-slate-200 text-slate-500 hover:bg-[#0A5CFF] hover:text-white hover:border-[#0A5CFF] transition-colors"
                 >
                   <ChevronLeft className="h-4 w-4" />
                 </button>
                 <button
                   onClick={() => go(1)}
                   aria-label="Next"
-                  className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full border border-slate-200 text-slate-500 hover:bg-[#0047AB] hover:text-white hover:border-[#0047AB] transition-colors"
+                  className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-full border border-slate-200 text-slate-500 hover:bg-[#0A5CFF] hover:text-white hover:border-[#0A5CFF] transition-colors"
                 >
                   <ChevronRight className="h-4 w-4" />
                 </button>
@@ -112,7 +112,7 @@ export function Testimonials() {
               key={i}
               onClick={() => setActive(i)}
               aria-label={`Story ${i + 1}`}
-              className={`h-2 rounded-full transition-all ${i === active ? "w-8 bg-[#0047AB]" : "w-2 bg-slate-300 hover:bg-slate-400"}`}
+              className={`h-2 rounded-full transition-all ${i === active ? "w-8 bg-[#0A5CFF]" : "w-2 bg-slate-300 hover:bg-slate-400"}`}
             />
           ))}
         </div>
