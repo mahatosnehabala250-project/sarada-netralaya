@@ -119,7 +119,7 @@
   }
   body {
     @apply bg-background text-foreground;
-    background-color: #F8FBFF;
+    background-color: #faf8f3;
   }
 }
 
@@ -130,15 +130,15 @@
 
 /* Refined scrollbar */
 ::-webkit-scrollbar { width: 8px; height: 8px; }
-::-webkit-scrollbar-track { background: #F8FBFF; }
-::-webkit-scrollbar-thumb { background: #0A5CFF33; border-radius: 4px; }
-::-webkit-scrollbar-thumb:hover { background: #0A5CFF; }
+::-webkit-scrollbar-track { background: #faf8f3; }
+::-webkit-scrollbar-thumb { background: #0047AB33; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #0047AB; }
 
 /* Smooth scroll */
 html { scroll-behavior: smooth; }
 
 /* Selection */
-::selection { background: #0A5CFF; color: #fff; }
+::selection { background: #0047AB; color: #fff; }
 
 /* Smooth scroll */
 html { scroll-behavior: smooth; }

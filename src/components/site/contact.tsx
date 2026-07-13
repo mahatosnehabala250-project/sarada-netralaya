@@ -9,7 +9,7 @@ const MAP_DIR = `https://www.google.com/maps/dir/?api=1&destination=${MAP_QUERY}
 
 export function Contact() {
   return (
-    <section id="contact" className="py-14 sm:py-20 lg:py-32 bg-[#0A5CFF]">
+    <section id="contact" className="py-14 sm:py-20 lg:py-32 bg-[#0047AB]">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-start">
           {/* Left — info */}
@@ -97,7 +97,7 @@ export function Contact() {
               referrerPolicy="no-referrer-when-downgrade"
               allowFullScreen
             />
-            <div className="absolute top-3 sm:top-4 left-3 sm:left-4 rounded-xl bg-[#0A5CFF]/90 backdrop-blur-md px-3 sm:px-4 py-2.5 sm:py-3 shadow-lg pointer-events-none">
+            <div className="absolute top-3 sm:top-4 left-3 sm:left-4 rounded-xl bg-[#0047AB]/90 backdrop-blur-md px-3 sm:px-4 py-2.5 sm:py-3 shadow-lg pointer-events-none">
               <div className="font-serif-display text-sm font-bold text-white">Sarada Netralaya</div>
               <div className="text-[10px] text-emerald-300/70 uppercase tracking-wider mt-0.5">{ADDRESS.short}</div>
             </div>

@@ -12,7 +12,7 @@ const FEATURES = [
 
 export function Features() {
   return (
-    <section className="bg-gradient-to-b from-white to-[#F8FBFF] py-14 sm:py-20">
+    <section className="bg-gradient-to-b from-white to-[#faf8f3] py-14 sm:py-20">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <motion.div
           initial="hidden"
@@ -25,12 +25,12 @@ export function Features() {
             <motion.div
               key={f.title}
               variants={{ hidden: { opacity: 0, y: 20 }, visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } } }}
-              className="group rounded-3xl bg-white/70 backdrop-blur-md border border-white/60 p-5 sm:p-6 text-center shadow-lg shadow-[#0A5CFF]/5 hover:shadow-xl hover:shadow-[#0A5CFF]/10 hover:-translate-y-1 transition-all duration-300"
+              className="group rounded-3xl bg-white/70 backdrop-blur-md border border-white/60 p-5 sm:p-6 text-center shadow-lg shadow-[#0047AB]/5 hover:shadow-xl hover:shadow-[#0047AB]/10 hover:-translate-y-1 transition-all duration-300"
             >
-              <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#0A5CFF] to-[#22D3EE] text-white shadow-md shadow-[#0A5CFF]/20 group-hover:scale-110 transition-transform">
+              <span className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-gradient-to-br from-[#0047AB] to-[#10b981] text-white shadow-md shadow-[#0047AB]/20 group-hover:scale-110 transition-transform">
                 <f.icon className="h-6 w-6" />
               </span>
-              <h3 className="mt-4 text-sm sm:text-base font-bold text-[#0A5CFF] uppercase tracking-wide">
+              <h3 className="mt-4 text-sm sm:text-base font-bold text-[#0047AB] uppercase tracking-wide">
                 {f.title}
               </h3>
               <p className="mt-1.5 text-xs sm:text-sm text-[#333] leading-snug">

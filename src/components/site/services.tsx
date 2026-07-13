@@ -57,10 +57,10 @@ export function Services() {
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="text-center mb-10 sm:mb-14 max-w-2xl mx-auto">
-          <span className="inline-block text-xs font-bold uppercase tracking-[0.2em] text-[#0A5CFF] mb-3">
+          <span className="inline-block text-xs font-bold uppercase tracking-[0.2em] text-[#0047AB] mb-3">
             Our Services
           </span>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#0A5CFF] leading-tight">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#0047AB] leading-tight">
             Complete eye care for
             <br className="hidden sm:block" /> your whole family
           </h2>
@@ -75,7 +75,7 @@ export function Services() {
           {SERVICES.map((s) => (
             <article
               key={s.title}
-              className="group rounded-3xl bg-white/70 backdrop-blur-md border border-white/60 overflow-hidden shadow-lg shadow-[#0A5CFF]/5 hover:shadow-xl hover:shadow-[#0A5CFF]/10 hover:shadow-[#0A5CFF]/8 hover:-translate-y-1 transition-all duration-300 flex flex-col"
+              className="group rounded-3xl bg-white/70 backdrop-blur-md border border-white/60 overflow-hidden shadow-lg shadow-[#0047AB]/5 hover:shadow-xl hover:shadow-[#0047AB]/10 hover:shadow-[#0047AB]/8 hover:-translate-y-1 transition-all duration-300 flex flex-col"
             >
               {/* Image */}
               <div className="relative aspect-[16/10] overflow-hidden">
@@ -86,15 +86,15 @@ export function Services() {
                   sizes="(min-width: 1024px) 24rem, (min-width: 768px) 36rem, 100vw"
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0A5CFF]/40 to-transparent" />
-                <span className="absolute top-3 right-3 rounded-full bg-white/95 backdrop-blur-sm px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#0A5CFF] shadow-sm">
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0047AB]/40 to-transparent" />
+                <span className="absolute top-3 right-3 rounded-full bg-white/95 backdrop-blur-sm px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-[#0047AB] shadow-sm">
                   {s.tag}
                 </span>
               </div>
 
               {/* Content */}
               <div className="p-5 sm:p-6 flex-1 flex flex-col">
-                <h3 className="text-lg sm:text-xl font-bold text-[#0A5CFF] leading-snug">
+                <h3 className="text-lg sm:text-xl font-bold text-[#0047AB] leading-snug">
                   {s.title}
                 </h3>
                 <p className="mt-2 text-sm text-slate-500 leading-relaxed">{s.desc}</p>
@@ -112,7 +112,7 @@ export function Services() {
 
                 <Link
                   href="/book"
-                  className="mt-5 inline-flex items-center gap-1.5 text-sm font-bold text-[#0A5CFF] hover:text-[#094FCC] transition-colors group/link min-h-[40px]"
+                  className="mt-5 inline-flex items-center gap-1.5 text-sm font-bold text-[#0047AB] hover:text-[#003a8c] transition-colors group/link min-h-[40px]"
                 >
                   Book this service
                   <ArrowRight className="h-4 w-4 group-hover/link:translate-x-0.5 transition-transform" />
