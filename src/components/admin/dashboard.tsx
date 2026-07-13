@@ -9,7 +9,7 @@ import {
   Phone, CheckCircle2, Check, X, Inbox, Filter, RefreshCw, Clock,
   TrendingUp, Hourglass, CalendarCheck, UserCircle2, Menu, X as CloseIcon,
   Eye as EyeIcon, ChevronRight, UserPlus, AlertCircle, Printer, Star,
-  FileText, Users, DollarSign, BarChart3, Zap,
+  Users, DollarSign, BarChart3, Bell, ChevronDown, Headphones,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -30,17 +30,9 @@ import { ActivityFeed } from "@/components/admin/activity-feed";
 import { printAppointmentSlip } from "@/components/admin/print-slip";
 
 type Appt = {
-  id: string;
-  ref: string;
-  name: string;
-  phone: string;
-  age: number | null;
-  department: string;
-  preferredDate: string;
-  timeSlot: string;
-  note: string | null;
-  status: string;
-  createdAt: string;
+  id: string; ref: string; name: string; phone: string; age: number | null;
+  department: string; preferredDate: string; timeSlot: string;
+  note: string | null; status: string; createdAt: string;
 };
 
 type Kpis = {
@@ -74,7 +66,6 @@ export function AdminDashboard() {
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
 
-  // Greeting computed after mount (avoid hydration mismatch)
   const [greeting, setGreeting] = useState("Good Morning");
   const [todayStr, setTodayStr] = useState("");
 
@@ -82,50 +73,6 @@ export function AdminDashboard() {
   const [busyId, setBusyId] = useState<string | null>(null);
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [bulkBusy, setBulkBusy] = useState(false);
-
-  const allSelected = items.length > 0 && items.every((a) => selected.has(a.id));
-  const someSelected = selected.size > 0;
-
-  function toggleSelect(id: string) {
-    setSelected((prev) => {
-      const next = new Set(prev);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  }
-  function toggleSelectAll() {
-    if (allSelected) setSelected(new Set());
-    else setSelected(new Set(items.map((a) => a.id)));
-  }
-  function clearSelection() { setSelected(new Set()); }
-
-  async function bulkUpdate(newStatus: Status) {
-    const ids = Array.from(selected);
-    if (ids.length === 0) return;
-    setBulkBusy(true);
-    // optimistic
-    setItems((prev) => prev.map((a) => (selected.has(a.id) ? { ...a, status: newStatus } : a)));
-    try {
-      await Promise.all(
-        ids.map((id) =>
-          fetch("/api/admin/appointments", {
-            method: "PATCH",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ id, status: newStatus }),
-          }).catch(() => null)
-        )
-      );
-      toast.success(`${ids.length} appointment${ids.length > 1 ? "s" : ""} marked as ${STATUS_META[newStatus].label}`);
-      clearSelection();
-      fetchList(true);
-    } catch {
-      toast.error("Bulk update failed");
-      fetchList(true);
-    } finally {
-      setBulkBusy(false);
-    }
-  }
   const [dialogAppt, setDialogAppt] = useState<Appt | null>(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
@@ -135,7 +82,6 @@ export function AdminDashboard() {
     setTodayStr(fullTodayIST());
   }, []);
 
-  // debounce search
   useEffect(() => {
     const t = setTimeout(() => setQDebounced(q), 280);
     return () => clearTimeout(t);
@@ -145,124 +91,83 @@ export function AdminDashboard() {
     if (!silent) setLoading(true);
     else setRefreshing(true);
     try {
-      const params = new URLSearchParams({
-        tab, department, status, q: qDebounced,
-      });
+      const params = new URLSearchParams({ tab, department, status, q: qDebounced });
       if (tab === "range") {
         if (dateFrom) params.set("dateFrom", dateFrom);
         if (dateTo) params.set("dateTo", dateTo);
       }
       const res = await fetch(`/api/admin/appointments?${params}`, { cache: "no-store" });
-      if (res.status === 401) {
-        router.refresh();
-        return;
-      }
+      if (res.status === 401) { router.refresh(); return; }
       const data = await res.json();
       setItems(data.items ?? []);
       setTotal(data.total ?? 0);
       setKpis(data.kpis ?? kpis);
-    } catch {
-      toast.error("Failed to load appointments");
-    } finally {
-      setLoading(false);
-      setRefreshing(false);
-    }
+    } catch { toast.error("Failed to load appointments"); }
+    finally { setLoading(false); setRefreshing(false); }
   }, [tab, department, status, qDebounced, dateFrom, dateTo]);
 
-  useEffect(() => {
-    fetchList();
-  }, [fetchList]);
+  useEffect(() => { fetchList(); }, [fetchList]);
 
-  // refetch on window focus
   useEffect(() => {
     const onFocus = () => fetchList(true);
     window.addEventListener("focus", onFocus);
-    const interval = setInterval(() => fetchList(true), 60000); // auto-refresh every 60s
-    return () => {
-      window.removeEventListener("focus", onFocus);
-      clearInterval(interval);
-    };
+    const interval = setInterval(() => fetchList(true), 60000);
+    return () => { window.removeEventListener("focus", onFocus); clearInterval(interval); };
   }, [fetchList]);
 
   async function logout() {
-    try {
-      await fetch("/api/admin/logout", { method: "POST" });
-    } catch { /* ignore */ }
+    try { await fetch("/api/admin/logout", { method: "POST" }); } catch {}
     router.refresh();
   }
 
   async function updateStatus(id: string, newStatus: Status) {
-    // optimistic
     setItems((prev) => prev.map((a) => (a.id === id ? { ...a, status: newStatus } : a)));
     setBusyId(id);
     try {
       const res = await fetch("/api/admin/appointments", {
-        method: "PATCH",
-        headers: { "Content-Type": "application/json" },
+        method: "PATCH", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ id, status: newStatus }),
       });
       const data = await res.json();
-      if (!res.ok) {
-        toast.error(data.error ?? "Update failed");
-        // revert by refetching
-        fetchList(true);
-        return;
-      }
+      if (!res.ok) { toast.error(data.error ?? "Update failed"); fetchList(true); return; }
       toast.success(`Marked as ${STATUS_META[newStatus].label}`);
-      // update KPIs locally
-      setKpis((k) => {
-        const next = { ...k };
-        return next;
-      });
       fetchList(true);
-    } catch {
-      toast.error("Network error");
-      fetchList(true);
-    } finally {
-      setBusyId(null);
-    }
+    } catch { toast.error("Network error"); fetchList(true); }
+    finally { setBusyId(null); }
   }
 
   const visibleItems = items;
+  const allSelected = items.length > 0 && items.every((a) => selected.has(a.id));
+  const someSelected = selected.size > 0;
 
-  const hasActiveFilters = department !== "all" || status !== "all" || qDebounced !== "" || (tab === "range" && (dateFrom !== "" || dateTo !== ""));
+  function toggleSelect(id: string) {
+    setSelected((prev) => { const next = new Set(prev); if (next.has(id)) next.delete(id); else next.add(id); return next; });
+  }
+  function toggleSelectAll() { if (allSelected) setSelected(new Set()); else setSelected(new Set(items.map((a) => a.id))); }
+  function clearSelection() { setSelected(new Set()); }
 
-  function clearFilters() {
-    setDepartment("all");
-    setStatus("all");
-    setQ("");
-    setDateFrom("");
-    setDateTo("");
+  async function bulkUpdate(newStatus: Status) {
+    const ids = Array.from(selected);
+    if (ids.length === 0) return;
+    setBulkBusy(true);
+    setItems((prev) => prev.map((a) => (selected.has(a.id) ? { ...a, status: newStatus } : a)));
+    try {
+      await Promise.all(ids.map((id) => fetch("/api/admin/appointments", { method: "PATCH", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ id, status: newStatus }) }).catch(() => null)));
+      toast.success(`${ids.length} appointment${ids.length > 1 ? "s" : ""} marked as ${STATUS_META[newStatus].label}`);
+      clearSelection(); fetchList(true);
+    } catch { toast.error("Bulk update failed"); fetchList(true); }
+    finally { setBulkBusy(false); }
   }
 
-  function openDetail(a: Appt) {
-    setDialogAppt(a);
-    setDialogOpen(true);
-  }
-
-  function onDialogUpdated(updated: Appt) {
-    setItems((prev) => prev.map((a) => (a.id === updated.id ? updated : a)));
-    setDialogAppt(updated);
-    fetchList(true);
-  }
-
-  function onDialogDeleted(id: string) {
-    setItems((prev) => prev.filter((a) => a.id !== id));
-    setTotal((t) => Math.max(0, t - 1));
-    fetchList(true);
-  }
-
-  function onCreated(a: NewAppt) {
-    // prepend the new appointment and refresh KPIs/analytics
-    setItems((prev) => [a as Appt, ...prev]);
-    setTotal((t) => t + 1);
-    fetchList(true);
-  }
+  function openDetail(a: Appt) { setDialogAppt(a); setDialogOpen(true); }
+  function onDialogUpdated(updated: Appt) { setItems((prev) => prev.map((a) => (a.id === updated.id ? updated : a))); setDialogAppt(updated); fetchList(true); }
+  function onDialogDeleted(id: string) { setItems((prev) => prev.filter((a) => a.id !== id)); setTotal((t) => Math.max(0, t - 1)); fetchList(true); }
+  function onCreated(a: NewAppt) { setItems((prev) => [a as Appt, ...prev]); setTotal((t) => t + 1); fetchList(true); }
 
   return (
-    <div className="min-h-screen bg-[#f6f8fa] flex">
+    <div className="min-h-screen bg-[#f8f9fa] flex">
       {/* Sidebar (desktop) */}
-      <aside className="hidden lg:flex w-64 shrink-0 flex-col bg-white border-r border-slate-200">
+      <aside className="hidden lg:flex w-60 shrink-0 flex-col bg-white border-r border-slate-200">
         <SidebarContent onLogout={logout} />
       </aside>
 
@@ -270,8 +175,8 @@ export function AdminDashboard() {
       {sidebarOpen && (
         <div className="lg:hidden fixed inset-0 z-50 flex">
           <div className="absolute inset-0 bg-black/50" onClick={() => setSidebarOpen(false)} />
-          <aside className="relative w-64 max-w-[80vw] flex flex-col bg-white border-r border-slate-200">
-            <button onClick={() => setSidebarOpen(false)} className="absolute top-3 right-3 text-white/60 hover:text-white">
+          <aside className="relative w-60 max-w-[80vw] flex flex-col bg-white border-r border-slate-200">
+            <button onClick={() => setSidebarOpen(false)} className="absolute top-3 right-3 text-slate-400 hover:text-slate-700">
               <CloseIcon className="h-5 w-5" />
             </button>
             <SidebarContent onLogout={logout} />
@@ -282,44 +187,25 @@ export function AdminDashboard() {
       {/* Main */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Mobile top bar */}
-        <header className="lg:hidden sticky top-0 z-40 flex items-center justify-between bg-[#063b4f] text-white px-4 h-14">
-          <button onClick={() => setSidebarOpen(true)} aria-label="Open menu">
-            <Menu className="h-5 w-5" />
-          </button>
-          <div className="flex items-center gap-2">
-            <Eye className="h-5 w-5" />
-            <span className="font-bold text-sm">Sarada Netralaya</span>
-          </div>
-          <button onClick={() => fetchList(true)} aria-label="Refresh">
-            <RefreshCw className={`h-5 w-5 ${refreshing ? "animate-spin" : ""}`} />
-          </button>
+        <header className="lg:hidden sticky top-0 z-40 flex items-center justify-between bg-white border-b border-slate-200 px-4 h-14">
+          <button onClick={() => setSidebarOpen(true)} aria-label="Open menu"><Menu className="h-5 w-5 text-[#374151]" /></button>
+          <div className="flex items-center gap-2"><Image src="/images/logo.png" alt="Logo" width={28} height={19} /><span className="font-bold text-sm text-[#374151]">Sarada Netralaya</span></div>
+          <button onClick={() => fetchList(true)} aria-label="Refresh"><RefreshCw className={`h-5 w-5 text-slate-500 ${refreshing ? "animate-spin" : ""}`} /></button>
         </header>
 
         {/* Content */}
-        <main className="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto">
-          {/* Header — clean white */}
+        <main className="flex-1 p-4 sm:p-6 max-w-[1400px] w-full mx-auto">
+          {/* Header row */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
             <div>
-              <h1 className="text-2xl font-bold text-[#0047AB]">Dashboard</h1>
-              <p className="text-sm text-slate-500 mt-0.5">
-                {greeting}! Here's what's happening today · {todayStr || ""}
-              </p>
+              <h1 className="text-2xl font-bold text-[#374151]">Dashboard</h1>
+              <p className="text-sm text-[#6b7280] mt-0.5">{greeting}! Here's what's happening today · {todayStr}</p>
             </div>
             <div className="flex items-center gap-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => fetchList(true)}
-                className="border-slate-200 text-slate-600 hover:bg-slate-50"
-              >
-                <RefreshCw className={`h-4 w-4 mr-1.5 ${refreshing ? "animate-spin" : ""}`} />
-                Refresh
+              <Button variant="outline" size="sm" onClick={() => fetchList(true)} className="border-slate-200 text-slate-600 hover:bg-slate-50">
+                <RefreshCw className={`h-4 w-4 mr-1.5 ${refreshing ? "animate-spin" : ""}`} /> Refresh
               </Button>
-              <Button
-                size="sm"
-                onClick={() => setCreateOpen(true)}
-                className="bg-[#0047AB] hover:bg-[#003a8c] text-white"
-              >
+              <Button size="sm" onClick={() => setCreateOpen(true)} className="bg-[#3b82f6] hover:bg-[#2563eb] text-white">
                 <UserPlus className="h-4 w-4 mr-1.5" /> New
               </Button>
               <TooltipProvider delayDuration={200}>
@@ -337,12 +223,12 @@ export function AdminDashboard() {
             </div>
           </div>
 
-          {/* KPI tiles */}
-          <div className="mt-6 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-            <KpiTile icon={CalendarCheck} label="Today's Appointments" value={kpis.today} tone="teal" />
-            <KpiTile icon={Hourglass} label="Pending Review" value={kpis.pending} tone="amber" />
-            <KpiTile icon={TrendingUp} label="Upcoming" value={kpis.upcoming} tone="sky" />
-            <KpiTile icon={CheckCircle2} label="Completed" value={kpis.done} tone="emerald" />
+          {/* KPI tiles — 4 cards matching mockup */}
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            <KpiCard icon={CalendarCheck} label="Today's Appointments" value={kpis.today} iconColor="text-[#3b82f6]" iconBg="bg-[#3b82f6]/10" valueColor="text-[#3b82f6]" />
+            <KpiCard icon={Users} label="Total Patients" value={kpis.total} iconColor="text-[#10b981]" iconBg="bg-[#10b981]/10" valueColor="text-[#374151]" />
+            <KpiCard icon={Eye} label="Pending Review" value={kpis.pending} iconColor="text-[#8b5cf6]" iconBg="bg-[#8b5cf6]/10" valueColor="text-[#8b5cf6]" />
+            <KpiCard icon={CheckCircle2} label="Completed" value={kpis.done} iconColor="text-[#f59e0b]" iconBg="bg-[#f59e0b]/10" valueColor="text-[#374151]" />
           </div>
 
           {/* Analytics charts */}
@@ -351,169 +237,76 @@ export function AdminDashboard() {
           </div>
 
           {/* Filters */}
-          <div className="mt-6 rounded-2xl bg-white border border-slate-200/80 p-4 shadow-sm ring-1 ring-slate-100/50">
-            {/* Tabs */}
+          <div className="mt-6 rounded-xl bg-white border border-slate-200 p-4 shadow-sm">
             <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
-              <div className="inline-flex rounded-xl bg-slate-100/80 p-1 self-start">
+              <div className="inline-flex rounded-lg bg-slate-100 p-1 self-start">
                 {TABS.map((t) => (
-                  <button
-                    key={t.id}
-                    onClick={() => setTab(t.id)}
-                    className={`px-3.5 py-1.5 text-[13px] font-semibold rounded-lg transition-all ${
-                      tab === t.id
-                        ? "bg-white text-[#084f67] shadow-sm ring-1 ring-slate-200/50"
-                        : "text-slate-500 hover:text-[#084f67]"
-                    }`}
-                  >
+                  <button key={t.id} onClick={() => setTab(t.id)}
+                    className={`px-3.5 py-1.5 text-[13px] font-semibold rounded-lg transition-all ${tab === t.id ? "bg-white text-[#3b82f6] shadow-sm" : "text-slate-500 hover:text-[#3b82f6]"}`}>
                     {t.label}
                   </button>
                 ))}
               </div>
-
               <div className="relative flex-1 max-w-xs">
-                <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#0b6e8f]/50" />
-                <Input
-                  value={q}
-                  onChange={(e) => setQ(e.target.value)}
-                  placeholder="Search name, phone, ref..."
-                  className="h-9 pl-9 border-[#0b6e8f]/20 focus-visible:ring-[#0b6e8f]/30"
-                />
+                <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search name, phone, ref..."
+                  className="h-9 pl-9 border-slate-200 focus-visible:border-[#3b82f6] focus-visible:ring-[#3b82f6]/20" />
               </div>
             </div>
-
-            {/* Dropdowns */}
             <div className="mt-3 flex flex-wrap items-center gap-2">
-              <FilterDropdown
-                icon={Filter}
-                label="Department"
-                value={department}
-                onChange={(v) => setDepartment(v as typeof department)}
-                options={[
-                  { value: "all", label: "All Departments" },
-                  { value: "eye_care", label: "Eye Care" },
-                  { value: "optical", label: "Optical" },
-                ]}
-              />
-              <FilterDropdown
-                icon={CheckCircle2}
-                label="Status"
-                value={status}
-                onChange={(v) => setStatus(v as typeof status)}
-                options={[
-                  { value: "all", label: "All Statuses" },
-                  { value: "pending", label: "⏳ Pending" },
-                  { value: "confirmed", label: "📌 Confirmed" },
-                  { value: "done", label: "✅ Done" },
-                  { value: "cancelled", label: "✕ Cancelled" },
-                ]}
-              />
-              {hasActiveFilters && (
-                <button
-                  onClick={clearFilters}
-                  className="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-[#084f67]"
-                >
+              <FilterDropdown icon={Filter} label="Department" value={department} onChange={(v) => setDepartment(v as typeof department)}
+                options={[{ value: "all", label: "All Departments" }, { value: "eye_care", label: "Eye Care" }, { value: "optical", label: "Optical" }]} />
+              <FilterDropdown icon={CheckCircle2} label="Status" value={status} onChange={(v) => setStatus(v as typeof status)}
+                options={[{ value: "all", label: "All Statuses" }, { value: "pending", label: "⏳ Pending" }, { value: "confirmed", label: "📌 Confirmed" }, { value: "done", label: "✅ Done" }, { value: "cancelled", label: "✕ Cancelled" }]} />
+              {someSelected && (
+                <button onClick={clearSelection} className="inline-flex items-center gap-1 rounded-md border border-slate-200 bg-white px-2.5 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-[#3b82f6]">
                   <X className="h-3 w-3" /> Clear
                 </button>
               )}
-              <span className="ml-auto text-xs text-[#0f2f3a]/45">
-                Showing <span className="font-semibold text-[#084f67]">{visibleItems.length}</span> of {total}
-              </span>
+              <span className="ml-auto text-xs text-slate-400">Showing <span className="font-semibold text-[#374151]">{visibleItems.length}</span> of {total}</span>
             </div>
-
-            {/* Date range pickers (only when tab === "range") */}
             {tab === "range" && (
-              <div className="mt-3 flex flex-wrap items-end gap-3 rounded-lg bg-[#f0f9fb] border border-[#0b6e8f]/10 p-3">
+              <div className="mt-3 flex flex-wrap items-end gap-3 rounded-lg bg-slate-50 border border-slate-200 p-3">
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-[#0b6e8f]/70 mb-1">From Date</label>
-                  <Input
-                    type="date"
-                    value={dateFrom}
-                    onChange={(e) => setDateFrom(e.target.value)}
-                    className="h-9 w-auto bg-white border-[#0b6e8f]/20 focus-visible:ring-[#0b6e8f]/30 text-sm"
-                  />
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">From Date</label>
+                  <Input type="date" value={dateFrom} onChange={(e) => setDateFrom(e.target.value)} className="h-9 w-auto bg-white border-slate-200 text-sm" />
                 </div>
                 <div>
-                  <label className="block text-[10px] font-bold uppercase tracking-wider text-[#0b6e8f]/70 mb-1">To Date</label>
-                  <Input
-                    type="date"
-                    value={dateTo}
-                    min={dateFrom || undefined}
-                    onChange={(e) => setDateTo(e.target.value)}
-                    className="h-9 w-auto bg-white border-[#0b6e8f]/20 focus-visible:ring-[#0b6e8f]/30 text-sm"
-                  />
+                  <label className="block text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1">To Date</label>
+                  <Input type="date" value={dateTo} min={dateFrom || undefined} onChange={(e) => setDateTo(e.target.value)} className="h-9 w-auto bg-white border-slate-200 text-sm" />
                 </div>
-                {dateFrom && dateTo ? (
-                  <span className="text-xs text-emerald-700 font-medium inline-flex items-center gap-1 pb-2">
-                    <CheckCircle2 className="h-3.5 w-3.5" /> {Math.round((new Date(dateTo).getTime() - new Date(dateFrom).getTime()) / 86400000) + 1} day(s) selected
-                  </span>
-                ) : (
-                  <span className="text-xs text-amber-600 font-medium inline-flex items-center gap-1 pb-2">
-                    <AlertCircle className="h-3.5 w-3.5" /> Select both dates to filter
-                  </span>
-                )}
               </div>
             )}
           </div>
+
+          {/* Bulk action bar */}
+          {someSelected && (
+            <div className="mt-3 flex items-center gap-3 rounded-xl bg-[#3b82f6] px-4 py-2.5 shadow-md">
+              <span className="text-sm font-bold text-white">{selected.size} selected</span>
+              <div className="h-4 w-px bg-white/20" />
+              <button onClick={() => bulkUpdate("confirmed")} disabled={bulkBusy} className="inline-flex items-center gap-1 rounded-md bg-white/15 hover:bg-white/25 px-2.5 py-1 text-xs font-semibold text-white"><Check className="h-3 w-3" /> Confirm all</button>
+              <button onClick={() => bulkUpdate("done")} disabled={bulkBusy} className="inline-flex items-center gap-1 rounded-md bg-white/15 hover:bg-white/25 px-2.5 py-1 text-xs font-semibold text-white"><CheckCircle2 className="h-3 w-3" /> Mark all done</button>
+              <button onClick={() => bulkUpdate("cancelled")} disabled={bulkBusy} className="inline-flex items-center gap-1 rounded-md bg-rose-500/30 hover:bg-rose-500/40 px-2.5 py-1 text-xs font-semibold text-white"><X className="h-3 w-3" /> Cancel all</button>
+              {bulkBusy && <Loader2 className="h-4 w-4 animate-spin text-white" />}
+              <button onClick={clearSelection} className="ml-auto text-xs font-medium text-white/60 hover:text-white">Clear</button>
+            </div>
+          )}
 
           {/* List */}
           <div className="mt-5">
             {loading ? (
               <LoadingState />
             ) : visibleItems.length === 0 ? (
-              <EmptyState tab={tab} hasFilters={hasActiveFilters} onClear={clearFilters} />
+              <EmptyState tab={tab} hasFilters={department !== "all" || status !== "all" || qDebounced !== "" || (tab === "range" && (dateFrom !== "" || dateTo !== ""))} onClear={() => { setDepartment("all"); setStatus("all"); setQ(""); setDateFrom(""); setDateTo(""); }} />
             ) : (
               <>
-                {/* Bulk action bar */}
-                {someSelected && (
-                  <div className="mb-3 flex items-center gap-3 rounded-xl bg-[#0b6e8f] px-4 py-2.5 shadow-md shadow-[#0b6e8f]/20 animate-[fadeIn_0.2s_ease-out]">
-                    <span className="text-sm font-bold text-white">{selected.size} selected</span>
-                    <div className="h-4 w-px bg-white/20" />
-                    <button
-                      onClick={() => bulkUpdate("confirmed")}
-                      disabled={bulkBusy}
-                      className="inline-flex items-center gap-1 rounded-md bg-white/15 hover:bg-white/25 px-2.5 py-1 text-xs font-semibold text-white disabled:opacity-50"
-                    >
-                      <Check className="h-3 w-3" /> Confirm all
-                    </button>
-                    <button
-                      onClick={() => bulkUpdate("done")}
-                      disabled={bulkBusy}
-                      className="inline-flex items-center gap-1 rounded-md bg-white/15 hover:bg-white/25 px-2.5 py-1 text-xs font-semibold text-white disabled:opacity-50"
-                    >
-                      <CheckCircle2 className="h-3 w-3" /> Mark all done
-                    </button>
-                    <button
-                      onClick={() => bulkUpdate("cancelled")}
-                      disabled={bulkBusy}
-                      className="inline-flex items-center gap-1 rounded-md bg-rose-500/30 hover:bg-rose-500/40 px-2.5 py-1 text-xs font-semibold text-white disabled:opacity-50"
-                    >
-                      <X className="h-3 w-3" /> Cancel all
-                    </button>
-                    {bulkBusy && <Loader2 className="h-4 w-4 animate-spin text-white" />}
-                    <button
-                      onClick={clearSelection}
-                      className="ml-auto text-xs font-medium text-white/60 hover:text-white"
-                    >
-                      Clear
-                    </button>
-                  </div>
-                )}
-
                 {/* Desktop table */}
-                <div className="hidden lg:block rounded-2xl bg-white border border-slate-200/80 shadow-sm ring-1 ring-slate-100/50 overflow-hidden">
+                <div className="hidden lg:block rounded-xl bg-white border border-slate-200 shadow-sm overflow-hidden">
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm">
                       <thead>
-                        <tr className="bg-[#f0f9fb] text-left text-xs uppercase tracking-wider text-[#0b6e8f]/70">
-                          <th className="px-4 py-3 w-8">
-                            <input
-                              type="checkbox"
-                              checked={allSelected}
-                              onChange={toggleSelectAll}
-                              className="h-4 w-4 rounded border-slate-300 text-[#0b6e8f] focus:ring-[#0b6e8f]/30 cursor-pointer"
-                              aria-label="Select all"
-                            />
-                          </th>
+                        <tr className="bg-slate-50 text-left text-xs uppercase tracking-wider text-slate-500">
+                          <th className="px-4 py-3 w-8"><input type="checkbox" checked={allSelected} onChange={toggleSelectAll} className="h-4 w-4 rounded border-slate-300 text-[#3b82f6] focus:ring-[#3b82f6]/30 cursor-pointer" aria-label="Select all" /></th>
                           <th className="px-4 py-3 font-semibold">Patient</th>
                           <th className="px-4 py-3 font-semibold">Date & Time</th>
                           <th className="px-4 py-3 font-semibold">Dept</th>
@@ -522,23 +315,14 @@ export function AdminDashboard() {
                           <th className="px-4 py-3 font-semibold text-right">Actions</th>
                         </tr>
                       </thead>
-                      <tbody className="divide-y divide-[#0b6e8f]/8">
+                      <tbody className="divide-y divide-slate-100">
                         {visibleItems.map((a) => (
-                          <ApptRow
-                            key={a.id}
-                            a={a}
-                            busy={busyId === a.id}
-                            selected={selected.has(a.id)}
-                            onToggleSelect={toggleSelect}
-                            onAction={updateStatus}
-                            onView={openDetail}
-                          />
+                          <ApptRow key={a.id} a={a} busy={busyId === a.id} selected={selected.has(a.id)} onToggleSelect={toggleSelect} onAction={updateStatus} onView={openDetail} />
                         ))}
                       </tbody>
                     </table>
                   </div>
                 </div>
-
                 {/* Mobile cards */}
                 <div className="lg:hidden space-y-3">
                   {visibleItems.map((a) => (
@@ -549,38 +333,30 @@ export function AdminDashboard() {
             )}
           </div>
 
-          {/* Recent Activity feed */}
+          {/* Activity feed */}
           <div className="mt-6">
-            <ActivityFeed onView={(id) => {
-              const appt = items.find((a) => a.id === id);
-              if (appt) openDetail(appt);
-            }} />
+            <ActivityFeed onView={(id) => { const appt = items.find((a) => a.id === id); if (appt) openDetail(appt); }} />
           </div>
 
           {/* Quick Actions */}
           <div className="mt-6">
-            <div className="rounded-2xl bg-white border border-slate-200/80 p-5 shadow-sm">
-              <h3 className="text-sm font-bold text-[#0047AB] mb-4">Quick Actions</h3>
+            <div className="rounded-xl bg-white border border-slate-200 p-5 shadow-sm">
+              <h3 className="text-base font-bold text-[#374151] mb-4">Quick Actions</h3>
               <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
                 {[
                   { icon: CalendarCheck, label: "Add Appointment", onClick: () => setCreateOpen(true) },
                   { icon: Users, label: "Add Patient", href: "/book" },
                   { icon: UserCircle2, label: "Add Doctor", href: "/admin/settings" },
-                  { icon: FileText, label: "Create Invoice", href: "/api/admin/appointments/export" },
-                  { icon: DollarSign, label: "Add Payment", href: "/api/admin/appointments/export" },
-                  { icon: BarChart3, label: "Generate Report", href: "/api/admin/appointments/export" },
+                  { icon: Download, label: "Export CSV", href: "/api/admin/appointments/export" },
+                  { icon: Eye, label: "View Gallery", href: "/gallery" },
+                  { icon: Star, label: "View Reviews", href: "/reviews" },
                 ].map((action) => (
-                  <button
-                    key={action.label}
-                    onClick={() => action.onClick ? action.onClick() : window.open(action.href, "_self")}
-                    className="group flex flex-col items-center gap-2 p-3 rounded-xl hover:bg-slate-50 transition-colors"
-                  >
-                    <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#0047AB]/8 text-[#0047AB] group-hover:bg-[#0047AB] group-hover:text-white transition-colors">
+                  <button key={action.label} onClick={() => action.onClick ? action.onClick() : window.open(action.href, "_self")}
+                    className="group flex flex-col items-center gap-2 p-3 rounded-xl bg-slate-50 hover:bg-[#3b82f6]/5 transition-colors">
+                    <span className="flex h-10 w-10 items-center justify-center rounded-lg bg-white text-[#3b82f6] group-hover:bg-[#3b82f6] group-hover:text-white transition-colors shadow-sm">
                       <action.icon className="h-5 w-5" />
                     </span>
-                    <span className="text-[10px] sm:text-xs font-semibold text-slate-600 text-center leading-tight">
-                      {action.label}
-                    </span>
+                    <span className="text-[10px] sm:text-xs font-semibold text-[#374151] text-center leading-tight">{action.label}</span>
                   </button>
                 ))}
               </div>
@@ -589,44 +365,30 @@ export function AdminDashboard() {
 
           {/* Footer */}
           <footer className="mt-8 pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-2">
-            <p className="text-xs text-slate-400">© 2026 Sarada Netralaya. All Rights Reserved.</p>
-            <p className="text-xs text-slate-400">Version 1.0.0</p>
+            <p className="text-xs text-[#6b7280]">© 2026 Sarada Netralaya. All Rights Reserved.</p>
+            <p className="text-xs text-[#6b7280]">Version 1.0.0</p>
           </footer>
         </main>
       </div>
 
-      {/* Appointment detail / edit dialog */}
-      <AppointmentDetailDialog
-        appt={dialogAppt}
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
-        onUpdated={onDialogUpdated}
-        onDeleted={onDialogDeleted}
-      />
-
-      {/* Create appointment dialog */}
-      <CreateAppointmentDialog
-        open={createOpen}
-        onOpenChange={setCreateOpen}
-        onCreated={onCreated}
-      />
-      <style>{`
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }
-      `}</style>
+      {/* Dialogs */}
+      <AppointmentDetailDialog appt={dialogAppt} open={dialogOpen} onOpenChange={setDialogOpen} onUpdated={onDialogUpdated} onDeleted={onDialogDeleted} />
+      <CreateAppointmentDialog open={createOpen} onOpenChange={setCreateOpen} onCreated={onCreated} />
+      <style>{`@keyframes fadeIn { from { opacity: 0; transform: translateY(-4px); } to { opacity: 1; transform: translateY(0); } }`}</style>
     </div>
   );
 }
 
-/* ---------- Sidebar (premium dark with gradient + glow) ---------- */
+/* ---------- Sidebar ---------- */
 function SidebarContent({ onLogout }: { onLogout: () => void }) {
   return (
     <div className="flex flex-col h-full">
       {/* Brand */}
-      <div className="p-5 border-b border-slate-100">
+      <div className="p-4 border-b border-slate-100">
         <div className="flex items-center gap-2.5">
           <Image src="/images/logo.png" alt="Sarada Netralaya" width={36} height={24} className="shrink-0" />
           <div className="leading-none">
-            <div className="text-sm font-bold text-[#0047AB]">Sarada Netralaya</div>
+            <div className="text-sm font-bold text-[#374151]">Sarada Netralaya</div>
             <div className="text-[10px] text-slate-400 mt-0.5">We Care, We Cure</div>
           </div>
         </div>
@@ -635,53 +397,40 @@ function SidebarContent({ onLogout }: { onLogout: () => void }) {
       {/* Nav */}
       <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
         <div className="px-3 pb-2 pt-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">Main</div>
-        <a href="/admin" className="flex items-center gap-3 rounded-xl bg-[#0047AB] px-3 py-2.5 text-sm font-bold text-white shadow-md shadow-[#0047AB]/20">
-          <CalendarDays className="h-4 w-4" />
-          Appointments
+        <a href="/admin" className="flex items-center gap-3 rounded-lg bg-[#3b82f6] px-3 py-2.5 text-sm font-bold text-white shadow-sm">
+          <CalendarDays className="h-4 w-4" /> Appointments
         </a>
-        <a href="/admin/settings" className="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#0047AB] transition-colors">
-          <UserCircle2 className="h-4 w-4 text-slate-400 group-hover:text-[#0047AB]" />
-          Settings
+        <a href="/admin/settings" className="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#3b82f6] transition-colors">
+          <UserCircle2 className="h-4 w-4 text-slate-400 group-hover:text-[#3b82f6]" /> Settings
         </a>
-
         <div className="px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">Links</div>
-        <a href="/" className="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#0047AB] transition-colors">
-          <ExternalLink className="h-4 w-4 text-slate-400 group-hover:text-[#0047AB]" />
-          View Website
+        <a href="/" className="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#3b82f6] transition-colors">
+          <ExternalLink className="h-4 w-4 text-slate-400 group-hover:text-[#3b82f6]" /> View Website
         </a>
-        <a href="/book" className="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#0047AB] transition-colors">
-          <CalendarCheck className="h-4 w-4 text-slate-400 group-hover:text-[#0047AB]" />
-          Book Appointment
+        <a href="/book" className="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#3b82f6] transition-colors">
+          <CalendarCheck className="h-4 w-4 text-slate-400 group-hover:text-[#3b82f6]" /> Book Appointment
         </a>
-        <a href="/gallery" className="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#0047AB] transition-colors">
-          <Eye className="h-4 w-4 text-slate-400 group-hover:text-[#0047AB]" />
-          Gallery
+        <a href="/gallery" className="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#3b82f6] transition-colors">
+          <Eye className="h-4 w-4 text-slate-400 group-hover:text-[#3b82f6]" /> Gallery
         </a>
-        <a href="/reviews" className="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#0047AB] transition-colors">
-          <Star className="h-4 w-4 text-slate-400 group-hover:text-[#0047AB]" />
-          Reviews
+        <a href="/reviews" className="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#3b82f6] transition-colors">
+          <Star className="h-4 w-4 text-slate-400 group-hover:text-[#3b82f6]" /> Reviews
         </a>
-        <a href="/track" className="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#0047AB] transition-colors">
-          <Search className="h-4 w-4 text-slate-400 group-hover:text-[#0047AB]" />
-          Track Appointment
+        <a href="/track" className="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#3b82f6] transition-colors">
+          <Search className="h-4 w-4 text-slate-400 group-hover:text-[#3b82f6]" /> Track Appointment
         </a>
       </nav>
 
       {/* Help + User */}
       <div className="p-3 border-t border-slate-100 space-y-2">
-        <div className="flex items-center gap-2.5 rounded-xl bg-[#0047AB]/5 px-3 py-2.5">
-          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#0047AB] text-white text-xs font-bold">
-            SN
-          </span>
+        <div className="flex items-center gap-2.5 rounded-lg bg-slate-50 px-3 py-2.5">
+          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#3b82f6] text-white text-xs font-bold">SN</span>
           <div className="leading-tight min-w-0 flex-1">
-            <div className="text-sm font-semibold text-[#0047AB] truncate">Sarada Owner</div>
+            <div className="text-sm font-semibold text-[#374151] truncate">Sarada Owner</div>
             <div className="text-[11px] text-slate-400 truncate">{SITE.domain}</div>
           </div>
         </div>
-        <button
-          onClick={onLogout}
-          className="w-full flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm font-medium text-rose-500 hover:bg-rose-50 transition-colors"
-        >
+        <button onClick={onLogout} className="w-full flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-rose-500 hover:bg-rose-50 transition-colors">
           <LogOut className="h-4 w-4" /> Logout
         </button>
       </div>
@@ -689,27 +438,17 @@ function SidebarContent({ onLogout }: { onLogout: () => void }) {
   );
 }
 
-/* ---------- KPI Tile (premium card with gradient + sparkline dot) ---------- */
-const TONE_MAP: Record<string, { bg: string; text: string; gradient: string }> = {
-  teal: { bg: "bg-[#0047AB]/10", text: "text-[#0047AB]", gradient: "from-[#0047AB] to-[#003a8c]" },
-  amber: { bg: "bg-amber-50", text: "text-amber-600", gradient: "from-amber-400 to-amber-600" },
-  sky: { bg: "bg-sky-50", text: "text-sky-600", gradient: "from-sky-400 to-sky-600" },
-  emerald: { bg: "bg-emerald-50", text: "text-emerald-600", gradient: "from-emerald-400 to-emerald-600" },
-};
-
-function KpiTile({
-  icon: Icon, label, value, tone,
-}: { icon: typeof Eye; label: string; value: number; tone: keyof typeof TONE_MAP }) {
-  const t = TONE_MAP[tone];
+/* ---------- KPI Card (matching mockup: icon top, value large, label below) ---------- */
+function KpiCard({
+  icon: Icon, label, value, iconColor, iconBg, valueColor,
+}: { icon: typeof Eye; label: string; value: number; iconColor: string; iconBg: string; valueColor: string }) {
   return (
-    <div className="group rounded-2xl bg-white border border-slate-200/80 p-5 shadow-sm hover:shadow-lg hover:shadow-[#0047AB]/5 hover:-translate-y-0.5 transition-all duration-300">
-      <div className="flex items-center justify-between mb-3">
-        <span className={`flex h-10 w-10 items-center justify-center rounded-xl ${t.bg} ${t.text}`}>
-          <Icon className="h-5 w-5" strokeWidth={2} />
-        </span>
-      </div>
-      <div className="text-3xl font-bold text-slate-800 tabular-nums leading-none">{value}</div>
-      <p className="mt-2 text-xs text-slate-500 font-medium leading-tight">{label}</p>
+    <div className="rounded-xl bg-white border border-slate-200 p-5 shadow-sm hover:shadow-md transition-shadow">
+      <span className={`flex h-10 w-10 items-center justify-center rounded-lg ${iconBg} ${iconColor}`}>
+        <Icon className="h-5 w-5" strokeWidth={2} />
+      </span>
+      <div className={`mt-3 text-3xl font-bold ${valueColor} tabular-nums leading-none`}>{value}</div>
+      <p className="mt-2 text-sm text-[#6b7280] font-medium leading-tight">{label}</p>
     </div>
   );
 }
@@ -717,25 +456,15 @@ function KpiTile({
 /* ---------- Filter Dropdown ---------- */
 function FilterDropdown({
   icon: Icon, label, value, onChange, options,
-}: {
-  icon: typeof Filter; label: string; value: string;
-  onChange: (v: string) => void;
-  options: { value: string; label: string }[];
-}) {
+}: { icon: typeof Filter; label: string; value: string; onChange: (v: string) => void; options: { value: string; label: string }[] }) {
   return (
     <div className="relative">
-      <Icon className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#0b6e8f]/50" />
-      <select
-        aria-label={label}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className="h-9 appearance-none rounded-md border border-[#0b6e8f]/20 bg-white pl-8 pr-8 text-xs sm:text-sm font-medium text-[#0f2f3a] focus:outline-none focus:ring-2 focus:ring-[#0b6e8f]/30 focus:border-[#0b6e8f]"
-      >
-        {options.map((o) => (
-          <option key={o.value} value={o.value}>{o.label}</option>
-        ))}
+      <Icon className="pointer-events-none absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" />
+      <select aria-label={label} value={value} onChange={(e) => onChange(e.target.value)}
+        className="h-9 appearance-none rounded-md border border-slate-200 bg-white pl-8 pr-8 text-xs sm:text-sm font-medium text-[#374151] focus:outline-none focus:ring-2 focus:ring-[#3b82f6]/20 focus:border-[#3b82f6]">
+        {options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
       </select>
-      <svg className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-[#0b6e8f]/50" viewBox="0 0 20 20" fill="none">
+      <svg className="pointer-events-none absolute right-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-slate-400" viewBox="0 0 20 20" fill="none">
         <path d="M5 7l5 5 5-5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
     </div>
@@ -743,96 +472,42 @@ function FilterDropdown({
 }
 
 /* ---------- Table Row ---------- */
-function ApptRow({
-  a, busy, onAction, onView, selected, onToggleSelect,
-}: { a: Appt; busy: boolean; onAction: (id: string, s: Status) => void; onView: (a: Appt) => void; selected?: boolean; onToggleSelect?: (id: string) => void }) {
+function ApptRow({ a, busy, onAction, onView, selected, onToggleSelect }: { a: Appt; busy: boolean; onAction: (id: string, s: Status) => void; onView: (a: Appt) => void; selected?: boolean; onToggleSelect?: (id: string) => void }) {
   const st = a.status as Status;
   const meta = STATUS_META[st];
   return (
-    <tr className={`hover:bg-[#f0f9fb]/50 transition-colors cursor-pointer group ${selected ? "bg-[#0b6e8f]/[0.04] ring-inset ring-2 ring-[#0b6e8f]/20" : ""}`} onClick={() => onView(a)}>
+    <tr className={`hover:bg-slate-50/50 transition-colors cursor-pointer group ${selected ? "bg-[#3b82f6]/[0.03]" : ""}`} onClick={() => onView(a)}>
       <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
-        <input
-          type="checkbox"
-          checked={selected ?? false}
-          onChange={() => onToggleSelect?.(a.id)}
-          className="h-4 w-4 rounded border-slate-300 text-[#0b6e8f] focus:ring-[#0b6e8f]/30 cursor-pointer"
-          aria-label={`Select ${a.name}`}
-        />
+        <input type="checkbox" checked={selected ?? false} onChange={() => onToggleSelect?.(a.id)} className="h-4 w-4 rounded border-slate-300 text-[#3b82f6] focus:ring-[#3b82f6]/30 cursor-pointer" aria-label={`Select ${a.name}`} />
       </td>
       <td className="px-4 py-3">
-        <div className="font-semibold text-[#084f67] group-hover:text-[#0b6e8f] transition-colors">{a.name}</div>
-        <a
-          href={telHref(a.phone)}
-          onClick={(e) => e.stopPropagation()}
-          className="text-xs font-semibold text-[#0b6e8f] hover:underline inline-flex items-center gap-1 mt-0.5"
-        >
+        <div className="font-semibold text-[#374151] group-hover:text-[#3b82f6] transition-colors">{a.name}</div>
+        <a href={telHref(a.phone)} onClick={(e) => e.stopPropagation()} className="text-xs font-semibold text-[#3b82f6] hover:underline inline-flex items-center gap-1 mt-0.5">
           <Phone className="h-3 w-3" />{formatPhone(a.phone)}
         </a>
-        <div className="text-[11px] text-[#0f2f3a]/45 mt-0.5">
-          {a.age != null && <span>{a.age} yrs · </span>}#{a.ref} · {timeAgoIST(a.createdAt)}
-        </div>
+        <div className="text-[11px] text-slate-400 mt-0.5">{a.age != null && <span>{a.age} yrs · </span>}#{a.ref} · {timeAgoIST(a.createdAt)}</div>
       </td>
       <td className="px-4 py-3">
-        <div className="font-medium text-[#0f2f3a]/85 text-[13px]">{formatDateLong(a.preferredDate)}</div>
-        <div className="text-xs text-[#0f2f3a]/55 mt-0.5">{a.timeSlot}</div>
+        <div className="font-medium text-[#374151] text-[13px]">{formatDateLong(a.preferredDate)}</div>
+        <div className="text-xs text-slate-500 mt-0.5">{a.timeSlot}</div>
       </td>
       <td className="px-4 py-3">
-        <span className="inline-flex items-center gap-1 rounded-md bg-[#0b6e8f]/8 px-2 py-0.5 text-xs font-semibold text-[#0b6e8f]">
-          {DEPT_LABEL[a.department as Department] ?? a.department}
-        </span>
+        <span className="inline-flex items-center gap-1 rounded-md bg-[#3b82f6]/8 px-2 py-0.5 text-xs font-semibold text-[#3b82f6]">{DEPT_LABEL[a.department as Department] ?? a.department}</span>
       </td>
-      <td className="px-4 py-3 max-w-[220px]">
-        <p className="text-xs text-[#0f2f3a]/65 line-clamp-2">{a.note || "—"}</p>
-      </td>
+      <td className="px-4 py-3 max-w-[220px]"><p className="text-xs text-slate-500 line-clamp-2">{a.note || "—"}</p></td>
       <td className="px-4 py-3">
-        <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-semibold ${meta.badge}`}>
-          <span>{meta.emoji}</span> {meta.label}
-        </span>
+        <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-semibold ${meta.badge}`}><span>{meta.emoji}</span> {meta.label}</span>
       </td>
       <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
         <div className="flex items-center justify-end gap-1">
-          <button
-            onClick={() => onView(a)}
-            title="View / Edit details"
-            className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-[#084f67]"
-          >
-            <EyeIcon className="h-4 w-4" />
-          </button>
-          <a
-            href={telHref(a.phone)}
-            className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-[#0b6e8f]/20 text-[#0b6e8f] hover:bg-[#0b6e8f]/5"
-            title={`Call ${formatPhone(a.phone)}`}
-          >
-            <Phone className="h-4 w-4" />
-          </a>
-          <button
-            onClick={() => printAppointmentSlip(a)}
-            title="Print appointment slip"
-            className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-[#084f67]"
-          >
-            <Printer className="h-4 w-4" />
-          </button>
-          {st === "pending" && (
-            <ActionBtn busy={busy} onClick={() => onAction(a.id, "confirmed")} title="Confirm" className="border-sky-200 text-sky-700 hover:bg-sky-50">
-              <Check className="h-4 w-4" />
-            </ActionBtn>
-          )}
-          {(st === "confirmed" || st === "pending") && (
-            <ActionBtn busy={busy} onClick={() => onAction(a.id, "done")} title="Mark Done" className="border-emerald-200 text-emerald-700 hover:bg-emerald-50">
-              <CheckCircle2 className="h-4 w-4" />
-            </ActionBtn>
-          )}
-          {(st === "pending" || st === "confirmed") && (
-            <ActionBtn busy={busy} onClick={() => onAction(a.id, "cancelled")} title="Cancel" className="border-rose-200 text-rose-600 hover:bg-rose-50">
-              <X className="h-4 w-4" />
-            </ActionBtn>
-          )}
-          {st === "done" && (
-            <span className="text-[10px] text-emerald-600/70 px-1">Completed</span>
-          )}
-          {st === "cancelled" && (
-            <span className="text-[10px] text-rose-500/70 px-1">Cancelled</span>
-          )}
+          <button onClick={() => onView(a)} title="View / Edit" className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-[#3b82f6]"><EyeIcon className="h-4 w-4" /></button>
+          <a href={telHref(a.phone)} title={`Call ${formatPhone(a.phone)}`} className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-[#3b82f6] hover:bg-[#3b82f6]/5"><Phone className="h-4 w-4" /></a>
+          <button onClick={() => printAppointmentSlip(a)} title="Print slip" className="inline-flex h-8 w-8 items-center justify-center rounded-md border border-slate-200 text-slate-500 hover:bg-slate-50 hover:text-[#3b82f6]"><Printer className="h-4 w-4" /></button>
+          {st === "pending" && <ActionBtn busy={busy} onClick={() => onAction(a.id, "confirmed")} title="Confirm" className="border-sky-200 text-sky-700 hover:bg-sky-50"><Check className="h-4 w-4" /></ActionBtn>}
+          {(st === "confirmed" || st === "pending") && <ActionBtn busy={busy} onClick={() => onAction(a.id, "done")} title="Mark Done" className="border-emerald-200 text-emerald-700 hover:bg-emerald-50"><CheckCircle2 className="h-4 w-4" /></ActionBtn>}
+          {(st === "pending" || st === "confirmed") && <ActionBtn busy={busy} onClick={() => onAction(a.id, "cancelled")} title="Cancel" className="border-rose-200 text-rose-600 hover:bg-rose-50"><X className="h-4 w-4" /></ActionBtn>}
+          {st === "done" && <span className="text-[10px] text-emerald-600/70 px-1">Completed</span>}
+          {st === "cancelled" && <span className="text-[10px] text-rose-500/70 px-1">Cancelled</span>}
         </div>
       </td>
     </tr>
@@ -840,97 +515,47 @@ function ApptRow({
 }
 
 /* ---------- Mobile Card ---------- */
-function ApptCard({
-  a, busy, onAction, onView,
-}: { a: Appt; busy: boolean; onAction: (id: string, s: Status) => void; onView: (a: Appt) => void }) {
+function ApptCard({ a, busy, onAction, onView }: { a: Appt; busy: boolean; onAction: (id: string, s: Status) => void; onView: (a: Appt) => void }) {
   const st = a.status as Status;
   const meta = STATUS_META[st];
   return (
-    <div className="rounded-2xl bg-white border border-[#0b6e8f]/10 p-4 shadow-sm">
+    <div className="rounded-xl bg-white border border-slate-200 p-4 shadow-sm">
       <div className="flex items-start justify-between gap-2">
         <button onClick={() => onView(a)} className="min-w-0 text-left">
-          <div className="font-bold text-[#084f67]">{a.name}</div>
-          <div className="text-xs font-semibold text-[#0b6e8f] mt-0.5">
-            {formatPhone(a.phone)} {a.age != null && <span className="text-[#0f2f3a]/55 font-normal">· {a.age} yrs</span>}
-          </div>
-          <div className="text-[10px] text-[#0f2f3a]/35 mt-0.5">#{a.ref} · tap to view</div>
+          <div className="font-bold text-[#374151]">{a.name}</div>
+          <div className="text-xs font-semibold text-[#3b82f6] mt-0.5">{formatPhone(a.phone)} {a.age != null && <span className="text-slate-500 font-normal">· {a.age} yrs</span>}</div>
+          <div className="text-[10px] text-slate-400 mt-0.5">#{a.ref} · tap to view</div>
         </button>
-        <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-semibold shrink-0 ${meta.badge}`}>
-          <span>{meta.emoji}</span> {meta.label}
-        </span>
+        <span className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-semibold shrink-0 ${meta.badge}`}><span>{meta.emoji}</span> {meta.label}</span>
       </div>
-
       <div className="mt-3 grid grid-cols-2 gap-2 text-xs">
-        <div className="rounded-lg bg-[#f0f9fb] p-2">
-          <div className="text-[10px] uppercase tracking-wider text-[#0b6e8f]/60 font-semibold">Date & Time</div>
-          <div className="font-medium text-[#0f2f3a]/85 mt-0.5">{formatDateLong(a.preferredDate)}</div>
-          <div className="text-[#0f2f3a]/55">{a.timeSlot}</div>
+        <div className="rounded-lg bg-slate-50 p-2">
+          <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Date & Time</div>
+          <div className="font-medium text-[#374151] mt-0.5">{formatDateLong(a.preferredDate)}</div>
+          <div className="text-slate-500">{a.timeSlot}</div>
         </div>
-        <div className="rounded-lg bg-[#f0f9fb] p-2">
-          <div className="text-[10px] uppercase tracking-wider text-[#0b6e8f]/60 font-semibold">Department</div>
-          <div className="font-medium text-[#0f2f3a]/85 mt-0.5">
-            {DEPT_LABEL[a.department as Department] ?? a.department}
-          </div>
+        <div className="rounded-lg bg-slate-50 p-2">
+          <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Department</div>
+          <div className="font-medium text-[#374151] mt-0.5">{DEPT_LABEL[a.department as Department] ?? a.department}</div>
         </div>
       </div>
-
-      {a.note && (
-        <div className="mt-2 text-xs text-[#0f2f3a]/65 bg-[#0b6e8f]/4 rounded-lg p-2 border border-[#0b6e8f]/8">
-          <span className="font-semibold text-[#0b6e8f]">Note: </span>{a.note}
-        </div>
-      )}
-
+      {a.note && <div className="mt-2 text-xs text-slate-500 bg-slate-50 rounded-lg p-2 border border-slate-100"><span className="font-semibold text-[#3b82f6]">Note: </span>{a.note}</div>}
       <div className="mt-3 flex flex-wrap gap-2">
-        <button
-          onClick={() => onView(a)}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-[#084f67]"
-        >
-          <EyeIcon className="h-3.5 w-3.5" /> Details
-        </button>
-        <a
-          href={telHref(a.phone)}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-[#0b6e8f]/20 px-3 py-1.5 text-xs font-semibold text-[#0b6e8f] hover:bg-[#0b6e8f]/5"
-        >
-          <Phone className="h-3.5 w-3.5" /> Call
-        </a>
-        <button
-          onClick={() => printAppointmentSlip(a)}
-          className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-[#084f67]"
-        >
-          <Printer className="h-3.5 w-3.5" /> Slip
-        </button>
-        {st === "pending" && (
-          <ActionBtn busy={busy} onClick={() => onAction(a.id, "confirmed")} title="Confirm" className="border-sky-200 text-sky-700 hover:bg-sky-50 !px-3 !h-8 text-xs">
-            <Check className="h-3.5 w-3.5" /> Confirm
-          </ActionBtn>
-        )}
-        {(st === "confirmed" || st === "pending") && (
-          <ActionBtn busy={busy} onClick={() => onAction(a.id, "done")} title="Mark Done" className="border-emerald-200 text-emerald-700 hover:bg-emerald-50 !px-3 !h-8 text-xs">
-            <CheckCircle2 className="h-3.5 w-3.5" /> Done
-          </ActionBtn>
-        )}
-        {(st === "pending" || st === "confirmed") && (
-          <ActionBtn busy={busy} onClick={() => onAction(a.id, "cancelled")} title="Cancel" className="border-rose-200 text-rose-600 hover:bg-rose-50 !px-3 !h-8 text-xs ml-auto">
-            <X className="h-3.5 w-3.5" /> Cancel
-          </ActionBtn>
-        )}
+        <button onClick={() => onView(a)} className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-[#3b82f6]"><EyeIcon className="h-3.5 w-3.5" /> Details</button>
+        <a href={telHref(a.phone)} className="inline-flex items-center gap-1.5 rounded-lg border border-[#3b82f6]/20 px-3 py-1.5 text-xs font-semibold text-[#3b82f6] hover:bg-[#3b82f6]/5"><Phone className="h-3.5 w-3.5" /> Call</a>
+        <button onClick={() => printAppointmentSlip(a)} className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-[#3b82f6]"><Printer className="h-3.5 w-3.5" /> Slip</button>
+        {st === "pending" && <ActionBtn busy={busy} onClick={() => onAction(a.id, "confirmed")} title="Confirm" className="border-sky-200 text-sky-700 hover:bg-sky-50 !px-3 !h-8 text-xs"><Check className="h-3.5 w-3.5" /> Confirm</ActionBtn>}
+        {(st === "confirmed" || st === "pending") && <ActionBtn busy={busy} onClick={() => onAction(a.id, "done")} title="Mark Done" className="border-emerald-200 text-emerald-700 hover:bg-emerald-50 !px-3 !h-8 text-xs"><CheckCircle2 className="h-3.5 w-3.5" /> Done</ActionBtn>}
+        {(st === "pending" || st === "confirmed") && <ActionBtn busy={busy} onClick={() => onAction(a.id, "cancelled")} title="Cancel" className="border-rose-200 text-rose-600 hover:bg-rose-50 !px-3 !h-8 text-xs ml-auto"><X className="h-3.5 w-3.5" /> Cancel</ActionBtn>}
       </div>
     </div>
   );
 }
 
-function ActionBtn({
-  busy, onClick, title, className, children,
-}: {
-  busy: boolean; onClick: () => void; title: string; className?: string; children: React.ReactNode;
-}) {
+function ActionBtn({ busy, onClick, title, className, children }: { busy: boolean; onClick: () => void; title: string; className?: string; children: React.ReactNode }) {
   return (
-    <button
-      onClick={onClick}
-      disabled={busy}
-      title={title}
-      className={`inline-flex h-8 w-8 items-center justify-center rounded-md border disabled:opacity-50 disabled:cursor-wait ${className ?? ""}`}
-    >
+    <button onClick={onClick} disabled={busy} title={title}
+      className={`inline-flex h-8 w-8 items-center justify-center rounded-md border disabled:opacity-50 disabled:cursor-wait ${className ?? ""}`}>
       {busy ? <Loader2 className="h-4 w-4 animate-spin" /> : children}
     </button>
   );
@@ -939,49 +564,30 @@ function ActionBtn({
 /* ---------- States ---------- */
 function LoadingState() {
   return (
-    <div className="rounded-2xl bg-white border border-[#0b6e8f]/10 p-10 shadow-sm">
+    <div className="rounded-xl bg-white border border-slate-200 p-10 shadow-sm">
       <div className="flex flex-col items-center justify-center text-center py-10">
-        <Loader2 className="h-8 w-8 animate-spin text-[#0b6e8f]" />
-        <p className="mt-3 text-sm text-[#0f2f3a]/55">Loading appointments...</p>
+        <Loader2 className="h-8 w-8 animate-spin text-[#3b82f6]" />
+        <p className="mt-3 text-sm text-slate-500">Loading appointments...</p>
       </div>
-      <div className="mt-4 space-y-2">
-        {[0, 1, 2].map((i) => (
-          <div key={i} className="h-14 rounded-lg bg-[#f0f9fb] animate-pulse" />
-        ))}
-      </div>
+      <div className="mt-4 space-y-2">{[0, 1, 2].map((i) => <div key={i} className="h-14 rounded-lg bg-slate-50 animate-pulse" />)}</div>
     </div>
   );
 }
 
-function EmptyState({
-  tab, hasFilters, onClear,
-}: { tab: Tab; hasFilters: boolean; onClear: () => void }) {
+function EmptyState({ tab, hasFilters, onClear }: { tab: Tab; hasFilters: boolean; onClear: () => void }) {
   const message = hasFilters
     ? "No appointments match your current filters. Try clearing them or switching tabs."
-    : tab === "today"
-      ? "No appointments scheduled for today. Switch to 'Upcoming' to view future bookings."
-      : tab === "upcoming"
-        ? "No upcoming appointments. New bookings from the website will appear here automatically."
-        : tab === "past"
-          ? "No past appointments yet. Completed and past-date appointments will show up here."
-          : "There are no appointments in the system yet. Bookings made from the website will appear here.";
-
+    : tab === "today" ? "No appointments scheduled for today. Switch to 'Upcoming' to view future bookings."
+    : tab === "upcoming" ? "No upcoming appointments. New bookings from the website will appear here automatically."
+    : tab === "past" ? "No past appointments yet. Completed and past-date appointments will show up here."
+    : "There are no appointments in the system yet. Bookings made from the website will appear here.";
   return (
-    <div className="rounded-2xl bg-white border border-[#0b6e8f]/10 p-10 shadow-sm">
+    <div className="rounded-xl bg-white border border-slate-200 p-10 shadow-sm">
       <div className="flex flex-col items-center justify-center text-center py-12">
-        <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-[#0b6e8f]/8 text-[#0b6e8f]">
-          <Inbox className="h-8 w-8" />
-        </span>
-        <h3 className="mt-4 text-lg font-bold text-[#084f67]">No appointments found</h3>
-        <p className="mt-1 text-sm text-[#0f2f3a]/55 max-w-sm">{message}</p>
-        {hasFilters && (
-          <button
-            onClick={onClear}
-            className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-[#0b6e8f] hover:bg-[#084f67] px-4 py-2 text-sm font-semibold text-white"
-          >
-            <X className="h-4 w-4" /> Clear all filters
-          </button>
-        )}
+        <span className="flex h-16 w-16 items-center justify-center rounded-2xl bg-slate-100 text-slate-400"><Inbox className="h-8 w-8" /></span>
+        <h3 className="mt-4 text-lg font-bold text-[#374151]">No appointments found</h3>
+        <p className="mt-1 text-sm text-slate-500 max-w-sm">{message}</p>
+        {hasFilters && <button onClick={onClear} className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-[#3b82f6] hover:bg-[#2563eb] px-4 py-2 text-sm font-semibold text-white"><X className="h-4 w-4" /> Clear all filters</button>}
       </div>
     </div>
   );
