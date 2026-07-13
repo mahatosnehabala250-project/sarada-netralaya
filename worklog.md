@@ -669,3 +669,43 @@ Stage Summary (Verification):
 - All routes: 200 ✓
 - Deployed to Vercel (dpl_GjHLWPBHMiqj11bLzwqQqJpHF4H5, READY)
 - Pushed to GitHub (commit aa85a04)
+
+---
+Task ID: PHASE-2-SECURITY
+Agent: main (Z.ai Code) — user request
+Task: Phase 2 security fixes — middleware, bcrypt, CSV injection, lookup rate limit.
+
+Work Log:
+1. Added src/middleware.ts — centralized auth middleware:
+   - Protects all /admin/* and /api/admin/* paths
+   - Verifies session cookie signature + expiry before route handler runs
+   - /api/admin/login and /api/admin/logout exempt (need to be public)
+   - API routes return 401 JSON if unauthenticated
+   - Defense-in-depth layer (API routes still check auth individually)
+
+2. Replaced plaintext password storage with bcrypt hashing:
+   - Installed bcryptjs (pure JS, Vercel-compatible)
+   - owner-settings.ts: passwords stored as bcrypt hashes (never plaintext)
+   - auth.ts: verifyOwnerCredentials uses bcrypt.compareSync (constant-time)
+   - change-password API: uses verifyPassword() + setOwnerPassword()
+   - Env-var password hashed once and cached (no re-hash per request)
+   - Removed getOwnerPassword() export (was returning plaintext)
+
+3. Fixed CSV injection in export endpoint:
+   - csvEscape() now prefixes cells starting with =, +, -, @, tab, or CR
+     with a single quote — prevents Excel/LibreOffice formula execution
+   - Patient notes (free-text from public form) were the attack surface
+
+4. Added rate limiting to /api/appointments/lookup:
+   - 3 lookups per 10 minutes per IP (separate key from booking limiter)
+   - Prevents brute-force enumeration of patient data
+   - Returns 429 with helpful "Too many attempts" message
+
+Stage Summary (Verification):
+- Unauthed API → 401 (middleware working) ✓
+- Lookup rate limit → 429 after 3 attempts ✓
+- Login → 200 with bcrypt-hashed password ✓
+- tsc → 0 errors, lint → clean ✓
+- All routes 200 on production ✓
+- Deployed to Vercel (dpl_DFRwUE1L8XLpGdQz7hnEGUmDhLFZ, READY)
+- Pushed to GitHub (commit b891e8b)
