@@ -1,34 +1,42 @@
 // Centralized auth middleware — protects all /admin and /api/admin routes.
-// Checks the signed session cookie before the route handler runs.
-// If invalid/missing, redirects (pages) or 401s (API).
-//
-// SECURITY: SESSION_SECRET is required in production (fail-closed).
-// /admin routes get an X-Robots-Tag: noindex header as defense-in-depth
-// against indexing (complements robots.txt which is only a hint).
+// Runs on Node.js runtime (not Edge) because it uses Node's crypto module.
 
 import { NextRequest, NextResponse } from "next/server";
 import { createHmac, timingSafeEqual } from "crypto";
-import { getSessionSecretSafe } from "@/lib/session-secret";
 
 const SESSION_COOKIE = "sn_owner_session";
+const DEV_FALLBACK = "dev-only-secret-change-me-in-production";
+const MIN_SECRET_LENGTH = 32;
 
-/** Verify the session cookie signature and expiry. Fail-closed if secret unset. */
+/** Get SESSION_SECRET — fail-closed in production if missing/weak. */
+function getSecret(): string | null {
+  const env = process.env.SESSION_SECRET;
+  const isProd = process.env.NODE_ENV === "production";
+
+  if (isProd) {
+    if (!env || env.length < MIN_SECRET_LENGTH || env === DEV_FALLBACK) {
+      return null; // fail-closed
+    }
+    return env;
+  }
+  // Dev: allow fallback
+  return env && env.length >= MIN_SECRET_LENGTH ? env : DEV_FALLBACK;
+}
+
+/** Verify the session cookie signature and expiry. */
 function verifySession(token: string): boolean {
-  const secret = getSessionSecretSafe();
-  if (!secret) return false; // production misconfig — deny
+  const secret = getSecret();
+  if (!secret) return false;
 
-  const [body, sig] = token.split(".");
-  if (!body || !sig) return false;
-  const expected = createHmac("sha256", secret).update(body).digest("base64url");
   try {
+    const [body, sig] = token.split(".");
+    if (!body || !sig) return false;
+    const expected = createHmac("sha256", secret).update(body).digest("base64url");
     const a = Buffer.from(sig);
     const b = Buffer.from(expected);
     if (a.length !== b.length) return false;
     if (!timingSafeEqual(a, b)) return false;
-  } catch {
-    return false;
-  }
-  try {
+
     const payload = JSON.parse(Buffer.from(body, "base64url").toString("utf8"));
     if (typeof payload.exp !== "number") return false;
     if (Date.now() > payload.exp) return false;
@@ -46,7 +54,9 @@ export function middleware(req: NextRequest) {
 
   // Allow login + logout endpoints without auth
   if (pathname === "/api/admin/login" || pathname === "/api/admin/logout") {
-    return NextResponse.next();
+    const res = NextResponse.next();
+    res.headers.set("X-Robots-Tag", "noindex, nofollow");
+    return res;
   }
 
   // API routes — return 401 JSON
@@ -54,17 +64,12 @@ export function middleware(req: NextRequest) {
     if (!isAuthed) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    return NextResponse.next();
+    const res = NextResponse.next();
+    res.headers.set("X-Robots-Tag", "noindex, nofollow");
+    return res;
   }
 
-  // Admin pages — let the page handler decide (it checks auth again for SSR).
-  // The middleware just ensures the cookie is valid; the page does the actual
-  // redirect to login. This is a defense-in-depth layer.
-  //
-  // Defense-in-depth: send X-Robots-Tag: noindex, nofollow on all /admin
-  // responses so search engines never index the admin surface, even if a
-  // rogue link appears somewhere. robots.txt already disallows /admin but
-  // is only a hint.
+  // Admin pages — let the page handler decide (it checks auth for SSR).
   const res = NextResponse.next();
   res.headers.set("X-Robots-Tag", "noindex, nofollow");
   return res;
