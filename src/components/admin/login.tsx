@@ -61,9 +61,7 @@ export function AdminLogin() {
         <div className="w-full max-w-md">
           {/* Brand */}
           <div className="text-center mb-8">
-            <span className="relative inline-flex h-16 w-16 items-center justify-center rounded-2xl overflow-hidden shadow-2xl shadow-emerald-900/30">
-              <Image src="/images/logo.png" alt="Sarada Netralaya" width={64} height={64} className="object-cover" />
-            </span>
+            <Image src="/images/logo.png" alt="Sarada Netralaya" width={72} height={48} className="shrink-0" />
             <h1 className="mt-5 text-2xl font-bold text-white tracking-tight">Sarada Netralaya</h1>
             <div className="mt-1.5 inline-flex items-center gap-1.5 rounded-full bg-white/10 backdrop-blur-sm border border-white/15 px-3 py-1 text-[11px] font-semibold text-white/80">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
