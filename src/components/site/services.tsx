@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { ArrowRight, Check } from "lucide-react";
 
 type Service = {
@@ -109,14 +110,13 @@ export function Services() {
                   ))}
                 </ul>
 
-                <a
-                  href="#book"
-                  onClick={(e) => { e.preventDefault(); document.querySelector("#book")?.scrollIntoView({ behavior: "smooth" }); }}
+                <Link
+                  href="/book"
                   className="mt-5 inline-flex items-center gap-1.5 text-sm font-bold text-[#10b981] hover:text-[#059669] transition-colors group/link min-h-[40px]"
                 >
                   Book this service
                   <ArrowRight className="h-4 w-4 group-hover/link:translate-x-0.5 transition-transform" />
-                </a>
+                </Link>
               </div>
             </article>
           ))}

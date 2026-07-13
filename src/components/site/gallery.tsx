@@ -118,9 +118,9 @@ export function GalleryPage() {
         <div className="mx-auto max-w-2xl px-4 text-center">
           <h2 className="text-2xl sm:text-3xl font-bold text-white">Want to see it in person?</h2>
           <p className="mt-2 text-sm text-white/60">Book a visit and experience our facility yourself.</p>
-          <a href="/#book" className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[#10b981] hover:bg-[#059669] text-white px-7 py-3.5 text-base font-bold transition-colors">
+          <Link href="/book" className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[#10b981] hover:bg-[#059669] text-white px-7 py-3.5 text-base font-bold transition-colors">
             Book Appointment
-          </a>
+          </Link>
         </div>
       </div>
 

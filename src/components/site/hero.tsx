@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { ArrowRight, Phone, Star, CheckCircle2 } from "lucide-react";
 import { SITE, PHONES } from "@/lib/site-info";
 
@@ -67,14 +68,13 @@ export function Hero() {
 
             {/* CTAs */}
             <div className="mt-8 flex flex-col sm:flex-row gap-3">
-              <a
-                href="#book"
-                onClick={(e) => { e.preventDefault(); document.querySelector("#book")?.scrollIntoView({ behavior: "smooth" }); }}
+              <Link
+                href="/book"
                 className="group inline-flex items-center justify-center gap-2 rounded-xl bg-[#10b981] hover:bg-[#059669] px-7 py-4 text-base font-bold text-white shadow-lg shadow-emerald-600/20 transition-all hover:shadow-xl hover:shadow-emerald-600/30 min-h-[52px]"
               >
                 Book Free Appointment
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-0.5" />
-              </a>
+              </Link>
               <a
                 href={`tel:${PHONES.primaryTel}`}
                 className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-[#0a3d4a] text-[#0a3d4a] px-7 py-4 text-base font-bold hover:bg-[#0a3d4a] hover:text-white transition-colors min-h-[52px]"

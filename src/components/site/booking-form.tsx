@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { CalendarCheck, Loader2, CheckCircle2, Phone, AlertCircle, Eye, Glasses, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -96,9 +97,9 @@ export function BookingForm() {
               <a href={`tel:${PHONES.primaryTel}`} className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#0a3d4a] text-white px-5 py-2.5 text-sm font-bold min-h-[44px]">
                 <Phone className="h-4 w-4" /> Call to confirm
               </a>
-              <a href="/track" className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 text-[#0a3d4a] px-5 py-2.5 text-sm font-bold hover:bg-slate-50 min-h-[44px]">
+              <Link href="/track" className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 text-[#0a3d4a] px-5 py-2.5 text-sm font-bold hover:bg-slate-50 min-h-[44px]">
                 <Search className="h-4 w-4" /> Track later
-              </a>
+              </Link>
               <Button variant="outline" onClick={() => setSuccess(null)} className="border-slate-200 text-[#0a3d4a] min-h-[44px]">Book another</Button>
             </div>
           </div>

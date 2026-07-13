@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { CalendarCheck, Phone, ArrowUp } from "lucide-react";
 import { PHONES } from "@/lib/site-info";
 
@@ -16,10 +17,10 @@ export function MobileCtaBar() {
   return (
     <div className="sm:hidden fixed bottom-0 inset-x-0 z-40 bg-[#faf8f3]/95 backdrop-blur-md border-t border-[#0a3d4a]/10 shadow-[0_-4px_20px_-8px_rgba(10,61,74,0.2)]">
       <div className="grid grid-cols-2 gap-2 p-2.5 pb-[calc(0.625rem+env(safe-area-inset-bottom))]">
-        <a href="#book" onClick={(e) => { e.preventDefault(); document.querySelector("#book")?.scrollIntoView({ behavior: "smooth" }); }}
+        <Link href="/book"
           className="flex items-center justify-center gap-2 rounded-full bg-[#0a3d4a] px-4 py-3 text-sm font-bold text-[#faf8f3]">
           <CalendarCheck className="h-4 w-4" /> Book
-        </a>
+        </Link>
         <a href={`tel:${PHONES.primaryTel}`} className="flex items-center justify-center gap-2 rounded-full bg-emerald-500 px-4 py-3 text-sm font-bold text-[#0a3d4a]">
           <Phone className="h-4 w-4" /> Call Now
         </a>

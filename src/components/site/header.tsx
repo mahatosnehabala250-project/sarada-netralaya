@@ -83,14 +83,13 @@ export function SiteHeader() {
             <span className="hidden lg:inline">{PHONES.primary}</span>
             <span className="lg:hidden">Call</span>
           </a>
-          <a
-            href="#book"
-            onClick={(e) => { e.preventDefault(); document.querySelector("#book")?.scrollIntoView({ behavior: "smooth" }); }}
+          <Link
+            href="/book"
             className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-[#10b981] hover:bg-[#059669] text-white px-4 py-2 text-sm font-bold transition-colors"
           >
             <Calendar className="h-4 w-4" />
             Book Now
-          </a>
+          </Link>
           <Link
             href="/admin"
             className="hidden sm:inline-flex items-center rounded-full border border-slate-200 text-slate-600 hover:text-[#0a3d4a] hover:border-[#0a3d4a]/30 px-3 py-2 text-xs font-bold uppercase tracking-wider transition-colors"
@@ -124,9 +123,9 @@ export function SiteHeader() {
               <a href={`tel:${PHONES.primaryTel}`} className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-full border border-slate-200 py-2.5 text-sm font-semibold text-[#0a3d4a] min-h-[44px]">
                 <Phone className="h-4 w-4" /> Call
               </a>
-              <a href="#book" onClick={() => setOpen(false)} className="flex-1 inline-flex items-center justify-center rounded-full bg-[#10b981] text-white py-2.5 text-sm font-bold min-h-[44px]">
+              <Link href="/book" onClick={() => setOpen(false)} className="flex-1 inline-flex items-center justify-center rounded-full bg-[#10b981] text-white py-2.5 text-sm font-bold min-h-[44px]">
                 Book Now
-              </a>
+              </Link>
             </div>
             <Link href="/admin" onClick={() => setOpen(false)} className="text-center py-2 text-xs text-slate-400 uppercase tracking-wider">
               Owner Login

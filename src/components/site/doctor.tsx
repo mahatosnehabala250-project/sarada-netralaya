@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { GraduationCap, Stethoscope, ArrowRight, BadgeCheck, Award } from "lucide-react";
 import { DOCTOR, SITE } from "@/lib/site-info";
 
@@ -78,14 +79,13 @@ export function Doctor() {
               ))}
             </div>
 
-            <a
-              href="#book"
-              onClick={(e) => { e.preventDefault(); document.querySelector("#book")?.scrollIntoView({ behavior: "smooth" }); }}
+            <Link
+              href="/book"
               className="mt-7 inline-flex items-center gap-2 rounded-xl bg-[#0a3d4a] hover:bg-[#082e38] text-white px-6 py-3.5 text-sm font-bold transition-colors min-h-[48px]"
             >
               Book a consultation
               <ArrowRight className="h-4 w-4" />
-            </a>
+            </Link>
           </div>
         </div>
       </div>

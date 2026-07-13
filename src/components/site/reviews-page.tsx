@@ -95,9 +95,9 @@ export function ReviewsPage() {
           </div>
           <h2 className="text-2xl sm:text-3xl font-bold text-white">Join 50,000+ happy patients</h2>
           <p className="mt-2 text-sm text-white/60">Book your appointment today and experience the difference.</p>
-          <a href="/#book" className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[#10b981] hover:bg-[#059669] text-white px-7 py-3.5 text-base font-bold transition-colors">
+          <Link href="/book" className="mt-6 inline-flex items-center gap-2 rounded-xl bg-[#10b981] hover:bg-[#059669] text-white px-7 py-3.5 text-base font-bold transition-colors">
             Book Appointment
-          </a>
+          </Link>
         </div>
       </div>
     </div>
