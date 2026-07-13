@@ -20,8 +20,8 @@ export function Doctor() {
             <div className="relative max-w-md mx-auto">
               <div className="relative aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl shadow-[#0a3d4a]/15">
                 <Image
-                  src="/images/doctor-portrait.png"
-                  alt={DOCTOR.name}
+                  src="/images/doctor-real.jpg"
+                  alt={`${DOCTOR.name} — ${DOCTOR.role}`}
                   fill
                   sizes="(min-width: 1024px) 28rem, 100vw"
                   className="object-cover"
