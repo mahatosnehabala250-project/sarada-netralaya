@@ -8,7 +8,8 @@ import {
   Eye, CalendarDays, LogOut, ExternalLink, Search, Download, Loader2,
   Phone, CheckCircle2, Check, X, Inbox, Filter, RefreshCw, Clock,
   TrendingUp, Hourglass, CalendarCheck, UserCircle2, Menu, X as CloseIcon,
-  Eye as EyeIcon, ChevronRight, UserPlus, AlertCircle, Printer,
+  Eye as EyeIcon, ChevronRight, UserPlus, AlertCircle, Printer, Star,
+  FileText, Users, DollarSign, BarChart3, Zap,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -555,6 +556,42 @@ export function AdminDashboard() {
               if (appt) openDetail(appt);
             }} />
           </div>
+
+          {/* Quick Actions */}
+          <div className="mt-6">
+            <div className="rounded-2xl bg-white border border-slate-200/80 p-5 shadow-sm">
+              <h3 className="text-sm font-bold text-[#0047AB] mb-4">Quick Actions</h3>
+              <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
+                {[
+                  { icon: CalendarCheck, label: "Add Appointment", onClick: () => setCreateOpen(true) },
+                  { icon: Users, label: "Add Patient", href: "/book" },
+                  { icon: UserCircle2, label: "Add Doctor", href: "/admin/settings" },
+                  { icon: FileText, label: "Create Invoice", href: "/api/admin/appointments/export" },
+                  { icon: DollarSign, label: "Add Payment", href: "/api/admin/appointments/export" },
+                  { icon: BarChart3, label: "Generate Report", href: "/api/admin/appointments/export" },
+                ].map((action) => (
+                  <button
+                    key={action.label}
+                    onClick={() => action.onClick ? action.onClick() : window.open(action.href, "_self")}
+                    className="group flex flex-col items-center gap-2 p-3 rounded-xl hover:bg-slate-50 transition-colors"
+                  >
+                    <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-[#0047AB]/8 text-[#0047AB] group-hover:bg-[#0047AB] group-hover:text-white transition-colors">
+                      <action.icon className="h-5 w-5" />
+                    </span>
+                    <span className="text-[10px] sm:text-xs font-semibold text-slate-600 text-center leading-tight">
+                      {action.label}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Footer */}
+          <footer className="mt-8 pt-6 border-t border-slate-200 flex flex-col sm:flex-row items-center justify-between gap-2">
+            <p className="text-xs text-slate-400">© 2026 Sarada Netralaya. All Rights Reserved.</p>
+            <p className="text-xs text-slate-400">Version 1.0.0</p>
+          </footer>
         </main>
       </div>
 
@@ -596,8 +633,8 @@ function SidebarContent({ onLogout }: { onLogout: () => void }) {
       </div>
 
       {/* Nav */}
-      <nav className="flex-1 p-3 space-y-1">
-        <div className="px-3 pb-2 pt-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">Menu</div>
+      <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
+        <div className="px-3 pb-2 pt-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">Main</div>
         <a href="/admin" className="flex items-center gap-3 rounded-xl bg-[#0047AB] px-3 py-2.5 text-sm font-bold text-white shadow-md shadow-[#0047AB]/20">
           <CalendarDays className="h-4 w-4" />
           Appointments
@@ -615,6 +652,18 @@ function SidebarContent({ onLogout }: { onLogout: () => void }) {
         <a href="/book" className="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#0047AB] transition-colors">
           <CalendarCheck className="h-4 w-4 text-slate-400 group-hover:text-[#0047AB]" />
           Book Appointment
+        </a>
+        <a href="/gallery" className="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#0047AB] transition-colors">
+          <Eye className="h-4 w-4 text-slate-400 group-hover:text-[#0047AB]" />
+          Gallery
+        </a>
+        <a href="/reviews" className="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#0047AB] transition-colors">
+          <Star className="h-4 w-4 text-slate-400 group-hover:text-[#0047AB]" />
+          Reviews
+        </a>
+        <a href="/track" className="group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#0047AB] transition-colors">
+          <Search className="h-4 w-4 text-slate-400 group-hover:text-[#0047AB]" />
+          Track Appointment
         </a>
       </nav>
 
