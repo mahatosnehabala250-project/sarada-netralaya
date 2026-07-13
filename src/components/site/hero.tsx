@@ -9,7 +9,7 @@ export function Hero() {
   return (
     <section id="top" className="relative bg-[#0047AB]">
       {/* Top bar */}
-      <div className="bg-[#0047AB] text-white text-xs sm:text-sm py-2 relative z-10">
+      <div className="bg-[#0047AB] text-[#0047AB] text-xs sm:text-sm py-2 relative z-10">
         <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-3">
           <span className="flex items-center gap-1.5">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
@@ -37,22 +37,22 @@ export function Hero() {
           <div className="w-full lg:w-[42%] px-6 sm:px-10 lg:px-14 py-10">
             <div className="max-w-lg">
               {/* Subtitle */}
-              <div className="text-white/90 text-xs sm:text-sm font-bold uppercase tracking-[0.15em] mb-3 drop-shadow">
+              <div className="text-[#0047AB]/90 text-xs sm:text-sm font-bold uppercase tracking-[0.15em] mb-3 ">
                 Expert Care for Every Eye
               </div>
 
               {/* Headline */}
-              <h1 className="text-4xl sm:text-5xl lg:text-[3.5rem] font-bold leading-[1.1] tracking-tight text-white drop-shadow-lg">
+              <h1 className="text-4xl sm:text-5xl lg:text-[3.5rem] font-bold leading-[1.1] tracking-tight text-[#0047AB] ">
                 Your Vision,
                 <br />
                 Our Mission
               </h1>
 
               {/* Underline */}
-              <div className="h-0.5 w-12 bg-white mt-4 mb-5" />
+              <div className="h-0.5 w-12 bg-[#0047AB] mt-4 mb-5" />
 
               {/* Body copy */}
-              <p className="text-base sm:text-lg text-white/90 leading-relaxed drop-shadow">
+              <p className="text-base sm:text-lg text-[#0047AB]/90 leading-relaxed ">
                 Advanced technology, experienced specialists, and compassionate
                 care – all dedicated to protecting your precious vision.
               </p>
@@ -68,7 +68,7 @@ export function Hero() {
                 </Link>
                 <a
                   href={`tel:${PHONES.primaryTel}`}
-                  className="inline-flex items-center justify-center gap-2 rounded-lg border-2 border-white text-white px-7 py-4 text-base font-bold hover:bg-white/10 transition-colors min-h-[52px] backdrop-blur-sm"
+                  className="inline-flex items-center justify-center gap-2 rounded-lg border-2 border-white text-[#0047AB] px-7 py-4 text-base font-bold hover:bg-[#0047AB]/10 transition-colors min-h-[52px] backdrop-blur-sm"
                 >
                   <Phone className="h-5 w-5" />
                   Call Now
@@ -76,21 +76,21 @@ export function Hero() {
               </div>
 
               {/* Stats */}
-              <div className="mt-8 flex items-center gap-5 pt-6 border-t border-white/30">
+              <div className="mt-8 flex items-center gap-5 pt-6 border-t border-[#0047AB]/30">
                 <div>
-                  <div className="text-2xl font-bold text-white drop-shadow">1000+</div>
-                  <div className="text-xs text-white/70 font-medium">Happy Patients</div>
+                  <div className="text-2xl font-bold text-[#0047AB] ">1000+</div>
+                  <div className="text-xs text-[#0047AB]/70 font-medium">Happy Patients</div>
                 </div>
                 <div className="h-8 w-px bg-white/30" />
                 <div className="flex items-center gap-1.5">
                   <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-                  <span className="text-2xl font-bold text-white drop-shadow">{SITE.rating}</span>
-                  <span className="text-xs text-white/70 font-medium">Rating</span>
+                  <span className="text-2xl font-bold text-[#0047AB] ">{SITE.rating}</span>
+                  <span className="text-xs text-[#0047AB]/70 font-medium">Rating</span>
                 </div>
                 <div className="h-8 w-px bg-white/30" />
                 <div>
-                  <div className="text-2xl font-bold text-white drop-shadow">30+</div>
-                  <div className="text-xs text-white/70 font-medium">Years</div>
+                  <div className="text-2xl font-bold text-[#0047AB] ">30+</div>
+                  <div className="text-xs text-[#0047AB]/70 font-medium">Years</div>
                 </div>
               </div>
             </div>
