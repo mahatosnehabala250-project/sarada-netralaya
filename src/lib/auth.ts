@@ -1,17 +1,23 @@
-// Owner authentication — simple cookie session.
+// Owner authentication — simple signed-cookie session.
 // Passwords are verified via bcrypt (constant-time, never stored plaintext).
+//
+// SECURITY MODEL:
+// - Session token = base64url(payload).base64url(HMAC-SHA256(payload, secret))
+// - Tamper-proof: any change to payload invalidates the signature.
+// - Expiry is checked both in payload and via cookie maxAge.
+// - Password changes invalidate sessions issued BEFORE the change
+//   (see passwordChangedAt check below).
+// - SESSION_SECRET is required in production (fail-closed).
 
 import { cookies } from "next/headers";
 import { createHmac, timingSafeEqual } from "crypto";
-import { getOwnerEmail, verifyPassword } from "@/lib/owner-settings";
+import { getOwnerEmail, verifyPassword, getPasswordChangedAt } from "@/lib/owner-settings";
+import { getSessionSecret } from "@/lib/session-secret";
 
 const SESSION_COOKIE = "sn_owner_session";
 const SESSION_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
 
-const SESSION_SECRET =
-  process.env.SESSION_SECRET ?? "dev-only-secret-change-me-in-production";
-
-/** Constant-time string compare for email matching. */
+/** Constant-time string compare. Returns false (not throws) on length mismatch. */
 function safeEqual(a: string, b: string): boolean {
   const ab = Buffer.from(a);
   const bb = Buffer.from(b);
@@ -28,43 +34,75 @@ export function verifyOwnerCredentials(email: string, password: string): boolean
 
 /** Create a signed session token and set the httpOnly cookie. */
 export async function createOwnerSession(): Promise<void> {
+  const secret = getSessionSecret();
+  const issued = Date.now();
   const payload = {
     email: getOwnerEmail(),
-    issued: Date.now(),
-    exp: Date.now() + SESSION_MAX_AGE * 1000,
+    issued,
+    exp: issued + SESSION_MAX_AGE * 1000,
   };
   const body = Buffer.from(JSON.stringify(payload)).toString("base64url");
-  const sig = createHmac("sha256", SESSION_SECRET).update(body).digest("base64url");
+  const sig = createHmac("sha256", secret).update(body).digest("base64url");
   const token = `${body}.${sig}`;
   const store = await cookies();
   store.set(SESSION_COOKIE, token, {
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
-    sameSite: "lax",
+    // strict: admin cookie is never needed cross-site. Blocks CSRF on
+    // top-level navigations from external origins (defense-in-depth).
+    sameSite: "strict",
     path: "/",
     maxAge: SESSION_MAX_AGE,
   });
 }
 
-/** Verify the current session cookie. Returns true if valid (non-expired). */
+/**
+ * Verify the current session cookie. Returns true only if:
+ *  - signature is valid (constant-time compare)
+ *  - expiry is in the future
+ *  - issued-at is not before the most recent password change (if any)
+ */
 export async function isOwnerAuthenticated(): Promise<boolean> {
+  let secret: string;
+  try {
+    secret = getSessionSecret();
+  } catch {
+    // Production misconfiguration — fail closed.
+    return false;
+  }
+
   const store = await cookies();
   const token = store.get(SESSION_COOKIE)?.value;
   if (!token) return false;
   const [body, sig] = token.split(".");
   if (!body || !sig) return false;
-  const expected = createHmac("sha256", SESSION_SECRET)
-    .update(body)
-    .digest("base64url");
+  const expected = createHmac("sha256", secret).update(body).digest("base64url");
   if (!safeEqual(sig, expected)) return false;
+
+  let payload: { issued?: number; exp?: number; email?: string };
   try {
-    const payload = JSON.parse(Buffer.from(body, "base64url").toString("utf8"));
-    if (typeof payload.exp !== "number") return false;
-    if (Date.now() > payload.exp) return false;
-    return true;
+    payload = JSON.parse(Buffer.from(body, "base64url").toString("utf8"));
   } catch {
     return false;
   }
+  if (typeof payload.exp !== "number" || typeof payload.issued !== "number") {
+    return false;
+  }
+  if (Date.now() > payload.exp) return false;
+
+  // Invalidate sessions issued before the most recent password change.
+  // (Only applies when a runtime password change has occurred; in production
+  // on Vercel, runtime changes don't persist across cold starts, so this
+  // primarily protects warm-instance sessions after a password rotation.)
+  const changedAtIso = getPasswordChangedAt();
+  if (changedAtIso) {
+    const changedAtMs = Date.parse(changedAtIso);
+    if (Number.isFinite(changedAtMs) && payload.issued < changedAtMs) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 /** Clear the session cookie (logout). */

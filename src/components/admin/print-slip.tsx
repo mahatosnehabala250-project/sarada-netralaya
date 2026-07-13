@@ -25,7 +25,7 @@ export function printAppointmentSlip(a: Appt) {
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Appointment Slip #${a.ref} — Sarada Netralaya</title>
+<title>Appointment Slip #${escapeHtml(a.ref)} — Sarada Netralaya</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -99,7 +99,7 @@ export function printAppointmentSlip(a: Appt) {
     <div class="ref-band">
       <div>
         <div class="label">Booking Reference</div>
-        <div class="ref">#${a.ref}</div>
+        <div class="ref">#${escapeHtml(a.ref)}</div>
       </div>
       <div class="status" style="background:${st === 'confirmed' ? '#e0f2fe' : st === 'done' ? '#d1fae5' : st === 'cancelled' ? '#ffe4e6' : '#fef3c7'}; color:${st === 'confirmed' ? '#075985' : st === 'done' ? '#065f46' : st === 'cancelled' ? '#9f1239' : '#92400e'}; border-color:${st === 'confirmed' ? '#bae6fd' : st === 'done' ? '#a7f3d0' : st === 'cancelled' ? '#fecdd3' : '#fde68a'}">
         ${meta.emoji} ${meta.label}
@@ -107,19 +107,19 @@ export function printAppointmentSlip(a: Appt) {
     </div>
     <div class="body">
       <div class="patient-name">${escapeHtml(a.name)}</div>
-      <div class="patient-sub">${a.age != null ? `${a.age} years old` : "Age not specified"} · ${escapeHtml(a.phone)}</div>
+      <div class="patient-sub">${a.age != null ? `${escapeHtml(String(a.age))} years old` : "Age not specified"} · ${escapeHtml(a.phone)}</div>
       <div class="grid">
         <div class="field">
           <div class="k">Department</div>
-          <div class="v">${dept}</div>
+          <div class="v">${escapeHtml(dept)}</div>
         </div>
         <div class="field">
           <div class="k">Consultant</div>
-          <div class="v">${DOCTOR.name}</div>
+          <div class="v">${escapeHtml(DOCTOR.name)}</div>
         </div>
         <div class="field">
           <div class="k">Preferred Date</div>
-          <div class="v">${formatDateLong(a.preferredDate)}</div>
+          <div class="v">${escapeHtml(formatDateLong(a.preferredDate))}</div>
         </div>
         <div class="field">
           <div class="k">Time Slot</div>
@@ -131,9 +131,9 @@ export function printAppointmentSlip(a: Appt) {
         <strong>Please bring:</strong> a valid photo ID, any previous eye prescription or old spectacles, and this reference number. For dilated retina/glaucoma checks, please arrange a driver — do not drive yourself back.
       </div>
       <div class="footer">
-        <strong>${SITE.name}</strong> · ${SITE.tagline}<br>
-        <div class="addr">${ADDRESS.line1}, ${ADDRESS.line2}, ${ADDRESS.line3}, ${ADDRESS.city} – ${ADDRESS.pincode}<br>
-        📞 ${PHONES.primary} / ${PHONES.secondary} · ✉ ${"saradanetralayajsr@gmail.com"}<br>
+        <strong>${escapeHtml(SITE.name)}</strong> · ${escapeHtml(SITE.tagline)}<br>
+        <div class="addr">${escapeHtml(ADDRESS.line1)}, ${escapeHtml(ADDRESS.line2)}, ${escapeHtml(ADDRESS.line3)}, ${escapeHtml(ADDRESS.city)} – ${escapeHtml(ADDRESS.pincode)}<br>
+        📞 ${escapeHtml(PHONES.primary)} / ${escapeHtml(PHONES.secondary)} · ✉ ${escapeHtml("saradanetralayajsr@gmail.com")}<br>
         🕐 Mon–Sat 10:00 AM – 7:30 PM · Sunday Closed<br>
         <span style="display:block;margin-top:6px;font-size:9px;color:#94a3b8">Slip generated on ${new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })} IST · This is a computer-generated slip and does not require a signature.</span>
       </div>

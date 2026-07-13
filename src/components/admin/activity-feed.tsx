@@ -6,13 +6,12 @@ import {
   ArrowRight, Bell,
 } from "lucide-react";
 import { STATUS_META, type Status } from "@/lib/appointments";
-import { formatPhone, telHref } from "@/lib/utils";
 
 type ActivityItem = {
   id: string;
   ref: string;
   name: string;
-  phone: string;
+  phoneLast4: string;
   department: string;
   status: string;
   preferredDate: string;
@@ -110,13 +109,9 @@ export function ActivityFeed({ onView }: { onView?: (id: string) => void }) {
                   </span>
                 </div>
                 <div className="mt-0.5 flex items-center gap-2 text-[11px] text-slate-500 flex-wrap">
-                  <a
-                    href={telHref(a.phone)}
-                    onClick={(e) => e.stopPropagation()}
-                    className="inline-flex items-center gap-0.5 text-[#0b6e8f] font-semibold hover:underline"
-                  >
-                    <Phone className="h-2.5 w-2.5" />{formatPhone(a.phone)}
-                  </a>
+                  <span className="inline-flex items-center gap-0.5 text-[#0b6e8f] font-semibold">
+                    <Phone className="h-2.5 w-2.5" />•••• {a.phoneLast4}
+                  </span>
                   <span className="text-slate-300">·</span>
                   <span className="inline-flex items-center gap-0.5">
                     {a.department === "Eye Care" ? <Eye className="h-2.5 w-2.5" /> : <Glasses className="h-2.5 w-2.5" />}

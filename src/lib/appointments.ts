@@ -119,22 +119,70 @@ export async function generateUniqueRef(): Promise<string> {
   return String(Date.now()).slice(-6);
 }
 
-/** In-memory IP rate limiter: max N bookings per IP per window. */
-const rateMap = new Map<string, { count: number; resetAt: number }>();
+/* ------------------------------------------------------------------ */
+/* Rate limiting                                                       */
+/* ------------------------------------------------------------------ */
+//
+// NOTE: This is an in-memory limiter. On Vercel serverless, each function
+// instance has its own counter, so the effective limit is higher in
+// practice. For production-grade protection, back this with Upstash Redis
+// or Vercel KV. The current implementation is defense-in-depth — it still
+// significantly raises the cost of brute-force enumeration.
+
+interface RateEntry {
+  count: number;
+  resetAt: number;
+}
+
+// Per-IP rate limit for booking creation.
 const RATE_LIMIT_MAX = 3;
 const RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000; // 10 minutes
+
+// Per-IP rate limit for the lookup endpoint (stricter — protects PHI).
+const LOOKUP_RATE_LIMIT_MAX = 5;
+const LOOKUP_RATE_LIMIT_WINDOW_MS = 10 * 60 * 1000;
+
+// Per-ref lockout: after this many failed lookup attempts against a single
+// ref, the ref is locked out (even with the correct phone) for the window.
+// This protects targeted enumeration even if the attacker rotates IPs.
+const REF_LOCKOUT_MAX_FAILURES = 5;
+const REF_LOCKOUT_WINDOW_MS = 15 * 60 * 1000;
+
+interface RefLockEntry {
+  failures: number;
+  firstFailedAt: number;
+  lockedUntil: number;
+}
+
+const rateMapInstance: Map<string, RateEntry> = new Map();
+const refLockMap: Map<string, RefLockEntry> = new Map();
 
 export function checkRateLimit(ipKey: string): {
   ok: boolean;
   retryAfterSec: number;
 } {
+  return checkRateLimitWith(ipKey, RATE_LIMIT_MAX, RATE_LIMIT_WINDOW_MS);
+}
+
+export function checkLookupRateLimit(ipKey: string): {
+  ok: boolean;
+  retryAfterSec: number;
+} {
+  return checkRateLimitWith(ipKey, LOOKUP_RATE_LIMIT_MAX, LOOKUP_RATE_LIMIT_WINDOW_MS);
+}
+
+function checkRateLimitWith(
+  ipKey: string,
+  max: number,
+  windowMs: number
+): { ok: boolean; retryAfterSec: number } {
   const now = Date.now();
-  const entry = rateMap.get(ipKey);
+  const entry = rateMapInstance.get(ipKey);
   if (!entry || entry.resetAt < now) {
-    rateMap.set(ipKey, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+    rateMapInstance.set(ipKey, { count: 1, resetAt: now + windowMs });
     return { ok: true, retryAfterSec: 0 };
   }
-  if (entry.count >= RATE_LIMIT_MAX) {
+  if (entry.count >= max) {
     return {
       ok: false,
       retryAfterSec: Math.ceil((entry.resetAt - now) / 1000),
@@ -142,6 +190,57 @@ export function checkRateLimit(ipKey: string): {
   }
   entry.count += 1;
   return { ok: true, retryAfterSec: 0 };
+}
+
+/**
+ * Check whether a given booking ref is currently locked out due to too many
+ * failed lookup attempts. Returns { locked, retryAfterSec }.
+ */
+export function checkRefLockout(ref: string): {
+  locked: boolean;
+  retryAfterSec: number;
+} {
+  const entry = refLockMap.get(ref);
+  if (!entry) return { locked: false, retryAfterSec: 0 };
+  const now = Date.now();
+  if (entry.lockedUntil > now) {
+    return {
+      locked: true,
+      retryAfterSec: Math.ceil((entry.lockedUntil - now) / 1000),
+    };
+  }
+  // Window expired — reset.
+  if (entry.firstFailedAt + REF_LOCKOUT_WINDOW_MS < now) {
+    refLockMap.delete(ref);
+  }
+  return { locked: false, retryAfterSec: 0 };
+}
+
+/**
+ * Record a failed lookup attempt against a ref. Locks the ref once the
+ * threshold is hit.
+ */
+export function recordRefFailure(ref: string): void {
+  const now = Date.now();
+  let entry = refLockMap.get(ref);
+  if (!entry || entry.firstFailedAt + REF_LOCKOUT_WINDOW_MS < now) {
+    entry = {
+      failures: 1,
+      firstFailedAt: now,
+      lockedUntil: 0,
+    };
+  } else {
+    entry.failures += 1;
+    if (entry.failures >= REF_LOCKOUT_MAX_FAILURES) {
+      entry.lockedUntil = now + REF_LOCKOUT_WINDOW_MS;
+    }
+  }
+  refLockMap.set(ref, entry);
+}
+
+/** Reset failures for a ref after a successful lookup. */
+export function clearRefFailures(ref: string): void {
+  refLockMap.delete(ref);
 }
 
 /** Hash an IP for storage (privacy). Uses a static salt — not for security. */

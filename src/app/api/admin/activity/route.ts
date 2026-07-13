@@ -1,5 +1,10 @@
 // GET /api/admin/activity — recent bookings for the dashboard activity feed.
 // Returns the 8 most recent appointments (by createdAt) for the activity panel.
+//
+// PRIVACY: Returns only phoneLast4 (not full phone) to minimize PHI exposure
+// on the dashboard's always-visible activity panel. The owner can click a
+// row to open the full detail dialog (which fetches the complete record
+// through /api/admin/appointments/[id]).
 
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
@@ -22,7 +27,22 @@ export async function GET(_req: NextRequest) {
     items = await db.appointment.findMany({
       orderBy: { createdAt: "desc" },
       take: 8,
-    });
+      // Select only the columns the activity feed needs — never select more
+      // PHI than necessary. (Returning a partial type via `select` is fine
+      // because we only read the listed fields below.)
+      select: {
+        id: true,
+        ref: true,
+        name: true,
+        phone: true,
+        department: true,
+        status: true,
+        preferredDate: true,
+        timeSlot: true,
+        createdAt: true,
+        // Deliberately NOT selecting: age, note, ipHash.
+      },
+    }) as Awaited<ReturnType<typeof db.appointment.findMany>>;
   } catch (err) {
     console.error("[admin/activity] DB error:", err);
   }
@@ -31,7 +51,7 @@ export async function GET(_req: NextRequest) {
     id: a.id,
     ref: a.ref,
     name: a.name,
-    phone: a.phone,
+    phoneLast4: a.phone.slice(-4),
     department: DEPT_LABEL[a.department as Department] ?? a.department,
     status: a.status,
     preferredDate: a.preferredDate,
