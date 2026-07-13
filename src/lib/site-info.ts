@@ -3,7 +3,7 @@
 
 export const SITE = {
   name: "Sarada Netralaya",
-  tagline: "Passion for Excellence • Committed to Care",
+  tagline: "Clear Vision, Better Life",
   domain: "saradanetralaya.in",
   url: "https://saradanetralaya.in",
   description:

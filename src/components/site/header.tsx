@@ -54,8 +54,8 @@ export function SiteHeader() {
         >
           <Image src="/images/logo.png" alt="Sarada Netralaya logo" width={40} height={27} className="shrink-0" />
           <div className="leading-none">
-            <div className="text-lg sm:text-xl font-bold text-[#0a3d4a] whitespace-nowrap">Sarada Netralaya</div>
-            <div className="hidden sm:block text-[10px] uppercase tracking-[0.15em] text-[#10b981] font-semibold mt-0.5">Eye Care Hospital</div>
+            <div className="text-lg sm:text-xl font-bold text-[#0047AB] whitespace-nowrap">Sarada Netralaya</div>
+            <div className="hidden sm:block text-[10px] uppercase tracking-[0.15em] text-[#0047AB] font-semibold mt-0.5">Eye Care Hospital</div>
           </div>
         </a>
 
@@ -65,7 +65,7 @@ export function SiteHeader() {
             <button
               key={n.href}
               onClick={() => go(n.href)}
-              className="px-3.5 py-2 text-sm font-medium text-slate-600 hover:text-[#0a3d4a] transition-colors"
+              className="px-3.5 py-2 text-sm font-medium text-slate-600 hover:text-[#0047AB] transition-colors"
             >
               {n.label}
             </button>
@@ -76,7 +76,7 @@ export function SiteHeader() {
         <div className="flex items-center gap-2 shrink-0">
           <a
             href={`tel:${PHONES.primaryTel}`}
-            className="hidden sm:inline-flex items-center gap-1.5 text-sm font-semibold text-[#0a3d4a] hover:text-[#10b981] transition-colors"
+            className="hidden sm:inline-flex items-center gap-1.5 text-sm font-semibold text-[#0047AB] hover:text-[#0047AB] transition-colors"
           >
             <Phone className="h-4 w-4" />
             <span className="hidden lg:inline">{PHONES.primary}</span>
@@ -84,20 +84,20 @@ export function SiteHeader() {
           </a>
           <Link
             href="/book"
-            className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-[#10b981] hover:bg-[#059669] text-white px-4 py-2 text-sm font-bold transition-colors"
+            className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-[#0047AB] hover:bg-[#003a8c] text-white px-4 py-2 text-sm font-bold transition-colors"
           >
             <Calendar className="h-4 w-4" />
             Book Now
           </Link>
           <Link
             href="/admin"
-            className="hidden sm:inline-flex items-center rounded-full border border-slate-200 text-slate-600 hover:text-[#0a3d4a] hover:border-[#0a3d4a]/30 px-3 py-2 text-xs font-bold uppercase tracking-wider transition-colors"
+            className="hidden sm:inline-flex items-center rounded-full border border-slate-200 text-slate-600 hover:text-[#0047AB] hover:border-[#0047AB]/30 px-3 py-2 text-xs font-bold uppercase tracking-wider transition-colors"
           >
             Owner
           </Link>
           <button
             onClick={() => setOpen((v) => !v)}
-            className="md:hidden flex h-10 w-10 items-center justify-center rounded-lg text-[#0a3d4a] hover:bg-slate-100 transition-colors"
+            className="md:hidden flex h-10 w-10 items-center justify-center rounded-lg text-[#0047AB] hover:bg-slate-100 transition-colors"
             aria-label="Menu"
           >
             {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
@@ -119,10 +119,10 @@ export function SiteHeader() {
               </button>
             ))}
             <div className="flex items-center gap-2 pt-3 pb-2">
-              <a href={`tel:${PHONES.primaryTel}`} className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-full border border-slate-200 py-2.5 text-sm font-semibold text-[#0a3d4a] min-h-[44px]">
+              <a href={`tel:${PHONES.primaryTel}`} className="flex-1 inline-flex items-center justify-center gap-1.5 rounded-full border border-slate-200 py-2.5 text-sm font-semibold text-[#0047AB] min-h-[44px]">
                 <Phone className="h-4 w-4" /> Call
               </a>
-              <Link href="/book" onClick={() => setOpen(false)} className="flex-1 inline-flex items-center justify-center rounded-full bg-[#10b981] text-white py-2.5 text-sm font-bold min-h-[44px]">
+              <Link href="/book" onClick={() => setOpen(false)} className="flex-1 inline-flex items-center justify-center rounded-full bg-[#0047AB] text-white py-2.5 text-sm font-bold min-h-[44px]">
                 Book Now
               </Link>
             </div>

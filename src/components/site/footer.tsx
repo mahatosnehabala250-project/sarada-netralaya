@@ -5,7 +5,7 @@ import { SITE, ADDRESS, PHONES, EMAIL } from "@/lib/site-info";
 
 export function Footer() {
   return (
-    <footer className="mt-auto bg-[#082e38] text-white">
+    <footer className="mt-auto bg-[#003a8c] text-white">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
         <div className="grid gap-8 sm:gap-10 lg:grid-cols-[1.5fr_1fr_1fr]">
           {/* Brand */}

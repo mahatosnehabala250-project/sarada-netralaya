@@ -74,7 +74,7 @@ export function BookingPage() {
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Header */}
-      <header className="bg-[#0a3d4a] text-white sticky top-0 z-40">
+      <header className="bg-[#0047AB] text-white sticky top-0 z-40">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 py-3.5 flex items-center justify-between">
           <Link href="/" className="inline-flex items-center gap-2 text-sm font-semibold text-white/80 hover:text-white">
             <ArrowLeft className="h-4 w-4" /> Back to Home
@@ -95,26 +95,26 @@ export function BookingPage() {
                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100">
                   <CheckCircle2 className="h-9 w-9 text-emerald-600" />
                 </div>
-                <h2 className="mt-6 text-2xl font-bold text-[#0a3d4a]">Request received!</h2>
+                <h2 className="mt-6 text-2xl font-bold text-[#0047AB]">Request received!</h2>
                 <p className="mt-2 text-sm text-slate-600 max-w-sm mx-auto">{success.message}</p>
-                <div className="mt-6 inline-flex flex-col items-center rounded-xl border-2 border-dashed border-[#0a3d4a]/20 bg-slate-50 px-10 py-4">
+                <div className="mt-6 inline-flex flex-col items-center rounded-xl border-2 border-dashed border-[#0047AB]/20 bg-slate-50 px-10 py-4">
                   <span className="text-[10px] font-bold uppercase tracking-[0.2em] text-slate-400">Your Reference</span>
-                  <span className="mt-1 text-3xl font-black tracking-wider text-[#0a3d4a]">#{success.ref}</span>
+                  <span className="mt-1 text-3xl font-black tracking-wider text-[#0047AB]">#{success.ref}</span>
                 </div>
                 <div className="mt-7 flex flex-col sm:flex-row gap-2.5 justify-center">
-                  <a href={`tel:${PHONES.primaryTel}`} className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#0a3d4a] text-white px-5 py-3 text-sm font-bold min-h-[44px]">
+                  <a href={`tel:${PHONES.primaryTel}`} className="inline-flex items-center justify-center gap-2 rounded-xl bg-[#0047AB] text-white px-5 py-3 text-sm font-bold min-h-[44px]">
                     <Phone className="h-4 w-4" /> Call to confirm faster
                   </a>
-                  <Link href="/track" className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 text-[#0a3d4a] px-5 py-3 text-sm font-bold hover:bg-slate-50 min-h-[44px]">
+                  <Link href="/track" className="inline-flex items-center justify-center gap-2 rounded-xl border border-slate-200 text-[#0047AB] px-5 py-3 text-sm font-bold hover:bg-slate-50 min-h-[44px]">
                     <Search className="h-4 w-4" /> Track later
                   </Link>
-                  <Button variant="outline" onClick={() => setSuccess(null)} className="border-slate-200 text-[#0a3d4a] min-h-[44px]">Book another</Button>
+                  <Button variant="outline" onClick={() => setSuccess(null)} className="border-slate-200 text-[#0047AB] min-h-[44px]">Book another</Button>
                 </div>
               </div>
             ) : (
               <div className="rounded-2xl bg-white shadow-lg overflow-hidden">
                 {/* Form header */}
-                <div className="bg-gradient-to-r from-[#0a3d4a] to-[#082e38] px-6 py-5">
+                <div className="bg-gradient-to-r from-[#0047AB] to-[#003a8c] px-6 py-5">
                   <h1 className="text-xl sm:text-2xl font-bold text-white">Schedule your visit</h1>
                   <p className="mt-1 text-sm text-white/60">Fill in your details — our team will call you to confirm. Takes less than a minute.</p>
                 </div>
@@ -128,18 +128,18 @@ export function BookingPage() {
                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
                     <Field label="Patient Name" required error={touched.name ? fieldError("name") : null}>
                       <Input value={name} onChange={(e) => setName(e.target.value)} onBlur={() => setTouched((t) => ({ ...t, name: true }))} placeholder="e.g. Ramesh Kumar" maxLength={80}
-                        className="h-12 sm:h-11 border-slate-200 focus-visible:border-[#10b981] focus-visible:ring-[#10b981]/20 text-base" />
+                        className="h-12 sm:h-11 border-slate-200 focus-visible:border-[#0047AB] focus-visible:ring-[#0047AB]/20 text-base" />
                     </Field>
                     <Field label="Mobile Number" required error={touched.phone ? fieldError("phone") : null}>
                       <div className="flex items-stretch">
                         <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-slate-200 bg-slate-50 text-sm font-semibold text-slate-600">+91</span>
                         <Input value={phone} onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))} onBlur={() => setTouched((t) => ({ ...t, phone: true }))} placeholder="98765 43210" inputMode="numeric"
-                          className="h-12 sm:h-11 rounded-l-none border-slate-200 focus-visible:border-[#10b981] focus-visible:ring-[#10b981]/20 text-base" />
+                          className="h-12 sm:h-11 rounded-l-none border-slate-200 focus-visible:border-[#0047AB] focus-visible:ring-[#0047AB]/20 text-base" />
                       </div>
                     </Field>
                     <Field label="Age" hint="Optional">
                       <Input value={age} onChange={(e) => setAge(e.target.value.replace(/\D/g, "").slice(0, 3))} placeholder="e.g. 62" inputMode="numeric"
-                        className="h-12 sm:h-11 border-slate-200 focus-visible:border-[#10b981] focus-visible:ring-[#10b981]/20 text-base" />
+                        className="h-12 sm:h-11 border-slate-200 focus-visible:border-[#0047AB] focus-visible:ring-[#0047AB]/20 text-base" />
                     </Field>
                     <Field label="Department" required error={touched.department ? fieldError("department") : null}>
                       <div className="grid grid-cols-2 gap-2" onBlur={() => setTouched((t) => ({ ...t, department: true }))}>
@@ -150,9 +150,9 @@ export function BookingPage() {
                           const active = department === d.v;
                           return (
                             <button key={d.v} type="button" onClick={() => { setDepartment(d.v); setTouched((t) => ({ ...t, department: true })); }}
-                              className={`flex items-center gap-2 rounded-lg border px-3 py-3 text-left transition-all min-h-[48px] ${active ? "border-[#10b981] bg-emerald-50 ring-1 ring-[#10b981]/30" : "border-slate-200 hover:border-slate-300"}`}>
-                              <d.icon className={`h-4 w-4 shrink-0 ${active ? "text-[#10b981]" : "text-slate-400"}`} />
-                              <span className={`text-sm font-semibold ${active ? "text-[#0a3d4a]" : "text-slate-600"}`}>{d.l}</span>
+                              className={`flex items-center gap-2 rounded-lg border px-3 py-3 text-left transition-all min-h-[48px] ${active ? "border-[#0047AB] bg-emerald-50 ring-1 ring-[#0047AB]/30" : "border-slate-200 hover:border-slate-300"}`}>
+                              <d.icon className={`h-4 w-4 shrink-0 ${active ? "text-[#0047AB]" : "text-slate-400"}`} />
+                              <span className={`text-sm font-semibold ${active ? "text-[#0047AB]" : "text-slate-600"}`}>{d.l}</span>
                             </button>
                           );
                         })}
@@ -160,11 +160,11 @@ export function BookingPage() {
                     </Field>
                     <Field label="Preferred Date" required error={touched.preferredDate ? fieldError("preferredDate") : null}>
                       <Input type="date" min={today} value={preferredDate} onChange={(e) => setPreferredDate(e.target.value)} onBlur={() => setTouched((t) => ({ ...t, preferredDate: true }))}
-                        className="h-12 sm:h-11 border-slate-200 focus-visible:border-[#10b981] focus-visible:ring-[#10b981]/20 text-base" />
+                        className="h-12 sm:h-11 border-slate-200 focus-visible:border-[#0047AB] focus-visible:ring-[#0047AB]/20 text-base" />
                     </Field>
                     <Field label="Time Slot" required error={touched.timeSlot ? fieldError("timeSlot") : null}>
                       <select value={timeSlot} onChange={(e) => { setTimeSlot(e.target.value); setTouched((t) => ({ ...t, timeSlot: true })); }} onBlur={() => setTouched((t) => ({ ...t, timeSlot: true }))}
-                        className="h-12 sm:h-11 w-full appearance-none rounded-md border border-slate-200 bg-white px-3 text-base text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#10b981]/20 focus:border-[#10b981]">
+                        className="h-12 sm:h-11 w-full appearance-none rounded-md border border-slate-200 bg-white px-3 text-base text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#0047AB]/20 focus:border-[#0047AB]">
                         <option value="">Select a slot</option>
                         {TIME_SLOTS.map((s) => <option key={s} value={s}>{s}</option>)}
                       </select>
@@ -174,15 +174,15 @@ export function BookingPage() {
                   <div className="mt-4 sm:mt-5">
                     <Field label="Reason for visit" hint="Optional">
                       <Textarea value={note} onChange={(e) => setNote(e.target.value)} placeholder="e.g. Cataract — blurry vision in left eye" maxLength={500}
-                        className="border-slate-200 focus-visible:border-[#10b981] focus-visible:ring-[#10b981]/20 min-h-[80px] text-base" />
+                        className="border-slate-200 focus-visible:border-[#0047AB] focus-visible:ring-[#0047AB]/20 min-h-[80px] text-base" />
                     </Field>
                   </div>
 
                   <div className="mt-6 flex flex-col sm:flex-row gap-3">
-                    <Button type="submit" disabled={submitting} className="h-12 flex-1 bg-[#10b981] hover:bg-[#059669] text-white text-base font-bold rounded-xl">
+                    <Button type="submit" disabled={submitting} className="h-12 flex-1 bg-[#0047AB] hover:bg-[#003a8c] text-white text-base font-bold rounded-xl">
                       {submitting ? <><Loader2 className="mr-2 h-5 w-5 animate-spin" /> Submitting...</> : <><CalendarCheck className="mr-2 h-5 w-5" /> Book Appointment</>}
                     </Button>
-                    <a href={`tel:${PHONES.primaryTel}`} className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border-2 border-slate-200 px-6 text-sm font-bold text-[#0a3d4a] hover:bg-slate-50 min-h-[48px]">
+                    <a href={`tel:${PHONES.primaryTel}`} className="inline-flex h-12 items-center justify-center gap-2 rounded-xl border-2 border-slate-200 px-6 text-sm font-bold text-[#0047AB] hover:bg-slate-50 min-h-[48px]">
                       <Phone className="h-4 w-4" /> Call instead
                     </a>
                   </div>
@@ -202,7 +202,7 @@ export function BookingPage() {
                 <div className="flex">
                   {[0,1,2,3,4].map((i) => <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />)}
                 </div>
-                <span className="text-sm font-bold text-[#0a3d4a]">{SITE.rating}</span>
+                <span className="text-sm font-bold text-[#0047AB]">{SITE.rating}</span>
                 <span className="text-xs text-slate-400">· {SITE.reviewsCount} reviews</span>
               </div>
               <div className="space-y-2.5">
@@ -213,7 +213,7 @@ export function BookingPage() {
                   { icon: Clock, text: "Same-day appointment available" },
                 ].map((item) => (
                   <div key={item.text} className="flex items-start gap-2">
-                    <item.icon className="h-4 w-4 text-[#10b981] shrink-0 mt-0.5" />
+                    <item.icon className="h-4 w-4 text-[#0047AB] shrink-0 mt-0.5" />
                     <span className="text-sm text-slate-700">{item.text}</span>
                   </div>
                 ))}
@@ -221,7 +221,7 @@ export function BookingPage() {
             </div>
 
             {/* Contact card */}
-            <div className="rounded-2xl bg-[#0a3d4a] p-5 text-white">
+            <div className="rounded-2xl bg-[#0047AB] p-5 text-white">
               <h3 className="text-sm font-bold mb-3">Prefer to call?</h3>
               <a href={`tel:${PHONES.primaryTel}`} className="flex items-center gap-2 text-sm font-bold text-emerald-300 hover:text-emerald-200 mb-2 min-h-[40px]">
                 <Phone className="h-4 w-4" /> {PHONES.primary}
@@ -242,7 +242,7 @@ export function BookingPage() {
             {/* Image */}
             <div className="relative rounded-2xl overflow-hidden shadow-md aspect-[4/3] hidden lg:block">
               <Image src="/images/waiting-hall.png" alt="Our comfortable waiting area" fill sizes="320px" className="object-cover" />
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#0a3d4a]/80 to-transparent p-3">
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#0047AB]/80 to-transparent p-3">
                 <p className="text-white text-xs font-bold">Our waiting area</p>
               </div>
             </div>
@@ -257,7 +257,7 @@ function Field({ label, required, hint, error, children }: { label: string; requ
   return (
     <div>
       <div className="flex items-baseline justify-between mb-1.5">
-        <Label className="text-sm font-semibold text-[#0a3d4a]">{label} {required && <span className="text-rose-500">*</span>}</Label>
+        <Label className="text-sm font-semibold text-[#0047AB]">{label} {required && <span className="text-rose-500">*</span>}</Label>
         {hint && <span className="text-[11px] text-slate-400">{hint}</span>}
       </div>
       {children}
