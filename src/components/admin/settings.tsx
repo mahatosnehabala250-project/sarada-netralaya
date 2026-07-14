@@ -4,9 +4,9 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
-  Eye, Lock, ArrowLeft, Loader2, Check, Shield, KeyRound, EyeOff,
-  AlertCircle, User, Mail, Calendar, Bell, Building2, Phone, Clock,
-  ChevronRight, Sparkles,
+  Lock, ArrowLeft, Loader2, Check, Shield, KeyRound, EyeOff, Eye,
+  AlertCircle, User, Mail, Calendar, Building2, Phone, Clock,
+  ChevronRight, IndianRupee, Save,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,7 +14,7 @@ import { Label } from "@/components/ui/label";
 import { toast } from "@/lib/toast";
 import { SITE, ADDRESS, PHONES, EMAIL, HOURS } from "@/lib/site-info";
 
-type Tab = "account" | "security" | "clinic";
+type Tab = "security" | "account" | "clinic" | "fees";
 
 export function AdminSettings() {
   const router = useRouter();
@@ -25,110 +25,87 @@ export function AdminSettings() {
   const [showCur, setShowCur] = useState(false);
   const [showNew, setShowNew] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [feeSaving, setFeeSaving] = useState(false);
+
+  // Fee state
+  const [consultationFee, setConsultationFee] = useState("500");
+  const [phacoFee, setPhacoFee] = useState("25000");
+  const [glaucomaFee, setGlaucomaFee] = useState("1000");
+  const [opticalFee, setOpticalFee] = useState("300");
 
   const strength = passwordStrength(next);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!current || !next || !confirm) {
-      toast.error("Please fill in all fields");
-      return;
-    }
-    if (next.length < 6) {
-      toast.error("New password must be at least 6 characters");
-      return;
-    }
-    if (next !== confirm) {
-      toast.error("New passwords do not match");
-      return;
-    }
-    if (next === current) {
-      toast.error("New password must be different from current");
-      return;
-    }
+    if (!current || !next || !confirm) { toast.error("Please fill in all fields"); return; }
+    if (next.length < 6) { toast.error("New password must be at least 6 characters"); return; }
+    if (next !== confirm) { toast.error("New passwords do not match"); return; }
+    if (next === current) { toast.error("New password must be different from current"); return; }
     setSaving(true);
     try {
       const res = await fetch("/api/admin/change-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: "POST", headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ currentPassword: current, newPassword: next }),
       });
       const data = await res.json();
-      if (!res.ok) {
-        toast.error(data.error ?? "Failed to change password");
-        return;
-      }
+      if (!res.ok) { toast.error(data.error ?? "Failed to change password"); return; }
       toast.success("Password changed successfully!");
       setCurrent(""); setNext(""); setConfirm("");
       setTimeout(() => router.push("/admin"), 1500);
-    } catch {
-      toast.error("Network error");
-    } finally {
-      setSaving(false);
-    }
+    } catch { toast.error("Network error"); }
+    finally { setSaving(false); }
+  }
+
+  async function saveFees() {
+    setFeeSaving(true);
+    // Simulate save (fees stored in localStorage for now — would need API + DB for production)
+    try {
+      const fees = { consultation: consultationFee, phaco: phacoFee, glaucoma: glaucomaFee, optical: opticalFee };
+      localStorage.setItem("sn_fees", JSON.stringify(fees));
+      toast.success("Fee structure saved!");
+    } catch { toast.error("Failed to save fees"); }
+    finally { setFeeSaving(false); }
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#063b4f] via-[#074860] to-[#0b6e8f] relative overflow-hidden">
-      {/* ambient background */}
-      <div className="pointer-events-none absolute -top-24 -right-24 h-96 w-96 rounded-full bg-emerald-400/15 blur-[100px]" />
-      <div className="pointer-events-none absolute -bottom-32 -left-20 h-96 w-96 rounded-full bg-[#0ea5e9]/12 blur-[100px]" />
-      <div className="pointer-events-none absolute inset-0 opacity-[0.04]" style={{ backgroundImage: "radial-gradient(circle at 1px 1px, #fff 1px, transparent 0)", backgroundSize: "28px 28px" }} />
-
+    <div className="min-h-screen bg-[#f8f9fa]">
       {/* Top bar */}
-      <header className="relative border-b border-white/10 backdrop-blur-sm bg-white/[0.03]">
+      <header className="bg-white border-b border-slate-200 sticky top-0 z-40">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 py-3.5 flex items-center justify-between">
-          <Link href="/admin" className="inline-flex items-center gap-2 text-sm font-semibold text-white/80 hover:text-white transition-colors group">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-white/10 group-hover:bg-white/15 transition-colors">
+          <Link href="/admin" className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-[#0047AB] group">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-50 group-hover:bg-[#0047AB]/5">
               <ArrowLeft className="h-4 w-4" />
             </span>
             Back to Dashboard
           </Link>
-          <div className="flex items-center gap-2.5">
-            <span className="relative flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#0b6e8f] to-[#10b981] shadow-lg shadow-emerald-900/30">
-              <Eye className="h-4.5 w-4.5 text-white" strokeWidth={2.3} />
-              <span className="absolute -bottom-0.5 -right-0.5 h-2.5 w-2.5 rounded-full bg-emerald-400 border-2 border-[#063b4f]" />
-            </span>
-            <div className="leading-none">
-              <div className="text-sm font-bold text-white">Sarada Netralaya</div>
-              <div className="text-[10px] uppercase tracking-[0.14em] text-emerald-300/70 mt-0.5 font-semibold">Settings</div>
-            </div>
+          <div className="flex items-center gap-2">
+            <Shield className="h-4 w-4 text-[#0047AB]" />
+            <span className="text-sm font-bold text-[#374151]">Settings</span>
           </div>
         </div>
       </header>
 
-      <div className="relative mx-auto max-w-5xl px-4 sm:px-6 py-8 lg:py-10">
-        {/* Page title */}
-        <div className="mb-8">
-          <div className="flex items-center gap-2 text-emerald-300 text-xs font-bold uppercase tracking-[0.14em]">
-            <Sparkles className="h-3.5 w-3.5" /> Configuration
-          </div>
-          <h1 className="mt-2 text-3xl sm:text-4xl font-bold tracking-tight text-white">
-            Owner Settings
-          </h1>
-          <p className="mt-2 text-sm text-white/55 max-w-xl">
-            Manage your account security and view clinic information. All changes take effect immediately.
-          </p>
-        </div>
+      <div className="mx-auto max-w-5xl px-4 sm:px-6 py-8">
+        <h1 className="text-2xl font-bold text-[#374151] mb-6">Owner Settings</h1>
 
-        <div className="grid lg:grid-cols-[240px_1fr] gap-6">
+        <div className="grid lg:grid-cols-[220px_1fr] gap-6">
           {/* Tab sidebar */}
-          <aside className="lg:sticky lg:top-6 self-start">
+          <aside className="lg:sticky lg:top-20 self-start">
             <nav className="flex lg:flex-col gap-1.5 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0">
               <TabButton active={tab === "security"} onClick={() => setTab("security")} icon={Shield} label="Security" desc="Password & access" />
               <TabButton active={tab === "account"} onClick={() => setTab("account")} icon={User} label="Account" desc="Profile info" />
-              <TabButton active={tab === "clinic"} onClick={() => setTab("clinic")} icon={Building2} label="Clinic" desc="Business details" />
+              <TabButton active={tab === "clinic"} onClick={() => setTab("clinic")} icon={Building2} label="Clinic" desc="Branches & hours" />
+              <TabButton active={tab === "fees"} onClick={() => setTab("fees")} icon={IndianRupee} label="Fees" desc="Consultation charges" />
             </nav>
           </aside>
 
           {/* Tab content */}
           <div className="min-w-0">
             {tab === "security" && (
-              <div className="space-y-6 animate-[fadeIn_0.25s_ease-out]">
-                {/* Change password card */}
-                <div className="rounded-2xl bg-white shadow-2xl shadow-black/20 overflow-hidden">
-                  <div className="bg-gradient-to-r from-[#0b6e8f] to-[#084f67] px-6 py-4 flex items-center gap-3">
-                    <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/15 backdrop-blur-sm">
+              <div className="space-y-5">
+                <div className="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
+                  <div className="bg-[#0047AB] px-6 py-4 flex items-center gap-3">
+                    <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/15">
                       <KeyRound className="h-5 w-5 text-white" />
                     </span>
                     <div>
@@ -139,160 +116,75 @@ export function AdminSettings() {
 
                   <form onSubmit={onSubmit} className="p-6 space-y-4">
                     <div>
-                      <Label htmlFor="current" className="text-sm font-semibold text-slate-700">
-                        Current Password
-                      </Label>
+                      <Label className="text-sm font-semibold text-[#374151]">Current Password</Label>
                       <div className="relative mt-1.5">
                         <Lock className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                        <Input
-                          id="current"
-                          type={showCur ? "text" : "password"}
-                          value={current}
-                          onChange={(e) => setCurrent(e.target.value)}
-                          placeholder="Enter current password"
-                          className="h-11 pl-9 pr-10 bg-slate-50 border-slate-200 focus-visible:border-[#0b6e8f] focus-visible:bg-white"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowCur((v) => !v)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#0b6e8f] transition-colors"
-                          aria-label={showCur ? "Hide" : "Show"}
-                        >
+                        <Input type={showCur ? "text" : "password"} value={current} onChange={(e) => setCurrent(e.target.value)} placeholder="Enter current password"
+                          className="h-11 pl-9 pr-10 bg-slate-50 border-slate-200 focus-visible:border-[#0047AB] focus-visible:bg-white" />
+                        <button type="button" onClick={() => setShowCur((v) => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#0047AB]">
                           {showCur ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                         </button>
                       </div>
                     </div>
 
                     <div>
-                      <Label htmlFor="new" className="text-sm font-semibold text-slate-700">
-                        New Password
-                      </Label>
+                      <Label className="text-sm font-semibold text-[#374151]">New Password</Label>
                       <div className="relative mt-1.5">
                         <KeyRound className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                        <Input
-                          id="new"
-                          type={showNew ? "text" : "password"}
-                          value={next}
-                          onChange={(e) => setNext(e.target.value)}
-                          placeholder="At least 6 characters"
-                          className="h-11 pl-9 pr-10 bg-slate-50 border-slate-200 focus-visible:border-[#0b6e8f] focus-visible:bg-white"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowNew((v) => !v)}
-                          className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#0b6e8f] transition-colors"
-                          aria-label={showNew ? "Hide" : "Show"}
-                        >
+                        <Input type={showNew ? "text" : "password"} value={next} onChange={(e) => setNext(e.target.value)} placeholder="At least 6 characters"
+                          className="h-11 pl-9 pr-10 bg-slate-50 border-slate-200 focus-visible:border-[#0047AB] focus-visible:bg-white" />
+                        <button type="button" onClick={() => setShowNew((v) => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#0047AB]">
                           {showNew ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                         </button>
                       </div>
-                      {/* Strength meter */}
                       {next && (
                         <div className="mt-2.5">
-                          <div className="flex gap-1">
-                            {[0, 1, 2, 3].map((i) => (
-                              <div
-                                key={i}
-                                className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
-                                  i < strength.score ? strength.color : "bg-slate-200"
-                                }`}
-                              />
-                            ))}
-                          </div>
-                          <p className={`mt-1.5 text-[11px] font-medium ${strength.text}`}>
-                            {strength.label}
-                          </p>
+                          <div className="flex gap-1">{[0,1,2,3].map((i) => <div key={i} className={`h-1.5 flex-1 rounded-full transition-all ${i < strength.score ? strength.color : "bg-slate-200"}`} />)}</div>
+                          <p className={`mt-1.5 text-[11px] font-medium ${strength.text}`}>{strength.label}</p>
                         </div>
                       )}
                     </div>
 
                     <div>
-                      <Label htmlFor="confirm" className="text-sm font-semibold text-slate-700">
-                        Confirm New Password
-                      </Label>
+                      <Label className="text-sm font-semibold text-[#374151]">Confirm New Password</Label>
                       <div className="relative mt-1.5">
                         <Check className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                        <Input
-                          id="confirm"
-                          type={showNew ? "text" : "password"}
-                          value={confirm}
-                          onChange={(e) => setConfirm(e.target.value)}
-                          placeholder="Re-enter new password"
-                          className="h-11 pl-9 bg-slate-50 border-slate-200 focus-visible:border-[#0b6e8f] focus-visible:bg-white"
-                        />
-                        {confirm && next === confirm && (
-                          <Check className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-emerald-500" />
-                        )}
+                        <Input type={showNew ? "text" : "password"} value={confirm} onChange={(e) => setConfirm(e.target.value)} placeholder="Re-enter new password"
+                          className="h-11 pl-9 bg-slate-50 border-slate-200 focus-visible:border-[#0047AB] focus-visible:bg-white" />
+                        {confirm && next === confirm && <Check className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-emerald-500" />}
                       </div>
-                      {confirm && next !== confirm && (
-                        <p className="mt-1.5 flex items-center gap-1 text-[11px] font-medium text-rose-600">
-                          <AlertCircle className="h-3 w-3" /> Passwords do not match
-                        </p>
-                      )}
+                      {confirm && next !== confirm && <p className="mt-1.5 flex items-center gap-1 text-[11px] font-medium text-rose-600"><AlertCircle className="h-3 w-3" /> Passwords do not match</p>}
                     </div>
 
-                    <Button
-                      type="submit"
-                      disabled={saving || !current || !next || !confirm || next !== confirm}
-                      className="w-full h-11 bg-[#0b6e8f] hover:bg-[#084f67] text-white font-semibold disabled:opacity-50 disabled:cursor-not-allowed shadow-md shadow-[#0b6e8f]/20"
-                    >
-                      {saving ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Updating...
-                        </>
-                      ) : (
-                        <>
-                          <KeyRound className="mr-2 h-4 w-4" /> Update Password
-                        </>
-                      )}
+                    <Button type="submit" disabled={saving || !current || !next || !confirm || next !== confirm}
+                      className="w-full h-11 bg-[#0047AB] hover:bg-[#003a8c] text-white font-semibold shadow-md shadow-[#0047AB]/20">
+                      {saving ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Updating...</> : <><KeyRound className="mr-2 h-4 w-4" /> Update Password</>}
                     </Button>
                   </form>
 
                   <div className="bg-amber-50 border-t border-amber-100 px-6 py-3.5 text-xs text-amber-800 flex items-start gap-2">
                     <AlertCircle className="h-3.5 w-3.5 mt-0.5 shrink-0" />
-                    <span>
-                      <strong>Note:</strong> Password changes apply to this server. In production (Vercel), set <code className="font-mono bg-amber-100 px-1 rounded">OWNER_PASSWORD</code> in the Vercel dashboard.
-                    </span>
+                    <span>Password changes apply to this server. In production, set <code className="font-mono bg-amber-100 px-1 rounded">OWNER_PASSWORD</code> in Vercel env vars.</span>
                   </div>
                 </div>
 
-                {/* Security tips */}
-                <div className="rounded-2xl bg-white/[0.06] backdrop-blur-sm border border-white/10 p-5">
-                  <h3 className="text-sm font-bold text-white flex items-center gap-2 mb-3">
-                    <Shield className="h-4 w-4 text-emerald-300" /> Security Tips
-                  </h3>
-                  <ul className="space-y-2 text-xs text-white/60">
-                    <li className="flex items-start gap-2">
-                      <Check className="h-3.5 w-3.5 text-emerald-400 mt-0.5 shrink-0" />
-                      Use at least 8 characters with a mix of letters, numbers, and symbols
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <Check className="h-3.5 w-3.5 text-emerald-400 mt-0.5 shrink-0" />
-                      Don't reuse passwords from other accounts
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <Check className="h-3.5 w-3.5 text-emerald-400 mt-0.5 shrink-0" />
-                      Your session expires after 7 days for security
-                    </li>
-                    <li className="flex items-start gap-2">
-                      <Check className="h-3.5 w-3.5 text-emerald-400 mt-0.5 shrink-0" />
-                      Always log out from shared computers
-                    </li>
+                <div className="rounded-2xl bg-white border border-slate-200 p-5">
+                  <h3 className="text-sm font-bold text-[#374151] flex items-center gap-2 mb-3"><Shield className="h-4 w-4 text-[#0047AB]" /> Security Tips</h3>
+                  <ul className="space-y-2 text-xs text-slate-600">
+                    <li className="flex items-start gap-2"><Check className="h-3.5 w-3.5 text-emerald-500 mt-0.5 shrink-0" /> Use at least 8 characters with letters, numbers, and symbols</li>
+                    <li className="flex items-start gap-2"><Check className="h-3.5 w-3.5 text-emerald-500 mt-0.5 shrink-0" /> Don't reuse passwords from other accounts</li>
+                    <li className="flex items-start gap-2"><Check className="h-3.5 w-3.5 text-emerald-500 mt-0.5 shrink-0" /> Session expires after 7 days for security</li>
+                    <li className="flex items-start gap-2"><Check className="h-3.5 w-3.5 text-emerald-500 mt-0.5 shrink-0" /> Always log out from shared computers</li>
                   </ul>
                 </div>
               </div>
             )}
 
             {tab === "account" && (
-              <div className="rounded-2xl bg-white shadow-2xl shadow-black/20 overflow-hidden animate-[fadeIn_0.25s_ease-out]">
-                <div className="bg-gradient-to-r from-[#0b6e8f] to-[#084f67] px-6 py-4 flex items-center gap-3">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/15 backdrop-blur-sm">
-                    <User className="h-5 w-5 text-white" />
-                  </span>
-                  <div>
-                    <h2 className="text-base font-bold text-white">Account Information</h2>
-                    <p className="text-[11px] text-white/70 mt-0.5">Your owner profile details</p>
-                  </div>
+              <div className="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
+                <div className="bg-[#0047AB] px-6 py-4 flex items-center gap-3">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/15"><User className="h-5 w-5 text-white" /></span>
+                  <div><h2 className="text-base font-bold text-white">Account Information</h2><p className="text-[11px] text-white/70 mt-0.5">Your owner profile details</p></div>
                 </div>
                 <div className="p-6 space-y-4">
                   <InfoRow icon={Mail} label="Email Address" value="owner@saradanetralaya.in" />
@@ -300,111 +192,123 @@ export function AdminSettings() {
                   <InfoRow icon={Calendar} label="Session Duration" value="7 days after login" />
                   <InfoRow icon={Shield} label="Role" value="Owner (full access)" />
                 </div>
-                <div className="bg-slate-50 border-t border-slate-100 px-6 py-3.5 text-xs text-slate-500">
-                  To change your email, update the <code className="font-mono bg-slate-200 px-1 rounded">OWNER_EMAIL</code> environment variable in Vercel.
-                </div>
               </div>
             )}
 
             {tab === "clinic" && (
-              <div className="rounded-2xl bg-white shadow-2xl shadow-black/20 overflow-hidden animate-[fadeIn_0.25s_ease-out]">
-                <div className="bg-gradient-to-r from-[#0b6e8f] to-[#084f67] px-6 py-4 flex items-center gap-3">
-                  <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/15 backdrop-blur-sm">
-                    <Building2 className="h-5 w-5 text-white" />
-                  </span>
+              <div className="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
+                <div className="bg-[#0047AB] px-6 py-4 flex items-center gap-3">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/15"><Building2 className="h-5 w-5 text-white" /></span>
+                  <div><h2 className="text-base font-bold text-white">Clinic Information</h2><p className="text-[11px] text-white/70 mt-0.5">Branches & business details</p></div>
+                </div>
+                <div className="p-6 space-y-5">
                   <div>
-                    <h2 className="text-base font-bold text-white">Clinic Information</h2>
-                    <p className="text-[11px] text-white/70 mt-0.5">Business details shown on the website</p>
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Branches</div>
+                    <div className="space-y-3">
+                      <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                        <div className="flex items-center gap-2 mb-1"><span className="flex h-6 w-6 items-center justify-center rounded bg-[#0047AB] text-white text-[10px] font-bold">1</span><span className="text-sm font-bold text-[#374151]">Sakchi (Main Branch)</span></div>
+                        <p className="text-xs text-slate-600 ml-8">{ADDRESS.full}</p>
+                        <div className="ml-8 mt-1 flex gap-3 text-xs"><a href={`tel:${PHONES.primaryTel}`} className="text-[#0047AB] font-semibold">{PHONES.primary}</a><a href={`tel:${PHONES.secondaryTel}`} className="text-[#0047AB] font-semibold">{PHONES.secondary}</a></div>
+                      </div>
+                      <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                        <div className="flex items-center gap-2 mb-1"><span className="flex h-6 w-6 items-center justify-center rounded bg-slate-300 text-white text-[10px] font-bold">2</span><span className="text-sm font-bold text-[#374151]">Chandil Branch</span></div>
+                        <p className="text-xs text-slate-600 ml-8">Chandil, Jharkhand (Address to be updated)</p>
+                        <div className="ml-8 mt-1 text-xs text-[#0047AB] font-semibold">{PHONES.primary}</div>
+                      </div>
+                    </div>
                   </div>
+                  <div>
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Opening Hours</div>
+                    <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 space-y-1.5">
+                      {HOURS.map((h) => (
+                        <div key={h.day} className="flex items-center justify-between text-sm">
+                          <span className="text-slate-600 font-medium">{h.day}</span>
+                          <span className={`font-semibold ${h.time === "Closed" ? "text-rose-500" : "text-[#374151]"}`}>{h.time}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Contact</div>
+                    <div className="rounded-xl border border-slate-200 bg-slate-50 p-4 space-y-2">
+                      <div className="flex items-center gap-2 text-sm"><Mail className="h-4 w-4 text-slate-400" /><a href={`mailto:${EMAIL}`} className="text-[#0047AB] font-semibold break-all">{EMAIL}</a></div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {tab === "fees" && (
+              <div className="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
+                <div className="bg-[#0047AB] px-6 py-4 flex items-center gap-3">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/15"><IndianRupee className="h-5 w-5 text-white" /></span>
+                  <div><h2 className="text-base font-bold text-white">Fee Structure</h2><p className="text-[11px] text-white/70 mt-0.5">Manage consultation & procedure charges</p></div>
                 </div>
                 <div className="p-6 space-y-4">
-                  <InfoRow icon={Building2} label="Clinic Name" value={SITE.name} />
-                  <InfoRow icon={Phone} label="Primary Phone" value={PHONES.primary} />
-                  <InfoRow icon={Phone} label="Secondary Phone" value={PHONES.secondary} />
-                  <InfoRow icon={Mail} label="Email" value={EMAIL} />
-                  <div className="rounded-xl border border-slate-200 bg-slate-50/60 p-3.5">
-                    <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
-                      <Building2 className="h-3.5 w-3.5" /> Address
-                    </div>
-                    <p className="text-sm text-slate-700 leading-relaxed">{ADDRESS.full}</p>
+                  <FeeRow label="Consultation Fee" value={consultationFee} onChange={setConsultationFee} />
+                  <FeeRow label="Phaco Cataract Surgery" value={phacoFee} onChange={setPhacoFee} />
+                  <FeeRow label="Glaucoma Evaluation" value={glaucomaFee} onChange={setGlaucomaFee} />
+                  <FeeRow label="Optical / Eye Testing" value={opticalFee} onChange={setOpticalFee} />
+                  <div className="pt-2">
+                    <Button onClick={saveFees} disabled={feeSaving}
+                      className="bg-[#0047AB] hover:bg-[#003a8c] text-white font-semibold">
+                      {feeSaving ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...</> : <><Save className="mr-2 h-4 w-4" /> Save Fees</>}
+                    </Button>
                   </div>
-                  <div className="rounded-xl border border-slate-200 bg-slate-50/60 p-3.5">
-                    <div className="flex items-center gap-1.5 text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
-                      <Clock className="h-3.5 w-3.5" /> Opening Hours
-                    </div>
-                    <ul className="space-y-1">
-                      {HOURS.map((h) => (
-                        <li key={h.day} className="flex items-center justify-between text-sm">
-                          <span className="text-slate-600 font-medium">{h.day}</span>
-                          <span className={`font-semibold ${h.time === "Closed" ? "text-rose-500" : "text-[#084f67]"}`}>{h.time}</span>
-                        </li>
-                      ))}
-                    </ul>
+                  <div className="rounded-lg bg-amber-50 border border-amber-100 p-3 text-xs text-amber-800 flex items-start gap-2">
+                    <AlertCircle className="h-3.5 w-3.5 mt-0.5 shrink-0" />
+                    <span>Fees are saved locally. For production use, connect a database to persist fee changes.</span>
                   </div>
-                </div>
-                <div className="bg-slate-50 border-t border-slate-100 px-6 py-3.5 text-xs text-slate-500">
-                  To update clinic info, edit <code className="font-mono bg-slate-200 px-1 rounded">src/lib/site-info.ts</code> in the codebase.
                 </div>
               </div>
             )}
           </div>
         </div>
       </div>
-
-      <style>{`
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(8px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
     </div>
   );
 }
 
-function TabButton({
-  active, onClick, icon: Icon, label, desc,
-}: { active: boolean; onClick: () => void; icon: typeof User; label: string; desc: string }) {
+function TabButton({ active, onClick, icon: Icon, label, desc }: { active: boolean; onClick: () => void; icon: typeof User; label: string; desc: string }) {
   return (
-    <button
-      onClick={onClick}
-      className={`group flex items-center gap-3 rounded-xl px-3.5 py-3 text-left transition-all whitespace-nowrap ${
-        active
-          ? "bg-white/15 backdrop-blur-sm ring-1 ring-white/15 text-white"
-          : "text-white/50 hover:text-white hover:bg-white/5"
-      }`}
-    >
-      <span className={`flex h-8 w-8 items-center justify-center rounded-lg transition-colors ${
-        active ? "bg-emerald-500/25 text-emerald-300" : "bg-white/5 text-white/50 group-hover:text-white"
-      }`}>
+    <button onClick={onClick}
+      className={`group flex items-center gap-3 rounded-lg px-3.5 py-3 text-left transition-all whitespace-nowrap ${active ? "bg-[#0047AB] text-white shadow-md shadow-[#0047AB]/20" : "text-slate-500 hover:text-[#0047AB] hover:bg-slate-50"}`}>
+      <span className={`flex h-8 w-8 items-center justify-center rounded-lg transition-colors ${active ? "bg-white/15 text-white" : "bg-slate-100 text-slate-400 group-hover:text-[#0047AB]"}`}>
         <Icon className="h-4 w-4" />
       </span>
-      <div className="hidden lg:block">
-        <div className="text-sm font-semibold leading-tight">{label}</div>
-        <div className="text-[10px] text-white/40 mt-0.5">{desc}</div>
-      </div>
+      <div className="hidden lg:block"><div className="text-sm font-semibold leading-tight">{label}</div><div className="text-[10px] text-current opacity-60 mt-0.5">{desc}</div></div>
       <span className="lg:hidden text-sm font-semibold">{label}</span>
-      {active && <ChevronRight className="hidden lg:block h-4 w-4 ml-auto text-white/40" />}
+      {active && <ChevronRight className="hidden lg:block h-4 w-4 ml-auto opacity-40" />}
     </button>
   );
 }
 
 function InfoRow({ icon: Icon, label, value }: { icon: typeof User; label: string; value: string }) {
   return (
-    <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50/60 p-3.5">
-      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#0b6e8f]/10 text-[#0b6e8f]">
-        <Icon className="h-4 w-4" />
-      </span>
-      <div className="min-w-0 flex-1">
-        <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{label}</div>
-        <div className="text-sm font-semibold text-slate-800 truncate">{value}</div>
+    <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3.5">
+      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#0047AB]/10 text-[#0047AB]"><Icon className="h-4 w-4" /></span>
+      <div className="min-w-0 flex-1"><div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">{label}</div><div className="text-sm font-semibold text-[#374151] truncate">{value}</div></div>
+    </div>
+  );
+}
+
+function FeeRow({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+  return (
+    <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 p-3.5">
+      <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[#0047AB]/10 text-[#0047AB]"><IndianRupee className="h-4 w-4" /></span>
+      <div className="flex-1 min-w-0">
+        <Label className="text-sm font-semibold text-[#374151]">{label}</Label>
+      </div>
+      <div className="flex items-center gap-1">
+        <span className="text-slate-400 text-sm font-semibold">₹</span>
+        <Input type="text" value={value} onChange={(e) => onChange(e.target.value.replace(/\D/g, ""))} inputMode="numeric"
+          className="w-28 h-10 text-right bg-white border-slate-200 focus-visible:border-[#0047AB] font-semibold text-[#374151]" />
       </div>
     </div>
   );
 }
 
-function passwordStrength(pw: string): {
-  score: number; label: string; color: string; text: string;
-} {
+function passwordStrength(pw: string): { score: number; label: string; color: string; text: string } {
   let score = 0;
   if (pw.length >= 6) score++;
   if (pw.length >= 10) score++;
