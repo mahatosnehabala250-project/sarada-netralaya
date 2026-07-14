@@ -12,6 +12,13 @@ let ensured = false
 
 export async function ensureDbSchema(): Promise<void> {
   if (ensured) return
+  // Postgres/Supabase: the schema is created via `prisma db push` (see README),
+  // so runtime table creation is unnecessary. This SQLite-only bootstrap is
+  // skipped unless the DB is a local file: SQLite database.
+  if (!(process.env.DATABASE_URL ?? '').startsWith('file:')) {
+    ensured = true
+    return
+  }
   try {
     // Create the appointments table if it doesn't exist (SQLite).
     // Column types match the Prisma schema. Using IF NOT EXISTS makes this idempotent.
