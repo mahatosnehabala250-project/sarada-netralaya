@@ -16,12 +16,12 @@ export function Contact() {
             Visit Us
           </h2>
           <p className="mt-3 text-base text-[#333] max-w-2xl mx-auto">
-            We have two branches to serve you better. Walk in, call, or book online.
+            Easy to find — right next to HDFC Bank in Baradwari. Walk in, call, or book online.
           </p>
         </div>
 
         {/* Branch cards */}
-        <div className="grid md:grid-cols-2 gap-5 sm:gap-6 mb-8">
+        <div className={`grid gap-5 sm:gap-6 mb-8 ${BRANCHES.length > 1 ? "md:grid-cols-2" : "max-w-2xl mx-auto"}`}>
           {BRANCHES.map((branch) => {
             const mapEmbed = `https://www.google.com/maps?q=${encodeURIComponent(branch.mapQuery)}&output=embed`;
             const mapDir = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(branch.mapQuery)}`;
