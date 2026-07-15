@@ -68,7 +68,7 @@ export function Doctor() {
             </div>
 
             {/* Qualifications */}
-            <div className="mt-6 grid sm:grid-cols-3 gap-3">
+            <div className="mt-6 grid grid-cols-2 gap-3">
               {QUALS.map((q) => (
                 <div key={q.label} className="rounded-xl border border-slate-200 bg-white p-3.5 text-center">
                   <q.icon className="mx-auto h-5 w-5 text-[#0047AB]" />
@@ -76,6 +76,31 @@ export function Doctor() {
                   <div className="text-[10px] text-slate-400 mt-0.5 leading-tight">{q.desc}</div>
                 </div>
               ))}
+            </div>
+
+            {/* Specialises in */}
+            <div className="mt-6">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Specialises In</div>
+              <div className="flex flex-wrap gap-2">
+                {DOCTOR.specialties.map((s) => (
+                  <span key={s} className="inline-flex items-center rounded-full bg-emerald-50 border border-emerald-100 px-3 py-1.5 text-sm font-semibold text-[#0047AB]">
+                    {s}
+                  </span>
+                ))}
+              </div>
+            </div>
+
+            {/* Awards & Recognition */}
+            <div className="mt-6">
+              <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Awards &amp; Recognition</div>
+              <ul className="space-y-2">
+                {DOCTOR.awards.map((a) => (
+                  <li key={a} className="flex items-start gap-2 text-sm text-slate-700">
+                    <Award className="h-4 w-4 shrink-0 text-amber-500 mt-0.5" />
+                    <span>{a}</span>
+                  </li>
+                ))}
+              </ul>
             </div>
 
             <Link
