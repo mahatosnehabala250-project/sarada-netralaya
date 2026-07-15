@@ -29,21 +29,21 @@ export function Doctor() {
                 {doc.image ? (
                   <div className="relative aspect-[16/10] overflow-hidden">
                     <Image src={doc.image} alt={doc.name} fill sizes="(min-width: 1024px) 36rem, 100vw" className="object-cover" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-[#0047AB]/80 to-transparent" />
                   </div>
                 ) : (
                   <div className="relative aspect-[16/10] bg-gradient-to-br from-[#0047AB] to-[#003a8c] flex items-center justify-center">
                     <span className="text-6xl font-bold text-white/20">NB</span>
                   </div>
                 )}
-                <div className="absolute bottom-0 left-0 right-0 p-5">
-                  <h3 className="text-xl sm:text-2xl font-bold text-white">{doc.name}</h3>
-                  <p className="text-white/80 text-sm mt-0.5">{doc.role}</p>
-                </div>
                 <div className="absolute top-4 right-4 rounded-xl bg-white shadow-lg px-4 py-2.5">
                   <div className="text-2xl font-bold text-[#0047AB] leading-none">{doc.experience}</div>
                   <div className="text-[9px] font-bold uppercase tracking-wider text-slate-400 mt-0.5">Experience</div>
                 </div>
+              </div>
+              {/* Name band below the photo — keeps the photo fully clear */}
+              <div className="bg-[#0047AB] px-5 py-4">
+                <h3 className="text-xl sm:text-2xl font-bold text-white">{doc.name}</h3>
+                <p className="text-white/80 text-sm mt-0.5">{doc.role}</p>
               </div>
 
               <div className="p-5 sm:p-6">
