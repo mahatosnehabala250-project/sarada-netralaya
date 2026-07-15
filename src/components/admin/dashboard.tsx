@@ -19,7 +19,7 @@ import {
 import { toast } from "@/lib/toast";
 import {
   DEPT_LABEL, STATUS_META, type Status, type Department,
-} from "@/lib/appointments";
+} from "@/lib/appointment-shared";
 import { greetingIST, fullTodayIST, formatDateLong, formatCreatedAtIST, timeAgoIST } from "@/lib/ist";
 import { PHONES } from "@/lib/site-info";
 import { formatPhone, telHref } from "@/lib/utils";

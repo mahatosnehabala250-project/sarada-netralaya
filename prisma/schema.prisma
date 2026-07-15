@@ -1,5 +1,5 @@
-// Sarada Netralaya — eye care hospital booking system
-// SQLite-backed (portable, zero-cost). See README for Supabase adaptation SQL.
+// Sarada Netralaya — production PostgreSQL schema.
+// Changes are deployed through committed Prisma migrations.
 
 generator client {
   provider = "prisma-client-js"
@@ -19,27 +19,47 @@ model Setting {
 }
 
 model Appointment {
-  id            String   @id @default(cuid())
-  // Short human-friendly booking reference, e.g. #482913
-  ref           String   @unique
-  name          String
-  // 10-digit Indian mobile, stored as text
-  phone         String
-  age           Int?
-  // "eye_care" | "optical"
-  department    String
-  // Calendar date in IST, stored as yyyy-mm-dd to avoid TZ ambiguity
-  preferredDate String
-  // Human label, e.g. "10:00 AM – 12:00 PM"
-  timeSlot      String
-  note          String?
-  // "pending" | "confirmed" | "done" | "cancelled"
-  status        String   @default("pending")
-  // Hashed IP for rate limiting (never the raw IP)
-  ipHash        String?
-  createdAt     DateTime @default(now())
+  id             String   @id @default(cuid())
+  // Human-friendly booking reference. New bookings use 8 digits; older 6-digit refs remain valid.
+  ref            String   @unique
+  idempotencyKey String?  @unique
+  requestHash    String?
+  name           String
+  phone          String
+  age            Int?
+  department     String
+  preferredDate  String
+  timeSlot       String
+  note           String?
+  status         String   @default("pending")
+  // Consultation fee captured when status first becomes "done".
+  feeCharged     Int?
+  ipHash         String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @default(now()) @updatedAt
+  version        Int      @default(1)
 
   @@index([preferredDate])
   @@index([status])
   @@index([phone])
+  @@index([preferredDate, createdAt])
+  @@index([status, preferredDate])
+}
+
+// Durable owner credential override. If absent, OWNER_PASSWORD seeds login.
+model OwnerCredential {
+  id             String   @id @default("owner")
+  passwordHash   String
+  sessionVersion Int      @default(1)
+  updatedAt      DateTime @default(now()) @updatedAt
+}
+
+// Shared serverless rate-limit buckets (never stores raw IP/email/ref values).
+model RateLimitBucket {
+  key       String   @id
+  count     Int
+  resetAt   DateTime
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@index([resetAt])
 }

@@ -8,7 +8,7 @@ import {
 import {
   Loader2, TrendingUp, PieChart as PieIcon, CalendarClock, Activity,
 } from "lucide-react";
-import { STATUS_META, type Status } from "@/lib/appointments";
+import { STATUS_META, type Status } from "@/lib/appointment-shared";
 
 type Stats = {
   statusDist: { name: string; value: number }[];

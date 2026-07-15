@@ -16,7 +16,7 @@ import { toast } from "@/lib/toast";
 import {
   TIME_SLOTS, DEPARTMENTS, DEPT_LABEL, STATUSES, STATUS_META,
   type Status, type Department,
-} from "@/lib/appointments";
+} from "@/lib/appointment-shared";
 import { todayISTString } from "@/lib/ist";
 
 export type NewAppt = {

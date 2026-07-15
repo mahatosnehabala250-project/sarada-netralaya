@@ -5,7 +5,7 @@ import {
   Loader2, Clock, Phone, Eye, Glasses, CalendarClock,
   ArrowRight, Bell,
 } from "lucide-react";
-import { STATUS_META, type Status } from "@/lib/appointments";
+import { STATUS_META, type Status } from "@/lib/appointment-shared";
 
 type ActivityItem = {
   id: string;

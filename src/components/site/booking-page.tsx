@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/lib/toast";
-import { TIME_SLOTS } from "@/lib/appointments";
+import { TIME_SLOTS } from "@/lib/appointment-shared";
 import { todayISTString } from "@/lib/ist";
 import { PHONES, ADDRESS } from "@/lib/site-info";
 
@@ -30,6 +30,9 @@ export function BookingPage() {
   const [note, setNote] = useState("");
   const [website, setWebsite] = useState("");
   const [touched, setTouched] = useState<Record<string, boolean>>({});
+  // Stable per-attempt key: a retry after a network error reuses it, so the
+  // server can return the original booking instead of creating a duplicate.
+  const [idempotencyKey, setIdempotencyKey] = useState(() => crypto.randomUUID());
   const today = todayISTString();
 
   function fieldError(field: string): string | null {
@@ -60,12 +63,13 @@ export function BookingPage() {
       const res = await fetch("/api/appointments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name.trim(), phone: phone.trim(), age: age || undefined, department, preferredDate, timeSlot, note: note.trim() || undefined, website }),
+        body: JSON.stringify({ name: name.trim(), phone: phone.trim(), age: age || undefined, department, preferredDate, timeSlot, note: note.trim() || undefined, website, idempotencyKey }),
       });
       const data = await res.json();
       if (!res.ok) { toast.error(data.error ?? "Something went wrong. Please call us."); return; }
       setSuccess({ ref: data.ref, message: data.message });
       toast.success("Appointment requested!");
+      setIdempotencyKey(crypto.randomUUID()); // fresh key for the next booking
       setName(""); setPhone(""); setAge(""); setDepartment(""); setPreferredDate(""); setTimeSlot(""); setNote(""); setWebsite(""); setTouched({});
     } catch { toast.error("Network error. Please call us instead."); }
     finally { setSubmitting(false); }

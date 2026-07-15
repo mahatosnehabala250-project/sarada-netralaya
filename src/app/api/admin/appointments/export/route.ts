@@ -5,7 +5,7 @@ import { db } from "@/lib/db"
 import { ensureDbSchema } from "@/lib/db-ensure";
 import { isOwnerAuthenticated } from "@/lib/auth";
 import { DEPT_LABEL } from "@/lib/appointments";
-import { formatDateLong, formatCreatedAtIST } from "@/lib/ist";
+import { formatDateLong, formatCreatedAtIST, todayISTString } from "@/lib/ist";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -39,7 +39,7 @@ export async function GET(req: NextRequest) {
   const dateFrom = url.searchParams.get("dateFrom")?.trim() ?? "";
   const dateTo = url.searchParams.get("dateTo")?.trim() ?? "";
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayISTString();
 
   const where: Record<string, unknown> = {};
   if (department !== "all") where.department = department;

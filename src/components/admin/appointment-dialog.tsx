@@ -20,7 +20,7 @@ import { toast } from "@/lib/toast";
 import {
   DEPT_LABEL, STATUS_META, TIME_SLOTS, DEPARTMENTS,
   type Status, type Department,
-} from "@/lib/appointments";
+} from "@/lib/appointment-shared";
 import { formatDateLong, formatCreatedAtIST, timeAgoIST, todayISTString } from "@/lib/ist";
 import { formatPhone, telHref } from "@/lib/utils";
 import { printAppointmentSlip } from "@/components/admin/print-slip";

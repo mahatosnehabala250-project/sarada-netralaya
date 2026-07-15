@@ -9,6 +9,7 @@ import { ensureDbSchema } from "@/lib/db-ensure";
 import { isOwnerAuthenticated } from "@/lib/auth";
 import { STATUSES, DEPARTMENTS, TIME_SLOTS, type Status } from "@/lib/appointments";
 import { todayISTString } from "@/lib/ist";
+import { getFees } from "@/lib/settings";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -119,9 +120,23 @@ export async function PATCH(
 
   await ensureDbSchema();
   try {
+    const existing = await db.appointment.findUnique({ where: { id } });
+    if (!existing) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+
+    // Capture the consultation fee the first time a visit is marked done.
+    if (data.status === "done" && existing.feeCharged == null) {
+      const fees = await getFees();
+      const dept = (data.department as string | undefined) ?? existing.department;
+      data.feeCharged = dept === "eye_care" ? fees.eye_care : fees.optical;
+    }
+    data.version = { increment: 1 };
+
     const updated = await db.appointment.update({ where: { id }, data });
     return NextResponse.json({ ok: true, item: updated });
-  } catch {
+  } catch (dbErr) {
+    console.error("[admin/appointments/:id patch] DB error:", dbErr);
     return NextResponse.json({ error: "Update failed" }, { status: 500 });
   }
 }

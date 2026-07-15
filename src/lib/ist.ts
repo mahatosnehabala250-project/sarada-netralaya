@@ -1,7 +1,7 @@
 // IST (Asia/Kolkata) date/time utilities.
 // All user-facing date logic must use IST, never raw UTC strings.
 
-import { format, parseISO } from "date-fns";
+import { format, parseISO, addDays } from "date-fns";
 import { toZonedTime, fromZonedTime } from "date-fns-tz";
 
 export const IST_TZ = "Asia/Kolkata";
@@ -14,6 +14,24 @@ export function nowInIST(): Date {
 /** Today's calendar date in IST as yyyy-MM-dd. */
 export function todayISTString(): string {
   return format(nowInIST(), "yyyy-MM-dd");
+}
+
+/** A future calendar date in IST, formatted as yyyy-MM-dd. */
+export function addDaysIST(days: number): string {
+  return format(addDays(nowInIST(), days), "yyyy-MM-dd");
+}
+
+/** Strictly validate a real yyyy-MM-dd Gregorian calendar date. */
+export function isValidISTDate(value: string): boolean {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value);
+  if (!match) return false;
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+  const parsed = new Date(Date.UTC(year, month - 1, day));
+  return parsed.getUTCFullYear() === year
+    && parsed.getUTCMonth() === month - 1
+    && parsed.getUTCDate() === day;
 }
 
 /** Format a yyyy-MM-dd date string + slot into a readable IST label. */

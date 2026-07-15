@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { Eye } from "lucide-react";
-import { DEPT_LABEL, STATUS_META, type Department, type Status } from "@/lib/appointments";
+import { DEPT_LABEL, STATUS_META, type Department, type Status } from "@/lib/appointment-shared";
 import { formatDateLong } from "@/lib/ist";
 import { SITE, ADDRESS, PHONES, DOCTOR } from "@/lib/site-info";
 

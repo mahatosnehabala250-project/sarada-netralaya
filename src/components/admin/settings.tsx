@@ -62,7 +62,7 @@ export function AdminSettings() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!current || !next || !confirm) { toast.error("Please fill in all fields"); return; }
-    if (next.length < 6) { toast.error("New password must be at least 6 characters"); return; }
+    if (next.length < 12) { toast.error("New password must be at least 12 characters"); return; }
     if (next !== confirm) { toast.error("New passwords do not match"); return; }
     if (next === current) { toast.error("New password must be different from current"); return; }
     setSaving(true);
@@ -161,7 +161,7 @@ export function AdminSettings() {
                       <Label className="text-sm font-semibold text-[#374151]">New Password</Label>
                       <div className="relative mt-1.5">
                         <KeyRound className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
-                        <Input type={showNew ? "text" : "password"} value={next} onChange={(e) => setNext(e.target.value)} placeholder="At least 6 characters"
+                        <Input type={showNew ? "text" : "password"} value={next} onChange={(e) => setNext(e.target.value)} placeholder="At least 12 characters"
                           className="h-11 pl-9 pr-10 bg-slate-50 border-slate-200 focus-visible:border-[#0047AB] focus-visible:bg-white" />
                         <button type="button" onClick={() => setShowNew((v) => !v)} className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-[#0047AB]">
                           {showNew ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -201,7 +201,7 @@ export function AdminSettings() {
                 <div className="rounded-2xl bg-white border border-slate-200 p-5">
                   <h3 className="text-sm font-bold text-[#374151] flex items-center gap-2 mb-3"><Shield className="h-4 w-4 text-[#0047AB]" /> Security Tips</h3>
                   <ul className="space-y-2 text-xs text-slate-600">
-                    <li className="flex items-start gap-2"><Check className="h-3.5 w-3.5 text-emerald-500 mt-0.5 shrink-0" /> Use at least 8 characters with letters, numbers, and symbols</li>
+                    <li className="flex items-start gap-2"><Check className="h-3.5 w-3.5 text-emerald-500 mt-0.5 shrink-0" /> Use at least 12 characters with letters, numbers, and symbols</li>
                     <li className="flex items-start gap-2"><Check className="h-3.5 w-3.5 text-emerald-500 mt-0.5 shrink-0" /> Don't reuse passwords from other accounts</li>
                     <li className="flex items-start gap-2"><Check className="h-3.5 w-3.5 text-emerald-500 mt-0.5 shrink-0" /> Session expires after 7 days for security</li>
                     <li className="flex items-start gap-2"><Check className="h-3.5 w-3.5 text-emerald-500 mt-0.5 shrink-0" /> Always log out from shared computers</li>
