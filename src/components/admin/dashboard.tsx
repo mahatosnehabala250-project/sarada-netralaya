@@ -21,7 +21,7 @@ import {
   DEPT_LABEL, STATUS_META, type Status, type Department,
 } from "@/lib/appointments";
 import { greetingIST, fullTodayIST, formatDateLong, formatCreatedAtIST, timeAgoIST } from "@/lib/ist";
-import { PHONES, SITE } from "@/lib/site-info";
+import { PHONES } from "@/lib/site-info";
 import { formatPhone, telHref } from "@/lib/utils";
 import { AppointmentDetailDialog } from "@/components/admin/appointment-dialog";
 import { CreateAppointmentDialog, type NewAppt } from "@/components/admin/create-dialog";
@@ -193,13 +193,36 @@ export function AdminDashboard() {
           <button onClick={() => fetchList(true)} aria-label="Refresh"><RefreshCw className={`h-5 w-5 text-slate-500 ${refreshing ? "animate-spin" : ""}`} /></button>
         </header>
 
+        {/* Desktop top bar */}
+        <header className="hidden lg:flex sticky top-0 z-30 items-center gap-4 bg-white border-b border-slate-200 px-6 h-16">
+          <div className="min-w-0">
+            <h1 className="text-lg font-bold text-[#374151] leading-tight">Dashboard</h1>
+            <p className="text-xs text-[#6b7280]">Welcome back, Admin! Here&apos;s what&apos;s happening today.</p>
+          </div>
+          <div className="ml-auto relative w-72">
+            <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+            <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search patients, appointments…" className="h-10 pl-9 rounded-full bg-slate-50 border-slate-200 focus-visible:border-[#3b82f6] focus-visible:ring-[#3b82f6]/20" />
+          </div>
+          <button onClick={() => { setStatus("pending"); setTab("all"); }} title="Pending appointments" className="relative flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-slate-500 hover:text-[#3b82f6] hover:border-[#3b82f6] transition-colors">
+            <Bell className="h-5 w-5" />
+            {kpis.pending > 0 && <span className="absolute -top-1 -right-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white border-2 border-white">{kpis.pending}</span>}
+          </button>
+          <div className="flex items-center gap-2 pl-1">
+            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-[#3b82f6] to-[#2563eb] text-white text-xs font-bold">AU</span>
+            <div className="leading-tight">
+              <div className="text-sm font-semibold text-[#374151]">Admin User</div>
+              <div className="text-[11px] text-slate-400">Super Admin</div>
+            </div>
+          </div>
+        </header>
+
         {/* Content */}
         <main className="flex-1 p-4 sm:p-6 max-w-[1400px] w-full mx-auto">
           {/* Header row */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
             <div>
-              <h1 className="text-2xl font-bold text-[#374151]">Dashboard</h1>
-              <p className="text-sm text-[#6b7280] mt-0.5">{greeting}! Here's what's happening today · {todayStr}</p>
+              <h2 className="text-xl font-bold text-[#374151]">Today&apos;s Overview</h2>
+              <p className="text-sm text-[#6b7280] mt-0.5">{greeting}! · {todayStr}</p>
             </div>
             <div className="flex items-center gap-2">
               <Button variant="outline" size="sm" onClick={() => fetchList(true)} className="border-slate-200 text-slate-600 hover:bg-slate-50">
@@ -237,7 +260,7 @@ export function AdminDashboard() {
           </div>
 
           {/* Filters */}
-          <div className="mt-6 rounded-xl bg-white border border-slate-200 p-4 shadow-sm">
+          <div id="appointments" className="mt-6 rounded-xl bg-white border border-slate-200 p-4 shadow-sm scroll-mt-20">
             <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
               <div className="inline-flex rounded-lg bg-slate-100 p-1 self-start">
                 {TABS.map((t) => (
@@ -293,7 +316,7 @@ export function AdminDashboard() {
           )}
 
           {/* List */}
-          <div className="mt-5">
+          <div id="patients" className="mt-5 scroll-mt-20">
             {loading ? (
               <LoadingState />
             ) : visibleItems.length === 0 ? (
@@ -381,58 +404,73 @@ export function AdminDashboard() {
 
 /* ---------- Sidebar ---------- */
 function SidebarContent({ onLogout }: { onLogout: () => void }) {
+  const soon = (name: string) => toast(`${name} module is coming soon`);
+  const linkCls = "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#3b82f6] transition-colors";
+  const iconCls = "h-[18px] w-[18px] text-slate-400 group-hover:text-[#3b82f6]";
   return (
     <div className="flex flex-col h-full">
       {/* Brand */}
       <div className="p-4 border-b border-slate-100">
         <div className="flex items-center gap-2.5">
-          <Image src="/images/logo.png" alt="Sarada Netralaya" width={36} height={24} className="shrink-0" />
+          <Image src="/images/logo.png" alt="Sarada Netralaya" width={38} height={26} className="shrink-0" />
           <div className="leading-none">
             <div className="text-sm font-bold text-[#374151]">Sarada Netralaya</div>
-            <div className="text-[10px] text-slate-400 mt-0.5">We Care, We Cure</div>
+            <div className="text-[10px] text-slate-400 mt-0.5">Clear Vision, Better Life</div>
           </div>
         </div>
       </div>
 
       {/* Nav */}
       <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
-        <div className="px-3 pb-2 pt-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">Main</div>
         <a href="/admin" className="flex items-center gap-3 rounded-lg bg-[#3b82f6] px-3 py-2.5 text-sm font-bold text-white shadow-sm">
-          <CalendarDays className="h-4 w-4" /> Appointments
+          <BarChart3 className="h-[18px] w-[18px]" /> Dashboard
         </a>
-        <a href="/admin/settings" className="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#3b82f6] transition-colors">
-          <UserCircle2 className="h-4 w-4 text-slate-400 group-hover:text-[#3b82f6]" /> Settings
-        </a>
-        <div className="px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">Links</div>
-        <a href="/" className="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#3b82f6] transition-colors">
-          <ExternalLink className="h-4 w-4 text-slate-400 group-hover:text-[#3b82f6]" /> View Website
-        </a>
-        <a href="/book" className="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#3b82f6] transition-colors">
-          <CalendarCheck className="h-4 w-4 text-slate-400 group-hover:text-[#3b82f6]" /> Book Appointment
-        </a>
-        <a href="/gallery" className="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#3b82f6] transition-colors">
-          <Eye className="h-4 w-4 text-slate-400 group-hover:text-[#3b82f6]" /> Gallery
-        </a>
-        <a href="/reviews" className="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#3b82f6] transition-colors">
-          <Star className="h-4 w-4 text-slate-400 group-hover:text-[#3b82f6]" /> Reviews
-        </a>
-        <a href="/track" className="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#3b82f6] transition-colors">
-          <Search className="h-4 w-4 text-slate-400 group-hover:text-[#3b82f6]" /> Track Appointment
-        </a>
+        <a href="#appointments" className={linkCls}><CalendarDays className={iconCls} /> Appointments</a>
+        <a href="#patients" className={linkCls}><Users className={iconCls} /> Patients</a>
+        <a href="/admin/settings" className={linkCls}><UserCircle2 className={iconCls} /> Doctors</a>
+        <a href="/reviews" className={linkCls}><Star className={iconCls} /> Reviews</a>
+        <a href="/api/admin/appointments/export" className={linkCls}><Download className={iconCls} /> Reports</a>
+        <a href="/admin/settings" className={linkCls}><UserCircle2 className={iconCls} /> Settings</a>
+
+        <div className="px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">More Modules</div>
+        {[
+          { label: "Billing", icon: DollarSign },
+          { label: "Payments", icon: DollarSign },
+          { label: "Inventory", icon: Inbox },
+          { label: "Users & Roles", icon: Users },
+          { label: "System Logs", icon: Filter },
+        ].map((m) => (
+          <button key={m.label} onClick={() => soon(m.label)} className={`${linkCls} w-full text-left`}>
+            <m.icon className={iconCls} />
+            <span className="flex-1">{m.label}</span>
+            <span className="text-[9px] font-bold uppercase tracking-wide text-slate-400 bg-slate-100 rounded px-1.5 py-0.5">Soon</span>
+          </button>
+        ))}
+
+        <div className="px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">Site</div>
+        <a href="/" className={linkCls}><ExternalLink className={iconCls} /> View Website</a>
+        <a href="/gallery" className={linkCls}><Eye className={iconCls} /> Gallery</a>
       </nav>
 
       {/* Help + User */}
       <div className="p-3 border-t border-slate-100 space-y-2">
-        <div className="flex items-center gap-2.5 rounded-lg bg-slate-50 px-3 py-2.5">
-          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#3b82f6] text-white text-xs font-bold">SN</span>
-          <div className="leading-tight min-w-0 flex-1">
-            <div className="text-sm font-semibold text-[#374151] truncate">Sarada Owner</div>
-            <div className="text-[11px] text-slate-400 truncate">{SITE.domain}</div>
+        <a href={`https://wa.me/${PHONES.whatsapp}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2.5 rounded-xl bg-[#3b82f6]/5 border border-[#3b82f6]/10 px-3 py-2.5 hover:bg-[#3b82f6]/10 transition-colors">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#3b82f6] text-white"><Headphones className="h-4 w-4" /></span>
+          <div className="leading-tight min-w-0">
+            <div className="text-[13px] font-bold text-[#374151]">Need Help?</div>
+            <div className="text-[11px] text-slate-400">Get quick support</div>
           </div>
+        </a>
+        <div className="flex items-center gap-2.5 rounded-lg px-2 py-2">
+          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-[#3b82f6] to-[#2563eb] text-white text-xs font-bold">AU</span>
+          <div className="leading-tight min-w-0 flex-1">
+            <div className="text-sm font-semibold text-[#374151] truncate">Admin User</div>
+            <div className="text-[11px] text-slate-400 truncate">Super Admin</div>
+          </div>
+          <button onClick={onLogout} title="Logout" className="text-slate-400 hover:text-rose-500 transition-colors p-1.5">
+            <LogOut className="h-4 w-4" />
+          </button>
         </div>
-        <button onClick={onLogout} className="w-full flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-rose-500 hover:bg-rose-50 transition-colors">
-          <LogOut className="h-4 w-4" /> Logout
-        </button>
       </div>
     </div>
   );
