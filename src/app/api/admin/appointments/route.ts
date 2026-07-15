@@ -7,7 +7,7 @@ import { ensureDbSchema } from "@/lib/db-ensure";
 import { isOwnerAuthenticated } from "@/lib/auth";
 import { STATUSES, type Status } from "@/lib/appointments";
 import { todayISTString } from "@/lib/ist";
-import { CONSULTATION_FEE } from "@/lib/site-info";
+import { getFees } from "@/lib/settings";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -78,9 +78,11 @@ export async function GET(req: NextRequest) {
   const monthPrefix = today.slice(0, 7); // "YYYY-MM" — current month in IST
   let todayCount = 0, pendingCount = 0, upcomingCount = 0, doneCount = 0,
     cancelledCount = 0, totalCount = 0, uniquePatients = 0, doneThisMonth = 0;
+  let revenueThisMonth = 0;
+  const fees = await getFees();
   try {
     const [
-      tCount, pCount, uCount, dCount, cCount, allCount, patientGroups, dMonth,
+      tCount, pCount, uCount, dCount, cCount, allCount, patientGroups, doneMonthRows,
     ] = await Promise.all([
       db.appointment.count({ where: { preferredDate: today } }),
       db.appointment.count({ where: { status: "pending" } }),
@@ -89,19 +91,23 @@ export async function GET(req: NextRequest) {
       db.appointment.count({ where: { status: "cancelled" } }),
       db.appointment.count(),
       db.appointment.groupBy({ by: ["phone"] }),         // distinct patients
-      db.appointment.count({ where: { status: "done", preferredDate: { startsWith: monthPrefix } } }),
+      db.appointment.findMany({                          // completed this month, by dept
+        where: { status: "done", preferredDate: { startsWith: monthPrefix } },
+        select: { department: true },
+      }),
     ]);
     todayCount = tCount; pendingCount = pCount; upcomingCount = uCount;
     doneCount = dCount; cancelledCount = cCount; totalCount = allCount;
-    uniquePatients = patientGroups.length; doneThisMonth = dMonth;
+    uniquePatients = patientGroups.length; doneThisMonth = doneMonthRows.length;
+
+    // Estimated revenue = completed visits this month × per-department fee.
+    // This is an ESTIMATE (no billing backend), using fees set in Settings.
+    const eyeDone = doneMonthRows.filter((a) => a.department === "eye_care").length;
+    const optDone = doneMonthRows.filter((a) => a.department === "optical").length;
+    revenueThisMonth = eyeDone * fees.eye_care + optDone * fees.optical;
   } catch {
     // DB unavailable — KPIs stay 0
   }
-
-  // Estimated revenue = completed visits this month × consultation fee.
-  // This is an ESTIMATE (there is no billing backend), based on the clinic's
-  // consultation fee set in site-info (CONSULTATION_FEE).
-  const revenueThisMonth = doneThisMonth * CONSULTATION_FEE;
 
   return NextResponse.json({
     items,
@@ -116,7 +122,7 @@ export async function GET(req: NextRequest) {
       patients: uniquePatients,
       doneThisMonth,
       revenueThisMonth,
-      fee: CONSULTATION_FEE,
+      fees,
     },
   });
 }

@@ -38,7 +38,8 @@ type Appt = {
 type Kpis = {
   today: number; pending: number; upcoming: number;
   done: number; cancelled: number; total: number;
-  patients?: number; doneThisMonth?: number; revenueThisMonth?: number; fee?: number;
+  patients?: number; doneThisMonth?: number; revenueThisMonth?: number;
+  fees?: { eye_care: number; optical: number };
 };
 
 const inr = (n: number) => "₹" + Number(n || 0).toLocaleString("en-IN");
@@ -254,7 +255,7 @@ export function AdminDashboard() {
             <KpiCard icon={CalendarCheck} label="Today's Appointments" value={kpis.today} sub={kpis.pending ? `${kpis.pending} pending review` : "All reviewed"} iconColor="text-[#3b82f6]" iconBg="bg-[#3b82f6]/10" valueColor="text-[#3b82f6]" />
             <KpiCard icon={Users} label="Total Patients" value={kpis.patients ?? 0} sub="Unique patient records" iconColor="text-[#10b981]" iconBg="bg-[#10b981]/10" valueColor="text-[#374151]" />
             <KpiCard icon={CheckCircle2} label="Completed This Month" value={kpis.doneThisMonth ?? 0} sub={`${kpis.done} completed all-time`} iconColor="text-[#8b5cf6]" iconBg="bg-[#8b5cf6]/10" valueColor="text-[#374151]" />
-            <KpiCard icon={DollarSign} label="Est. Revenue (Month)" value={inr(kpis.revenueThisMonth ?? 0)} sub={`≈ ${inr(kpis.fee ?? 0)}/visit · consultation`} iconColor="text-[#f59e0b]" iconBg="bg-[#f59e0b]/10" valueColor="text-[#374151]" />
+            <KpiCard icon={DollarSign} label="Est. Revenue (Month)" value={inr(kpis.revenueThisMonth ?? 0)} sub={kpis.fees ? `Eye ${inr(kpis.fees.eye_care)} · Optical ${inr(kpis.fees.optical)}` : "per-department fees"} iconColor="text-[#f59e0b]" iconBg="bg-[#f59e0b]/10" valueColor="text-[#374151]" />
           </div>
 
           {/* Analytics charts */}

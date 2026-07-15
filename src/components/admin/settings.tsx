@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import {
@@ -27,11 +27,25 @@ export function AdminSettings() {
   const [saving, setSaving] = useState(false);
   const [feeSaving, setFeeSaving] = useState(false);
 
-  // Fee state
-  const [consultationFee, setConsultationFee] = useState("500");
-  const [phacoFee, setPhacoFee] = useState("25000");
-  const [glaucomaFee, setGlaucomaFee] = useState("1000");
+  // Per-department consultation fees (drive the dashboard revenue estimate)
+  const [eyeCareFee, setEyeCareFee] = useState("500");
   const [opticalFee, setOpticalFee] = useState("300");
+  const [feesLoading, setFeesLoading] = useState(true);
+
+  useEffect(() => {
+    let active = true;
+    fetch("/api/admin/fees", { cache: "no-store" })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => {
+        if (active && d?.fees) {
+          setEyeCareFee(String(d.fees.eye_care));
+          setOpticalFee(String(d.fees.optical));
+        }
+      })
+      .catch(() => {})
+      .finally(() => { if (active) setFeesLoading(false); });
+    return () => { active = false; };
+  }, []);
 
   const strength = passwordStrength(next);
 
@@ -58,12 +72,17 @@ export function AdminSettings() {
 
   async function saveFees() {
     setFeeSaving(true);
-    // Simulate save (fees stored in localStorage for now — would need API + DB for production)
     try {
-      const fees = { consultation: consultationFee, phaco: phacoFee, glaucoma: glaucomaFee, optical: opticalFee };
-      localStorage.setItem("sn_fees", JSON.stringify(fees));
-      toast.success("Fee structure saved!");
-    } catch { toast.error("Failed to save fees"); }
+      const res = await fetch("/api/admin/fees", {
+        method: "PATCH", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ eye_care: Number(eyeCareFee) || 0, optical: Number(opticalFee) || 0 }),
+      });
+      const data = await res.json();
+      if (!res.ok) { toast.error(data.error ?? "Failed to save fees"); return; }
+      setEyeCareFee(String(data.fees.eye_care));
+      setOpticalFee(String(data.fees.optical));
+      toast.success("Consultation fees saved!");
+    } catch { toast.error("Network error"); }
     finally { setFeeSaving(false); }
   }
 
@@ -237,22 +256,27 @@ export function AdminSettings() {
               <div className="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
                 <div className="bg-[#0047AB] px-6 py-4 flex items-center gap-3">
                   <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/15"><IndianRupee className="h-5 w-5 text-white" /></span>
-                  <div><h2 className="text-base font-bold text-white">Fee Structure</h2><p className="text-[11px] text-white/70 mt-0.5">Manage consultation & procedure charges</p></div>
+                  <div><h2 className="text-base font-bold text-white">Consultation Fees</h2><p className="text-[11px] text-white/70 mt-0.5">Per-department fee · drives the dashboard revenue estimate</p></div>
                 </div>
                 <div className="p-6 space-y-4">
-                  <FeeRow label="Consultation Fee" value={consultationFee} onChange={setConsultationFee} />
-                  <FeeRow label="Phaco Cataract Surgery" value={phacoFee} onChange={setPhacoFee} />
-                  <FeeRow label="Glaucoma Evaluation" value={glaucomaFee} onChange={setGlaucomaFee} />
-                  <FeeRow label="Optical / Eye Testing" value={opticalFee} onChange={setOpticalFee} />
+                  <p className="text-sm text-slate-600">Set the consultation fee for each department. The dashboard&apos;s <b>Est. Revenue (Month)</b> = completed visits this month × the fee for that department.</p>
+                  {feesLoading ? (
+                    <div className="flex items-center gap-2 text-slate-400 text-sm py-4"><Loader2 className="h-4 w-4 animate-spin" /> Loading current fees…</div>
+                  ) : (
+                    <>
+                      <FeeRow label="Eye Care — Consultation Fee" value={eyeCareFee} onChange={setEyeCareFee} />
+                      <FeeRow label="Optical — Consultation Fee" value={opticalFee} onChange={setOpticalFee} />
+                    </>
+                  )}
                   <div className="pt-2">
-                    <Button onClick={saveFees} disabled={feeSaving}
+                    <Button onClick={saveFees} disabled={feeSaving || feesLoading}
                       className="bg-[#0047AB] hover:bg-[#003a8c] text-white font-semibold">
                       {feeSaving ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...</> : <><Save className="mr-2 h-4 w-4" /> Save Fees</>}
                     </Button>
                   </div>
-                  <div className="rounded-lg bg-amber-50 border border-amber-100 p-3 text-xs text-amber-800 flex items-start gap-2">
-                    <AlertCircle className="h-3.5 w-3.5 mt-0.5 shrink-0" />
-                    <span>Fees are saved locally. For production use, connect a database to persist fee changes.</span>
+                  <div className="rounded-lg bg-emerald-50 border border-emerald-100 p-3 text-xs text-emerald-800 flex items-start gap-2">
+                    <Check className="h-3.5 w-3.5 mt-0.5 shrink-0" />
+                    <span>Saved to your database — changes apply immediately across all devices. Revenue shown is an estimate based on completed consultations.</span>
                   </div>
                 </div>
               </div>
