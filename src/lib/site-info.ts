@@ -54,6 +54,10 @@ export const PHONES = {
 
 export const EMAIL = "saradanetralayajsr@gmail.com";
 
+// Consultation fee (₹) from the client form — used to ESTIMATE revenue on the
+// admin dashboard (completed visits × fee). Change here to update the estimate.
+export const CONSULTATION_FEE = 500;
+
 export const SOCIAL = {
   instagram: "https://www.instagram.com/saradanetralayaandmaternity",
   facebook: "https://www.facebook.com/profile.php?id=61559926176336",

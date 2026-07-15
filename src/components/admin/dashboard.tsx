@@ -38,7 +38,10 @@ type Appt = {
 type Kpis = {
   today: number; pending: number; upcoming: number;
   done: number; cancelled: number; total: number;
+  patients?: number; doneThisMonth?: number; revenueThisMonth?: number; fee?: number;
 };
+
+const inr = (n: number) => "₹" + Number(n || 0).toLocaleString("en-IN");
 
 type Tab = "today" | "upcoming" | "past" | "all" | "range";
 
@@ -248,10 +251,10 @@ export function AdminDashboard() {
 
           {/* KPI tiles — 4 cards matching mockup */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <KpiCard icon={CalendarCheck} label="Today's Appointments" value={kpis.today} iconColor="text-[#3b82f6]" iconBg="bg-[#3b82f6]/10" valueColor="text-[#3b82f6]" />
-            <KpiCard icon={Users} label="Total Patients" value={kpis.total} iconColor="text-[#10b981]" iconBg="bg-[#10b981]/10" valueColor="text-[#374151]" />
-            <KpiCard icon={Eye} label="Pending Review" value={kpis.pending} iconColor="text-[#8b5cf6]" iconBg="bg-[#8b5cf6]/10" valueColor="text-[#8b5cf6]" />
-            <KpiCard icon={CheckCircle2} label="Completed" value={kpis.done} iconColor="text-[#f59e0b]" iconBg="bg-[#f59e0b]/10" valueColor="text-[#374151]" />
+            <KpiCard icon={CalendarCheck} label="Today's Appointments" value={kpis.today} sub={kpis.pending ? `${kpis.pending} pending review` : "All reviewed"} iconColor="text-[#3b82f6]" iconBg="bg-[#3b82f6]/10" valueColor="text-[#3b82f6]" />
+            <KpiCard icon={Users} label="Total Patients" value={kpis.patients ?? 0} sub="Unique patient records" iconColor="text-[#10b981]" iconBg="bg-[#10b981]/10" valueColor="text-[#374151]" />
+            <KpiCard icon={CheckCircle2} label="Completed This Month" value={kpis.doneThisMonth ?? 0} sub={`${kpis.done} completed all-time`} iconColor="text-[#8b5cf6]" iconBg="bg-[#8b5cf6]/10" valueColor="text-[#374151]" />
+            <KpiCard icon={DollarSign} label="Est. Revenue (Month)" value={inr(kpis.revenueThisMonth ?? 0)} sub={`≈ ${inr(kpis.fee ?? 0)}/visit · consultation`} iconColor="text-[#f59e0b]" iconBg="bg-[#f59e0b]/10" valueColor="text-[#374151]" />
           </div>
 
           {/* Analytics charts */}
@@ -476,17 +479,22 @@ function SidebarContent({ onLogout }: { onLogout: () => void }) {
   );
 }
 
-/* ---------- KPI Card (matching mockup: icon top, value large, label below) ---------- */
+/* ---------- KPI Card (mockup style: label top, big value, icon top-right, subtext) ---------- */
 function KpiCard({
-  icon: Icon, label, value, iconColor, iconBg, valueColor,
-}: { icon: typeof Eye; label: string; value: number; iconColor: string; iconBg: string; valueColor: string }) {
+  icon: Icon, label, value, sub, iconColor, iconBg, valueColor,
+}: { icon: typeof Eye; label: string; value: number | string; sub?: string; iconColor: string; iconBg: string; valueColor: string }) {
   return (
     <div className="rounded-xl bg-white border border-slate-200 p-5 shadow-sm hover:shadow-md transition-shadow">
-      <span className={`flex h-10 w-10 items-center justify-center rounded-lg ${iconBg} ${iconColor}`}>
-        <Icon className="h-5 w-5" strokeWidth={2} />
-      </span>
-      <div className={`mt-3 text-3xl font-bold ${valueColor} tabular-nums leading-none`}>{value}</div>
-      <p className="mt-2 text-sm text-[#6b7280] font-medium leading-tight">{label}</p>
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-sm text-[#6b7280] font-medium leading-tight">{label}</p>
+          <div className={`mt-2 text-2xl sm:text-[1.75rem] font-bold ${valueColor} tabular-nums leading-none`}>{value}</div>
+        </div>
+        <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${iconBg} ${iconColor}`}>
+          <Icon className="h-5 w-5" strokeWidth={2} />
+        </span>
+      </div>
+      {sub && <p className="mt-3 text-xs text-slate-400 truncate">{sub}</p>}
     </div>
   );
 }
