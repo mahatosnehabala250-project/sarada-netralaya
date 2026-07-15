@@ -2,8 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Phone, CheckCircle2, Star } from "lucide-react";
-import { PHONES, SITE } from "@/lib/site-info";
+import { ArrowRight, Phone } from "lucide-react";
+import { PHONES } from "@/lib/site-info";
 
 export function Hero() {
   return (
@@ -13,7 +13,7 @@ export function Hero() {
         <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-3">
           <span className="flex items-center gap-1.5">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-            Open Today · 10 AM – 7:30 PM
+            Mon–Sat · 9:30 AM – 7:00 PM
           </span>
           <a href={`tel:${PHONES.primaryTel}`} className="hidden sm:flex items-center gap-1.5 font-semibold hover:text-emerald-300 transition-colors">
             <Phone className="h-3 w-3" /> {PHONES.primary}
@@ -78,19 +78,18 @@ export function Hero() {
               {/* Stats */}
               <div className="mt-8 flex items-center gap-5 pt-6 border-t border-[#0047AB]/30">
                 <div>
-                  <div className="text-2xl font-bold text-[#0047AB] ">1000+</div>
-                  <div className="text-xs text-[#0047AB]/70 font-medium">Happy Patients</div>
-                </div>
-                <div className="h-8 w-px bg-white/30" />
-                <div className="flex items-center gap-1.5">
-                  <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
-                  <span className="text-2xl font-bold text-[#0047AB] ">{SITE.rating}</span>
-                  <span className="text-xs text-[#0047AB]/70 font-medium">Rating</span>
+                  <div className="text-2xl font-bold text-[#0047AB] ">1,000+</div>
+                  <div className="text-xs text-[#0047AB]/70 font-medium">Surgeries</div>
                 </div>
                 <div className="h-8 w-px bg-white/30" />
                 <div>
-                  <div className="text-2xl font-bold text-[#0047AB] ">30+</div>
-                  <div className="text-xs text-[#0047AB]/70 font-medium">Years</div>
+                  <div className="text-2xl font-bold text-[#0047AB] ">15</div>
+                  <div className="text-xs text-[#0047AB]/70 font-medium">Yrs Experience</div>
+                </div>
+                <div className="h-8 w-px bg-white/30" />
+                <div>
+                  <div className="text-2xl font-bold text-[#0047AB] ">Since 2015</div>
+                  <div className="text-xs text-[#0047AB]/70 font-medium">Trusted Care</div>
                 </div>
               </div>
             </div>

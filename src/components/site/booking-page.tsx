@@ -5,7 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import {
   CalendarCheck, Loader2, CheckCircle2, Phone, AlertCircle, Eye, Glasses,
-  Search, ArrowLeft, ShieldCheck, Clock, Star, MapPin,
+  Search, ArrowLeft, ShieldCheck, Clock, MapPin,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -14,7 +14,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "@/lib/toast";
 import { TIME_SLOTS } from "@/lib/appointments";
 import { todayISTString } from "@/lib/ist";
-import { PHONES, ADDRESS, SITE } from "@/lib/site-info";
+import { PHONES, ADDRESS } from "@/lib/site-info";
 
 type Dept = "" | "eye_care" | "optical";
 
@@ -198,17 +198,11 @@ export function BookingPage() {
           <aside className="space-y-4">
             {/* Trust card */}
             <div className="rounded-2xl bg-white border border-slate-200 p-5 shadow-sm">
-              <div className="flex items-center gap-2 mb-3">
-                <div className="flex">
-                  {[0,1,2,3,4].map((i) => <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />)}
-                </div>
-                <span className="text-sm font-bold text-[#0047AB]">{SITE.rating}</span>
-                <span className="text-xs text-slate-400">· {SITE.reviewsCount} reviews</span>
-              </div>
+              <div className="text-sm font-bold text-[#0047AB] mb-3">Why choose us</div>
               <div className="space-y-2.5">
                 {[
-                  { icon: ShieldCheck, text: "30+ years of trusted eye care" },
-                  { icon: CheckCircle2, text: "Painless Phaco (no injection)" },
+                  { icon: ShieldCheck, text: "Trusted eye care since 2015" },
+                  { icon: CheckCircle2, text: "1,000+ surgeries performed" },
                   { icon: Eye, text: "FICO (U.K.) qualified surgeon" },
                   { icon: Clock, text: "Same-day appointment available" },
                 ].map((item) => (
@@ -235,7 +229,7 @@ export function BookingPage() {
               </div>
               <div className="flex items-start gap-2 text-xs text-white/60 mt-2">
                 <Clock className="h-3.5 w-3.5 mt-0.5 shrink-0" />
-                <span>Mon–Sat · 10:00 AM – 7:30 PM</span>
+                <span>Mon–Sat · 9:30 AM – 7:00 PM</span>
               </div>
             </div>
 

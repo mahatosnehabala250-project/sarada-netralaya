@@ -1,9 +1,9 @@
 import { Syringe, Zap, ShieldCheck, Clock4, HeartHandshake, Award } from "lucide-react";
 
 const POINTS = [
-  { icon: Syringe, title: "No Injection", desc: "Painless topical Phaco cataract surgery" },
-  { icon: Zap, title: "Laser Facility", desc: "Latest Phaco & laser equipment on-site" },
-  { icon: ShieldCheck, title: "30+ Years", desc: "Three decades of trusted eye care" },
+  { icon: Syringe, title: "Modern Phaco", desc: "Phaco machine for cataract surgery" },
+  { icon: Zap, title: "In-house Diagnostics", desc: "OCT, Biometry & more on-site" },
+  { icon: ShieldCheck, title: "Since 2015", desc: "Trusted eye care in Jamshedpur" },
   { icon: Award, title: "FICO (U.K.)", desc: "Internationally qualified surgeon" },
   { icon: Clock4, title: "Quick Turnaround", desc: "Minimal wait, efficient consultations" },
   { icon: HeartHandshake, title: "Patient First", desc: "Compassionate, honest guidance" },

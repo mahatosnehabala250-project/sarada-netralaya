@@ -1,10 +1,10 @@
 import { Users, Stethoscope, Eye, Award } from "lucide-react";
 
 const METRICS = [
-  { icon: Users, value: "10,000+", label: "Happy Patients" },
-  { icon: Stethoscope, value: "15+", label: "Expert Doctors" },
-  { icon: Eye, value: "20+", label: "Advanced Services" },
-  { icon: Award, value: "25+", label: "Years of Trust" },
+  { icon: Stethoscope, value: "1,000+", label: "Surgeries Performed" },
+  { icon: Award, value: "15 Yrs", label: "Doctor's Experience" },
+  { icon: Eye, value: "6", label: "Eye Care Services" },
+  { icon: Users, value: "Since 2015", label: "Trusted Care" },
 ];
 
 export function StatsBand() {

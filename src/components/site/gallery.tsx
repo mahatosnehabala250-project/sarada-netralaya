@@ -16,7 +16,7 @@ const PHOTOS: Photo[] = [
   { src: "/images/waiting-hall.png", title: "Patient Waiting Area", desc: "Comfortable, welcoming space for patients and families", category: "Facility" },
   { src: "/images/consult-room.png", title: "Consultation Room", desc: "Modern examination room with slit lamp and diagnostic equipment", category: "Diagnostics" },
   { src: "/images/reception.png", title: "Reception", desc: "Friendly front desk to assist you with bookings and queries", category: "Facility" },
-  { src: "/images/service-diagnostics.png", title: "OCT & Diagnostic Lab", desc: "Advanced OCT, HVF, and Optical Biometry — all under one roof", category: "Diagnostics" },
+  { src: "/images/service-diagnostics.png", title: "OCT & Diagnostic Lab", desc: "Advanced OCT, Optical Biometry and Auto Refractometer — all under one roof", category: "Diagnostics" },
   { src: "/images/optical-lab.png", title: "Optical Lab", desc: "In-house lens cutting and eyewear fitting for quick turnaround", category: "Optical" },
   { src: "/images/service-cataract.png", title: "Phaco Machine", desc: "Latest phacoemulsification technology for painless cataract surgery", category: "Surgical" },
   { src: "/images/service-optical.png", title: "Eyewear Collection", desc: "Wide range of frames for every budget, including kids' frames", category: "Optical" },

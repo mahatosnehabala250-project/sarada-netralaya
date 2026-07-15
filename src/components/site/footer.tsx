@@ -1,7 +1,7 @@
 import Link from "next/link";
 import Image from "next/image";
-import { MapPin, Phone, Mail, Star } from "lucide-react";
-import { SITE, ADDRESS, PHONES, EMAIL } from "@/lib/site-info";
+import { MapPin, Phone, Mail, Instagram, Facebook } from "lucide-react";
+import { SITE, ADDRESS, PHONES, EMAIL, SOCIAL } from "@/lib/site-info";
 
 export function Footer() {
   return (
@@ -14,17 +14,19 @@ export function Footer() {
               <Image src="/images/logo.png" alt="Sarada Netralaya logo" width={44} height={30} className="shrink-0" />
               <div className="leading-none">
                 <span className="font-serif-display text-lg sm:text-xl font-bold">Sarada Netralaya</span>
-                <span className="block text-[10px] uppercase tracking-[0.2em] text-white/40 mt-1">Est. 1995</span>
+                <span className="block text-[10px] uppercase tracking-[0.2em] text-white/40 mt-1">Est. 2015</span>
               </div>
             </div>
             <p className="mt-3 text-sm text-white/50 max-w-xs leading-relaxed">
               {SITE.tagline}
             </p>
-            <div className="mt-4 inline-flex items-center gap-2 rounded-full bg-white/5 px-3 py-1.5 text-xs">
-              <Star className="h-3.5 w-3.5 fill-amber-400 text-amber-400" />
-              <span className="font-semibold">{SITE.rating}</span>
-              <span className="text-white/40">·</span>
-              <span className="text-white/60">{SITE.reviewsCount} reviews</span>
+            <div className="mt-4 flex items-center gap-3">
+              <a href={SOCIAL.instagram} target="_blank" rel="noopener noreferrer" aria-label="Instagram" className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors">
+                <Instagram className="h-4 w-4" />
+              </a>
+              <a href={SOCIAL.facebook} target="_blank" rel="noopener noreferrer" aria-label="Facebook" className="flex h-9 w-9 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors">
+                <Facebook className="h-4 w-4" />
+              </a>
             </div>
           </div>
 

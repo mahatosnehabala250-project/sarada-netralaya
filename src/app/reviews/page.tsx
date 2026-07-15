@@ -3,7 +3,7 @@ import { ReviewsPage } from "@/components/site/reviews-page";
 
 export const metadata: Metadata = {
   title: "Patient Reviews — What Our Patients Say",
-  description: "Read genuine patient reviews and testimonials from Sarada Netralaya. 4.9 star rating from 329+ Google reviews.",
+  description: "Read genuine patient reviews from Sarada Netralaya, Baradwari, Jamshedpur — straight from Google.",
 };
 
 export const dynamic = "force-dynamic";
