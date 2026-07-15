@@ -66,23 +66,27 @@ export const HOURS = [
 
 export const DOCTOR = {
   name: "Dr. Nitin G Dhira",
-  qualifications: "DOMS, DNB, FICO (U.K.)",
-  training: "L.V. Prasad Eye Institute, Hyderabad",
-  role: "Consultant Eye Surgeon",
-  bio: "With over three decades of dedicated ophthalmic practice, Dr. Nitin G Dhira leads Sarada Netralaya with a commitment to precision, safety and compassionate care. Trained at the renowned L.V. Prasad Eye Institute, Hyderabad, and holding the FICO qualification from the United Kingdom, he specialises in advanced topical Phaco cataract surgery, glaucoma management and comprehensive retinal evaluation.",
+  qualifications: "DNB, FICO (U.K.)",
+  training: "International Council of Ophthalmology (ICO), United Kingdom",
+  role: "Consultant Eye Surgeon & Founder",
+  bio: "With 15 years of dedicated ophthalmic practice and over 1,000 surgeries performed, Dr. Nitin G Dhira leads Sarada Netralaya with a commitment to precision, safety and compassionate care. Holding the FICO qualification from the International Council of Ophthalmology (United Kingdom), he specialises in cataract surgery, squint correction and pterygium treatment.",
 } as const;
 
 export const DOCTORS = [
   {
     name: "Dr. Nitin G Dhira",
-    qualifications: "DOMS, DNB, FICO (U.K.)",
-    training: "L.V. Prasad Eye Institute, Hyderabad",
+    qualifications: "DNB, FICO (U.K.)",
+    training: "International Council of Ophthalmology (ICO), United Kingdom",
     role: "Consultant Eye Surgeon & Founder",
-    experience: "30+ years",
-    bio: "With over three decades of dedicated ophthalmic practice, Dr. Nitin G Dhira leads Sarada Netralaya with a commitment to precision, safety and compassionate care. Trained at the renowned L.V. Prasad Eye Institute, Hyderabad, and holding the FICO qualification from the United Kingdom, he specialises in advanced topical Phaco cataract surgery, glaucoma management and comprehensive retinal evaluation.",
-    expertise: ["Topical Phaco Cataract Surgery", "Glaucoma Management", "Retinal Evaluation", "Oculoplasty"],
-    surgeries: "10,000+",
-    image: "/images/doctor-real.jpg",
+    experience: "15 years",
+    bio: "With 15 years of dedicated ophthalmic practice and over 1,000 surgeries performed, Dr. Nitin G Dhira leads Sarada Netralaya with a commitment to precision, safety and compassionate care. Holding the FICO qualification from the International Council of Ophthalmology (United Kingdom), he specialises in cataract surgery, squint correction and pterygium treatment.",
+    expertise: ["Cataract Surgery", "Squint Correction", "Pterygium", "Glaucoma & Retina"],
+    surgeries: "1,000+",
+    awards: [
+      "Ophthalmic Premier League Award",
+      "Academic Presentations",
+    ],
+    image: "/images/doctor-real.png",
   },
   {
     name: "Dr. Nitish R Bharadwaj",
