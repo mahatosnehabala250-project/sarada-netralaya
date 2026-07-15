@@ -217,6 +217,9 @@ export function AdminDashboard() {
               <div className="text-sm font-semibold text-[#374151]">Admin User</div>
               <div className="text-[11px] text-slate-400">Super Admin</div>
             </div>
+            <button onClick={logout} title="Logout" className="ml-2 flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 text-slate-400 hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 transition-colors">
+              <LogOut className="h-4 w-4" />
+            </button>
           </div>
         </header>
 
@@ -471,10 +474,10 @@ function SidebarContent({ onLogout }: { onLogout: () => void }) {
             <div className="text-sm font-semibold text-[#374151] truncate">Admin User</div>
             <div className="text-[11px] text-slate-400 truncate">Super Admin</div>
           </div>
-          <button onClick={onLogout} title="Logout" className="text-slate-400 hover:text-rose-500 transition-colors p-1.5">
-            <LogOut className="h-4 w-4" />
-          </button>
         </div>
+        <button onClick={onLogout} className="w-full flex items-center justify-center gap-2 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2.5 text-sm font-bold text-rose-600 hover:bg-rose-100 transition-colors">
+          <LogOut className="h-4 w-4" /> Logout
+        </button>
       </div>
     </div>
   );

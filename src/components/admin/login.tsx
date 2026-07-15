@@ -84,7 +84,7 @@ export function AdminLogin() {
                 <div className="relative mt-1.5">
                   <Mail className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                   <Input id="email" type="email" autoComplete="email" value={email}
-                    onChange={(e) => setEmail(e.target.value)} placeholder="owner@saradanetralaya.in"
+                    onChange={(e) => setEmail(e.target.value)} placeholder="saradanetralayajsr@gmail.com"
                     className="h-11 pl-9 bg-slate-50 border-slate-200 focus-visible:border-[#0047AB] focus-visible:bg-white focus-visible:ring-[#0047AB]/20" />
                 </div>
               </div>
