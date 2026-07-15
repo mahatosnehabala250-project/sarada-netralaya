@@ -206,22 +206,10 @@ export function AdminSettings() {
                     <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-2">Branches</div>
                     <div className="space-y-3">
                       <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-<<<<<<< HEAD
-                        <div className="flex items-center gap-2 mb-1"><span className="flex h-6 w-6 items-center justify-center rounded bg-[#0047AB] text-white text-[10px] font-bold">1</span><span className="text-sm font-bold text-[#374151]">Sakchi (Main Branch)</span></div>
-                        <p className="text-xs text-slate-600 ml-8">{ADDRESS.full}</p>
-                        <div className="ml-8 mt-1 flex gap-3 text-xs"><a href={`tel:${PHONES.primaryTel}`} className="text-[#0047AB] font-semibold">{PHONES.primary}</a><a href={`tel:${PHONES.secondaryTel}`} className="text-[#0047AB] font-semibold">{PHONES.secondary}</a></div>
-                      </div>
-                      <div className="rounded-xl border border-slate-200 bg-slate-50 p-4">
-                        <div className="flex items-center gap-2 mb-1"><span className="flex h-6 w-6 items-center justify-center rounded bg-slate-300 text-white text-[10px] font-bold">2</span><span className="text-sm font-bold text-[#374151]">Chandil Branch</span></div>
-                        <p className="text-xs text-slate-600 ml-8">Chandil, Jharkhand (Address to be updated)</p>
-                        <div className="ml-8 mt-1 text-xs text-[#0047AB] font-semibold">{PHONES.primary}</div>
-                      </div>
-=======
                         <div className="flex items-center gap-2 mb-1"><span className="flex h-6 w-6 items-center justify-center rounded bg-[#0047AB] text-white text-[10px] font-bold">1</span><span className="text-sm font-bold text-[#374151]">Baradwari (Main Branch)</span></div>
                         <p className="text-xs text-slate-600 ml-8">{ADDRESS.full}</p>
                         <div className="ml-8 mt-1 flex gap-3 text-xs"><a href={`tel:${PHONES.primaryTel}`} className="text-[#0047AB] font-semibold">{PHONES.primary}</a><a href={`tel:${PHONES.secondaryTel}`} className="text-[#0047AB] font-semibold">{PHONES.secondary}</a></div>
                       </div>
->>>>>>> 1b0090c967106858d9985b06722bdefe8695b655
                     </div>
                   </div>
                   <div>

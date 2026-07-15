@@ -66,17 +66,12 @@ export const HOURS = [
 
 export const DOCTOR = {
   name: "Dr. Nitin G Dhira",
-  qualifications: "DNB, FICO",
-  training: "International Council of Ophthalmology (ICO), United Kingdom",
+  qualifications: "DOMS, DNB, FICO (U.K.)",
+  training: "L.V. Prasad Eye Institute, Hyderabad",
   role: "Consultant Eye Surgeon",
-  yearsExperience: "15",
-  surgeries: "1000+",
-  specialties: ["Cataract", "Squint", "Pterygium"],
-  awards: ["Ophthalmic Premier League Award", "Academic Presentations"],
-  bio: "With 15 years of dedicated ophthalmic practice and over 1,000 surgeries performed, Dr. Nitin G Dhira leads Sarada Netralaya with a commitment to precision, safety and compassionate care. Holding the FICO qualification from the International Council of Ophthalmology (United Kingdom), he specialises in cataract surgery, squint correction and pterygium treatment.",
+  bio: "With over three decades of dedicated ophthalmic practice, Dr. Nitin G Dhira leads Sarada Netralaya with a commitment to precision, safety and compassionate care. Trained at the renowned L.V. Prasad Eye Institute, Hyderabad, and holding the FICO qualification from the United Kingdom, he specialises in advanced topical Phaco cataract surgery, glaucoma management and comprehensive retinal evaluation.",
 } as const;
 
-<<<<<<< HEAD
 export const DOCTORS = [
   {
     name: "Dr. Nitin G Dhira",
@@ -108,30 +103,6 @@ export const DOCTORS = [
   },
 ] as const;
 
-=======
-// Services offered (from the client form)
-export const SERVICES = [
-  "Cataract",
-  "Glaucoma",
-  "Retina",
-  "Pediatric Eye Care",
-  "Squint",
-  "Pterygium",
-] as const;
-
-// Diagnostic & surgical equipment available (from the client form)
-export const EQUIPMENT = [
-  "OCT",
-  "Optical Biometry",
-  "Auto Refractometer (AR)",
-  "Slit Lamp",
-  "Non-Contact Tonometer",
-  "Phaco Machine",
-] as const;
-
-export const CONSULTATION_FEE = 500; // ₹ — display on site only if client confirms
-
->>>>>>> 1b0090c967106858d9985b06722bdefe8695b655
 // Brand palette (used via arbitrary Tailwind values)
 export const BRAND = {
   primary: "#0b6e8f",
