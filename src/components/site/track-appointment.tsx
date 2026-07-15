@@ -83,12 +83,12 @@ export function TrackAppointment() {
       {/* Header */}
       <header className="bg-white border-b border-slate-200">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="inline-flex items-center gap-2 text-sm font-semibold text-[#084f67] hover:text-[#0b6e8f]">
+          <Link href="/" className="inline-flex items-center gap-2 text-sm font-semibold text-[#003a8c] hover:text-[#0047AB]">
             <ArrowLeft className="h-4 w-4" /> Back to Home
           </Link>
           <div className="flex items-center gap-2">
             <span className="text-lg">👁️</span>
-            <span className="font-bold text-[#084f67]">Sarada Netralaya</span>
+            <span className="font-bold text-[#003a8c]">Sarada Netralaya</span>
           </div>
         </div>
       </header>
@@ -97,10 +97,10 @@ export function TrackAppointment() {
         <div className="w-full max-w-lg">
           {/* Title */}
           <div className="text-center mb-8">
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#0b6e8f]/10 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-[#0b6e8f] ring-1 ring-[#0b6e8f]/15">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-[#0047AB]/10 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-[#0047AB] ring-1 ring-[#0047AB]/15">
               <Search className="h-3.5 w-3.5" /> Track Appointment
             </span>
-            <h1 className="mt-4 text-3xl font-bold tracking-tight text-[#084f67]">
+            <h1 className="mt-4 text-3xl font-bold tracking-tight text-[#003a8c]">
               Check Your Appointment Status
             </h1>
             <p className="mt-2 text-sm text-slate-600">
@@ -110,8 +110,8 @@ export function TrackAppointment() {
           </div>
 
           {/* Form card */}
-          <div className="rounded-2xl bg-white border border-slate-200 shadow-xl shadow-[#0b6e8f]/5 overflow-hidden">
-            <div className="bg-gradient-to-r from-[#0b6e8f] to-[#084f67] px-6 py-4 flex items-center gap-3">
+          <div className="rounded-2xl bg-white border border-slate-200 shadow-xl shadow-[#0047AB]/5 overflow-hidden">
+            <div className="bg-gradient-to-r from-[#0047AB] to-[#003a8c] px-6 py-4 flex items-center gap-3">
               <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/15 backdrop-blur-sm">
                 <Search className="h-5 w-5 text-white" />
               </span>
@@ -135,7 +135,7 @@ export function TrackAppointment() {
                     placeholder="e.g. 874598"
                     inputMode="numeric"
                     maxLength={10}
-                    className="h-11 pl-9 bg-slate-50 border-slate-200 focus-visible:border-[#0b6e8f] focus-visible:bg-white font-mono"
+                    className="h-11 pl-9 bg-slate-50 border-slate-200 focus-visible:border-[#0047AB] focus-visible:bg-white font-mono"
                   />
                 </div>
                 <p className="mt-1 text-[11px] text-slate-400">
@@ -156,7 +156,7 @@ export function TrackAppointment() {
                     placeholder="e.g. 3210"
                     inputMode="numeric"
                     maxLength={4}
-                    className="h-11 pl-9 bg-slate-50 border-slate-200 focus-visible:border-[#0b6e8f] focus-visible:bg-white font-mono"
+                    className="h-11 pl-9 bg-slate-50 border-slate-200 focus-visible:border-[#0047AB] focus-visible:bg-white font-mono"
                   />
                 </div>
                 <p className="mt-1 text-[11px] text-slate-400">
@@ -167,7 +167,7 @@ export function TrackAppointment() {
               <Button
                 type="submit"
                 disabled={loading}
-                className="w-full h-11 bg-[#0b6e8f] hover:bg-[#084f67] text-white font-semibold"
+                className="w-full h-11 bg-[#0047AB] hover:bg-[#003a8c] text-white font-semibold"
               >
                 {loading ? (
                   <>
@@ -229,10 +229,10 @@ export function TrackAppointment() {
 
                 {/* Help */}
                 <div className="mt-5 flex flex-wrap gap-3 justify-center">
-                  <a href={`tel:${PHONES.primaryTel}`} className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#0b6e8f] hover:underline">
+                  <a href={`tel:${PHONES.primaryTel}`} className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#0047AB] hover:underline">
                     <Phone className="h-4 w-4" /> Call us for help
                   </a>
-                  <Link href="/#book" className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#0b6e8f] hover:underline">
+                  <Link href="/#book" className="inline-flex items-center gap-1.5 text-sm font-semibold text-[#0047AB] hover:underline">
                     <CalendarCheck className="h-4 w-4" /> Book new appointment
                   </Link>
                 </div>
@@ -246,12 +246,12 @@ export function TrackAppointment() {
               <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-rose-100">
                 <AlertCircle className="h-7 w-7 text-rose-600" />
               </div>
-              <h3 className="mt-4 text-lg font-bold text-[#084f67]">Appointment Not Found</h3>
+              <h3 className="mt-4 text-lg font-bold text-[#003a8c]">Appointment Not Found</h3>
               <p className="mt-1 text-sm text-slate-600 max-w-sm mx-auto">
                 We couldn't find an appointment with that reference number. Please
                 check the number from your booking confirmation and try again.
               </p>
-              <a href={`tel:${PHONES.primaryTel}`} className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-[#0b6e8f] hover:bg-[#084f67] px-4 py-2 text-sm font-semibold text-white">
+              <a href={`tel:${PHONES.primaryTel}`} className="mt-4 inline-flex items-center gap-1.5 rounded-lg bg-[#0047AB] hover:bg-[#003a8c] px-4 py-2 text-sm font-semibold text-white">
                 <Phone className="h-4 w-4" /> Call us for help
               </a>
             </div>
@@ -259,7 +259,7 @@ export function TrackAppointment() {
 
           <p className="mt-6 text-center text-xs text-slate-400">
             Lost your reference number? Call us at{" "}
-            <a href={`tel:${PHONES.primaryTel}`} className="font-semibold text-[#0b6e8f] hover:underline">
+            <a href={`tel:${PHONES.primaryTel}`} className="font-semibold text-[#0047AB] hover:underline">
               {PHONES.primary}
             </a>{" "}
             and we'll help you find it.
