@@ -12,6 +12,7 @@ type Photo = {
 };
 
 const PHOTOS: Photo[] = [
+  { src: "/images/gate-view.png", title: "Hospital Entrance", desc: "Sarada Netralaya — 33, Swastik Ambika Tower, Near HDFC Bank, Baradwari, Jamshedpur", category: "Facility" },
   { src: "/images/operation-theater.png", title: "Operation Theater", desc: "State-of-the-art Phaco surgery suite with advanced microscope", category: "Surgical" },
   { src: "/images/waiting-hall.png", title: "Patient Waiting Area", desc: "Comfortable, welcoming space for patients and families", category: "Facility" },
   { src: "/images/consult-room.png", title: "Consultation Room", desc: "Modern examination room with slit lamp and diagnostic equipment", category: "Diagnostics" },
