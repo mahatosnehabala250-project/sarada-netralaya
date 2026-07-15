@@ -35,13 +35,13 @@ export function GalleryPage() {
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Header */}
-      <header className="bg-[#0a3d4a] text-white">
+      <header className="bg-[#0047AB] text-white">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <Link href="/" className="inline-flex items-center gap-2 text-sm font-semibold text-white/80 hover:text-white">
             <ArrowLeft className="h-4 w-4" /> Back to Home
           </Link>
           <div className="flex items-center gap-2">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#0a3d4a] to-[#10b981]">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#0047AB] to-[#10b981]">
               <Camera className="h-4 w-4 text-white" />
             </span>
             <span className="font-bold text-white">Gallery</span>
@@ -55,7 +55,7 @@ export function GalleryPage() {
           <span className="inline-block text-xs font-bold uppercase tracking-[0.2em] text-[#10b981] mb-3">
             Take a Tour
           </span>
-          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#0a3d4a]">
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#0047AB]">
             Inside Sarada Netralaya
           </h1>
           <p className="mt-4 text-base text-slate-600 max-w-2xl mx-auto">
@@ -74,8 +74,8 @@ export function GalleryPage() {
               onClick={() => setFilter(cat)}
               className={`rounded-full px-4 py-2 text-sm font-bold transition-colors ${
                 filter === cat
-                  ? "bg-[#0a3d4a] text-white"
-                  : "bg-white border border-slate-200 text-slate-600 hover:border-[#0a3d4a]/30"
+                  ? "bg-[#0047AB] text-white"
+                  : "bg-white border border-slate-200 text-slate-600 hover:border-[#0047AB]/30"
               }`}
             >
               {cat}
@@ -99,7 +99,7 @@ export function GalleryPage() {
                   sizes="(min-width: 1024px) 24rem, (min-width: 768px) 36rem, 100vw"
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0a3d4a]/80 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0047AB]/80 via-transparent to-transparent" />
                 <div className="absolute bottom-0 left-0 right-0 p-4">
                   <span className="inline-block rounded-full bg-[#10b981] text-white text-[9px] font-bold uppercase tracking-wider px-2 py-0.5 mb-2">
                     {photo.category}
@@ -114,7 +114,7 @@ export function GalleryPage() {
       </div>
 
       {/* CTA */}
-      <div className="bg-[#0a3d4a] py-12">
+      <div className="bg-[#0047AB] py-12">
         <div className="mx-auto max-w-2xl px-4 text-center">
           <h2 className="text-2xl sm:text-3xl font-bold text-white">Want to see it in person?</h2>
           <p className="mt-2 text-sm text-white/60">Book a visit and experience our facility yourself.</p>
