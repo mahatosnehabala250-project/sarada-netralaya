@@ -69,6 +69,37 @@ export const DOCTOR = {
   bio: "With over three decades of dedicated ophthalmic practice, Dr. Nitin G Dhira leads Sarada Netralaya with a commitment to precision, safety and compassionate care. Trained at the renowned L.V. Prasad Eye Institute, Hyderabad, and holding the FICO qualification from the United Kingdom, he specialises in advanced topical Phaco cataract surgery, glaucoma management and comprehensive retinal evaluation.",
 } as const;
 
+export const DOCTORS = [
+  {
+    name: "Dr. Nitin G Dhira",
+    qualifications: "DOMS, DNB, FICO (U.K.)",
+    training: "L.V. Prasad Eye Institute, Hyderabad",
+    role: "Consultant Eye Surgeon & Founder",
+    experience: "30+ years",
+    bio: "With over three decades of dedicated ophthalmic practice, Dr. Nitin G Dhira leads Sarada Netralaya with a commitment to precision, safety and compassionate care. Trained at the renowned L.V. Prasad Eye Institute, Hyderabad, and holding the FICO qualification from the United Kingdom, he specialises in advanced topical Phaco cataract surgery, glaucoma management and comprehensive retinal evaluation.",
+    expertise: ["Topical Phaco Cataract Surgery", "Glaucoma Management", "Retinal Evaluation", "Oculoplasty"],
+    surgeries: "10,000+",
+    image: "/images/doctor-real.jpg",
+  },
+  {
+    name: "Dr. Nitish R Bharadwaj",
+    qualifications: "MBBS, DNB, FICO (U.K.), FCRS",
+    training: "Shiv Ganapati Netralaya, Jalna, Maharashtra (DNB, FCRS)",
+    role: "Consultant Eye Surgeon",
+    experience: "8 years",
+    bio: "Dr. Nitish R Bharadwaj is a skilled ophthalmic surgeon specializing in cataract surgery, pterygium excision, and keratoplasty (corneal transplant). He completed his DNB and FCRS fellowship at Shiv Ganapati Netralaya, Jalna, Maharashtra. With over 1,200 successful surgeries, he brings precision and advanced techniques to Sarada Netralaya. He holds the FICO qualification from the United Kingdom and has been recognized with multiple national awards.",
+    expertise: ["Cataract Surgery", "Pterygium Excision", "Keratoplasty (Corneal Transplant)", "Comprehensive Eye Care"],
+    surgeries: "1,200+",
+    awards: [
+      "Distinction in Microbiology (UG)",
+      "3rd Prize — National PG Competition, OSAS 2018",
+      "2nd Prize — Focus Online Quiz 2021",
+      "Certificate of Excellence in Fellowship",
+    ],
+    image: null,
+  },
+] as const;
+
 // Brand palette (used via arbitrary Tailwind values)
 export const BRAND = {
   primary: "#0b6e8f",
