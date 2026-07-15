@@ -3,10 +3,9 @@
 import Image from "next/image";
 import Link from "next/link";
 import { GraduationCap, Stethoscope, ArrowRight, BadgeCheck, Award } from "lucide-react";
-import { DOCTOR, SITE } from "@/lib/site-info";
+import { DOCTOR } from "@/lib/site-info";
 
 const QUALS = [
-  { icon: GraduationCap, label: "DOMS", desc: "Ophthalmic Medicine & Surgery" },
   { icon: GraduationCap, label: "DNB", desc: "Diplomate, National Board" },
   { icon: Award, label: "FICO (U.K.)", desc: "International Council of Ophthalmology" },
 ];
@@ -30,7 +29,7 @@ export function Doctor() {
               </div>
               {/* Experience badge */}
               <div className="absolute -bottom-4 -right-2 sm:-right-4 rounded-2xl bg-[#0047AB] text-white px-5 py-4 shadow-xl">
-                <div className="text-3xl font-bold leading-none">30+</div>
+                <div className="text-3xl font-bold leading-none">15</div>
                 <div className="text-[10px] font-bold uppercase tracking-wider mt-1">Years Experience</div>
               </div>
               {/* Verified badge */}

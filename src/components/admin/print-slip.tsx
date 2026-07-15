@@ -134,7 +134,7 @@ export function printAppointmentSlip(a: Appt) {
         <strong>${escapeHtml(SITE.name)}</strong> · ${escapeHtml(SITE.tagline)}<br>
         <div class="addr">${escapeHtml(ADDRESS.line1)}, ${escapeHtml(ADDRESS.line2)}, ${escapeHtml(ADDRESS.line3)}, ${escapeHtml(ADDRESS.city)} – ${escapeHtml(ADDRESS.pincode)}<br>
         📞 ${escapeHtml(PHONES.primary)} / ${escapeHtml(PHONES.secondary)} · ✉ ${escapeHtml("saradanetralayajsr@gmail.com")}<br>
-        🕐 Mon–Sat 10:00 AM – 7:30 PM · Sunday Closed<br>
+        🕐 Mon–Sat 9:30 AM – 7:00 PM · Sunday Closed<br>
         <span style="display:block;margin-top:6px;font-size:9px;color:#94a3b8">Slip generated on ${new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" })} IST · This is a computer-generated slip and does not require a signature.</span>
       </div>
     </div>

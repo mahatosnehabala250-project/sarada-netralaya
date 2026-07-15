@@ -51,17 +51,10 @@ const jsonLd = {
         "Friday",
         "Saturday",
       ],
-      opens: "10:00",
-      closes: "19:30",
+      opens: "09:30",
+      closes: "19:00",
     },
   ],
-  aggregateRating: {
-    "@type": "AggregateRating",
-    ratingValue: SITE.rating,
-    reviewCount: 329,
-    bestRating: "5",
-    worstRating: "1",
-  },
   medicalSpecialty: ["Ophthalmology", "Optometric"],
   employee: {
     "@type": "Physician",
@@ -92,10 +85,10 @@ const faqLd = {
   mainEntity: [
     {
       "@type": "Question",
-      name: "What is Topical Phaco cataract surgery?",
+      name: "What eye services does Sarada Netralaya offer?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "Topical Phaco is a modern, stitch-free cataract technique performed using only eye drops as anaesthesia — no injection and no patch. Most patients feel no pain and recover vision within a day.",
+        text: "We offer Cataract surgery, Glaucoma care, Retina treatment, Pediatric eye care, Squint correction and Pterygium treatment, along with a full optical (spectacles) section.",
       },
     },
     {
@@ -111,7 +104,7 @@ const faqLd = {
       name: "What are the timings of Sarada Netralaya?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "We are open Monday to Saturday, 10:00 AM to 7:30 PM. Sunday is closed.",
+        text: "We are open Monday to Saturday, 9:30 AM to 7:00 PM. Sunday is closed.",
       },
     },
   ],

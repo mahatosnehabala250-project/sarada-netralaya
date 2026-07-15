@@ -26,21 +26,21 @@ export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
     default:
-      "Sarada Netralaya — Advanced Eye Care Hospital in Sakchi, Jamshedpur",
+      "Sarada Netralaya — Eye Care Hospital in Baradwari, Jamshedpur",
     template: "%s | Sarada Netralaya",
   },
   description:
-    "Sarada Netralaya — Advanced Eye Care Hospital in Sakchi, Jamshedpur. Cataract, Glaucoma, Retina. Book appointment online.",
+    "Sarada Netralaya — Eye care hospital in Baradwari, Jamshedpur. Cataract, Glaucoma, Retina, Pediatric, Squint & Pterygium care by Dr. Nitin G Dhira. Book appointment online.",
   keywords: [
     "eye hospital Jamshedpur",
     "Sarada Netralaya",
     "cataract surgery Jamshedpur",
-    "eye care Sakchi",
+    "eye care Baradwari",
     "Dr Nitin Dhira",
     "ophthalmologist Jamshedpur",
     "glaucoma treatment",
     "retina specialist",
-    "Phaco surgery",
+    "squint treatment",
     "book eye appointment",
   ],
   authors: [{ name: "Sarada Netralaya" }],
@@ -53,9 +53,9 @@ export const metadata: Metadata = {
   },
   openGraph: {
     title:
-      "Sarada Netralaya — Advanced Eye Care Hospital in Sakchi, Jamshedpur",
+      "Sarada Netralaya — Eye Care Hospital in Baradwari, Jamshedpur",
     description:
-      "30+ years of trusted eye care. Cataract, Glaucoma, Retina, Oculoplasty. Latest Phaco & laser facility. Book appointment online.",
+      "Trusted eye care since 2015. Cataract, Glaucoma, Retina, Pediatric, Squint & Pterygium — by Dr. Nitin G Dhira (FICO, U.K.). Book appointment online.",
     url: SITE_URL,
     siteName: "Sarada Netralaya",
     type: "website",
@@ -64,9 +64,9 @@ export const metadata: Metadata = {
   twitter: {
     card: "summary_large_image",
     title:
-      "Sarada Netralaya — Advanced Eye Care Hospital in Sakchi, Jamshedpur",
+      "Sarada Netralaya — Eye Care Hospital in Baradwari, Jamshedpur",
     description:
-      "30+ years of trusted eye care. Cataract, Glaucoma, Retina. Book appointment online.",
+      "Trusted eye care since 2015. Cataract, Glaucoma, Retina, Squint & more. Book appointment online.",
   },
   robots: {
     index: true,

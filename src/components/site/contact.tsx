@@ -75,7 +75,7 @@ export function Contact() {
                 <div className="flex items-start gap-3 mb-4">
                   <Clock className="h-4 w-4 text-slate-400 mt-0.5 shrink-0" />
                   <div className="text-sm text-[#333]">
-                    <span>Mon–Sat: 10:00 AM – 7:30 PM</span>
+                    <span>Mon–Sat: 9:30 AM – 7:00 PM</span>
                     <span className="block text-rose-500">Sunday: Closed</span>
                   </div>
                 </div>

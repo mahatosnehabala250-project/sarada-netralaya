@@ -9,10 +9,10 @@ export const DEPARTMENTS = ["eye_care", "optical"] as const;
 export type Department = (typeof DEPARTMENTS)[number];
 
 export const TIME_SLOTS = [
-  "10:00 AM – 12:00 PM",
+  "9:30 AM – 12:00 PM",
   "12:00 PM – 2:00 PM",
   "3:00 PM – 5:00 PM",
-  "5:00 PM – 7:30 PM",
+  "5:00 PM – 7:00 PM",
 ] as const;
 
 export const STATUSES = ["pending", "confirmed", "done", "cancelled"] as const;

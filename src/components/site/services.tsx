@@ -17,12 +17,12 @@ const SERVICES: Service[] = [
     image: "/images/service-cataract.png",
     tag: "Surgical",
     title: "Cataract & Comprehensive Eye Care",
-    desc: "From painless Topical Phaco cataract surgery to glaucoma and retina treatment — complete medical eye care under one roof.",
+    desc: "From cataract surgery to glaucoma and retina treatment — complete medical eye care under one roof.",
     items: [
-      "Topical Phaco (No Injection, No Patch)",
+      "Cataract Surgery (Phaco)",
       "Glaucoma Evaluation & Management",
-      "Pediatric Eye Diseases & Squint",
-      "Retinal Diseases & Oculoplasty",
+      "Retina Treatment",
+      "Pediatric Eye Care, Squint & Pterygium",
     ],
   },
   {
@@ -31,10 +31,10 @@ const SERVICES: Service[] = [
     title: "Advanced Technology & Diagnostics",
     desc: "Precision instrumentation for accurate diagnosis and modern surgical outcomes — all in-house, no running around.",
     items: [
-      "Optical Biometry (Premium IOL)",
       "OCT — Retina & Glaucoma Scan",
-      "HVF — Visual Field Analysis",
-      "Latest Phaco & Laser Facility",
+      "Optical Biometry (Premium IOL)",
+      "Auto Refractometer & Slit Lamp",
+      "Non-Contact Tonometer & Phaco Machine",
     ],
   },
   {
@@ -66,7 +66,7 @@ export function Services() {
           </h2>
           <p className="mt-4 text-base text-slate-600">
             From routine eye testing to advanced surgical care — everything you
-            need for healthy vision, delivered with 30+ years of expertise.
+            need for healthy vision, delivered with expert, patient-first care.
           </p>
         </div>
 
