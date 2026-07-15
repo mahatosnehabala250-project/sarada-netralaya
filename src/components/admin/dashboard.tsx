@@ -411,7 +411,6 @@ export function AdminDashboard() {
 
 /* ---------- Sidebar ---------- */
 function SidebarContent({ onLogout }: { onLogout: () => void }) {
-  const soon = (name: string) => toast(`${name} module is coming soon`);
   const linkCls = "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#3b82f6] transition-colors";
   const iconCls = "h-[18px] w-[18px] text-slate-400 group-hover:text-[#3b82f6]";
   return (
@@ -438,21 +437,6 @@ function SidebarContent({ onLogout }: { onLogout: () => void }) {
         <a href="/reviews" className={linkCls}><Star className={iconCls} /> Reviews</a>
         <a href="/api/admin/appointments/export" className={linkCls}><Download className={iconCls} /> Reports</a>
         <a href="/admin/settings?tab=account" className={linkCls}><UserCircle2 className={iconCls} /> Settings</a>
-
-        <div className="px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">More Modules</div>
-        {[
-          { label: "Billing", icon: DollarSign },
-          { label: "Payments", icon: DollarSign },
-          { label: "Inventory", icon: Inbox },
-          { label: "Users & Roles", icon: Users },
-          { label: "System Logs", icon: Filter },
-        ].map((m) => (
-          <button key={m.label} onClick={() => soon(m.label)} className={`${linkCls} w-full text-left`}>
-            <m.icon className={iconCls} />
-            <span className="flex-1">{m.label}</span>
-            <span className="text-[9px] font-bold uppercase tracking-wide text-slate-400 bg-slate-100 rounded px-1.5 py-0.5">Soon</span>
-          </button>
-        ))}
 
         <div className="px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">Site</div>
         <a href="/" className={linkCls}><ExternalLink className={iconCls} /> View Website</a>

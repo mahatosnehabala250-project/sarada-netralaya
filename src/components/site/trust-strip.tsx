@@ -11,7 +11,7 @@ const POINTS = [
 
 export function TrustStrip() {
   return (
-    <section className="bg-white border-b border-[#0b6e8f]/8">
+    <section className="bg-white border-b border-[#0047AB]/8">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4 sm:gap-5">
           {POINTS.map((p) => (
@@ -19,7 +19,7 @@ export function TrustStrip() {
               key={p.title}
               className="flex flex-col items-center text-center group"
             >
-              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#0b6e8f]/10 to-[#10b981]/10 text-[#0b6e8f] group-hover:from-[#0b6e8f] group-hover:to-[#084f67] group-hover:text-white transition-all duration-300">
+              <span className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-[#0047AB]/10 to-[#3b82f6]/10 text-[#0047AB] group-hover:from-[#0047AB] group-hover:to-[#003a8c] group-hover:text-white transition-all duration-300">
                 <p.icon className="h-6 w-6" strokeWidth={2} />
               </span>
               <h3 className="mt-2.5 text-sm font-bold text-[#084f67]">{p.title}</h3>

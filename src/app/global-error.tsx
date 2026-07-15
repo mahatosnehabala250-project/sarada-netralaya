@@ -36,7 +36,7 @@ export default function GlobalError({
           alignItems: "center",
           justifyContent: "center",
           background:
-            "linear-gradient(135deg, #063b4f 0%, #074860 50%, #0b6e8f 100%)",
+            "linear-gradient(135deg, #00265c 0%, #003a8c 50%, #0047AB 100%)",
           fontFamily:
             '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif',
           color: "#fff",
@@ -68,7 +68,7 @@ export default function GlobalError({
               fontSize: 18,
               fontWeight: 600,
               marginBottom: 12,
-              color: "#10b981",
+              color: "#0047AB",
             }}
           >
             Something went wrong
@@ -85,7 +85,7 @@ export default function GlobalError({
             notified. Please try again, or call us at{" "}
             <a
               href="tel:+917091090014"
-              style={{ color: "#10b981", fontWeight: 600 }}
+              style={{ color: "#0047AB", fontWeight: 600 }}
             >
               +91 70910 90014
             </a>{" "}
@@ -102,7 +102,7 @@ export default function GlobalError({
             <button
               onClick={reset}
               style={{
-                background: "#10b981",
+                background: "#0047AB",
                 color: "#063b4f",
                 border: "none",
                 padding: "10px 20px",

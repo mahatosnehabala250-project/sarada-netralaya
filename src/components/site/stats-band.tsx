@@ -14,7 +14,7 @@ export function StatsBand() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
           {METRICS.map((m) => (
             <div key={m.label} className="flex items-center gap-3">
-              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/15 text-[#10b981]">
+              <span className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-white/15 text-white">
                 <m.icon className="h-5 w-5" />
               </span>
               <div>

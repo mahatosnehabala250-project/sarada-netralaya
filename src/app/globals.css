@@ -144,7 +144,7 @@ html { scroll-behavior: smooth; }
 html { scroll-behavior: smooth; }
 
 /* Selection */
-::selection { background: #0a3d4a; color: #faf8f3; }
+::selection { background: #0047AB; color: #ffffff; }
 
 /* Reveal animation */
 @keyframes reveal-up {

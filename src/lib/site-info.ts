@@ -156,9 +156,9 @@ export const REVIEWS = [
 
 // Brand palette (used via arbitrary Tailwind values)
 export const BRAND = {
-  primary: "#0b6e8f",
-  dark: "#084f67",
-  accent: "#10b981",
-  accentDark: "#059669",
-  ink: "#0f2f3a",
+  primary: "#0047AB",
+  dark: "#003a8c",
+  accent: "#3b82f6",
+  accentDark: "#2563eb",
+  ink: "#374151",
 } as const;
