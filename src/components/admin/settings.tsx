@@ -2,23 +2,28 @@
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import {
   Lock, ArrowLeft, Loader2, Check, Shield, KeyRound, EyeOff, Eye,
   AlertCircle, User, Mail, Calendar, Building2, Phone, Clock,
-  ChevronRight, IndianRupee, Save,
+  ChevronRight, IndianRupee, Save, Stethoscope, GraduationCap, Award,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/lib/toast";
-import { SITE, ADDRESS, PHONES, EMAIL, HOURS } from "@/lib/site-info";
+import { SITE, ADDRESS, PHONES, EMAIL, HOURS, DOCTORS } from "@/lib/site-info";
 
-type Tab = "security" | "account" | "clinic" | "fees";
+type Tab = "security" | "account" | "clinic" | "doctors" | "fees";
+const VALID_TABS: Tab[] = ["security", "account", "clinic", "doctors", "fees"];
 
 export function AdminSettings() {
   const router = useRouter();
-  const [tab, setTab] = useState<Tab>("security");
+  const searchParams = useSearchParams();
+  const initialTab = VALID_TABS.includes(searchParams.get("tab") as Tab)
+    ? (searchParams.get("tab") as Tab)
+    : "account";
+  const [tab, setTab] = useState<Tab>(initialTab);
   const [current, setCurrent] = useState("");
   const [next, setNext] = useState("");
   const [confirm, setConfirm] = useState("");
@@ -48,6 +53,11 @@ export function AdminSettings() {
   }, []);
 
   const strength = passwordStrength(next);
+
+  function goTab(t: Tab) {
+    setTab(t);
+    router.replace(`/admin/settings?tab=${t}`, { scroll: false });
+  }
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -111,10 +121,11 @@ export function AdminSettings() {
           {/* Tab sidebar */}
           <aside className="lg:sticky lg:top-20 self-start">
             <nav className="flex lg:flex-col gap-1.5 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0">
-              <TabButton active={tab === "security"} onClick={() => setTab("security")} icon={Shield} label="Security" desc="Password & access" />
-              <TabButton active={tab === "account"} onClick={() => setTab("account")} icon={User} label="Account" desc="Profile info" />
-              <TabButton active={tab === "clinic"} onClick={() => setTab("clinic")} icon={Building2} label="Clinic" desc="Branches & hours" />
-              <TabButton active={tab === "fees"} onClick={() => setTab("fees")} icon={IndianRupee} label="Fees" desc="Consultation charges" />
+              <TabButton active={tab === "account"} onClick={() => goTab("account")} icon={User} label="Account" desc="Profile info" />
+              <TabButton active={tab === "security"} onClick={() => goTab("security")} icon={Shield} label="Security" desc="Password & access" />
+              <TabButton active={tab === "doctors"} onClick={() => goTab("doctors")} icon={Stethoscope} label="Doctors" desc="Surgeons at the clinic" />
+              <TabButton active={tab === "clinic"} onClick={() => goTab("clinic")} icon={Building2} label="Clinic" desc="Branches & hours" />
+              <TabButton active={tab === "fees"} onClick={() => goTab("fees")} icon={IndianRupee} label="Fees" desc="Consultation charges" />
             </nav>
           </aside>
 
@@ -206,10 +217,48 @@ export function AdminSettings() {
                   <div><h2 className="text-base font-bold text-white">Account Information</h2><p className="text-[11px] text-white/70 mt-0.5">Your owner profile details</p></div>
                 </div>
                 <div className="p-6 space-y-4">
-                  <InfoRow icon={Mail} label="Email Address" value="owner@saradanetralaya.in" />
+                  <InfoRow icon={Mail} label="Email Address" value={EMAIL} />
                   <InfoRow icon={Lock} label="Password" value="•••••••• (hidden)" />
                   <InfoRow icon={Calendar} label="Session Duration" value="7 days after login" />
                   <InfoRow icon={Shield} label="Role" value="Owner (full access)" />
+                </div>
+              </div>
+            )}
+
+            {tab === "doctors" && (
+              <div className="rounded-2xl bg-white border border-slate-200 shadow-sm overflow-hidden">
+                <div className="bg-[#0047AB] px-6 py-4 flex items-center gap-3">
+                  <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-white/15"><Stethoscope className="h-5 w-5 text-white" /></span>
+                  <div><h2 className="text-base font-bold text-white">Doctors</h2><p className="text-[11px] text-white/70 mt-0.5">Surgeons currently at Sarada Netralaya</p></div>
+                </div>
+                <div className="p-6 space-y-4">
+                  {DOCTORS.map((doc) => (
+                    <div key={doc.name} className="rounded-xl border border-slate-200 bg-slate-50 p-4">
+                      <div className="flex items-start gap-3">
+                        <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-[#0047AB] text-white"><User className="h-5 w-5" /></span>
+                        <div className="min-w-0 flex-1">
+                          <div className="text-sm font-bold text-[#374151]">{doc.name}</div>
+                          <div className="text-xs text-[#0047AB] font-semibold mt-0.5">{doc.role} · {doc.experience}</div>
+                          <div className="mt-2 flex items-start gap-1.5 text-xs text-slate-600">
+                            <GraduationCap className="h-3.5 w-3.5 mt-0.5 shrink-0 text-slate-400" /> {doc.qualifications}
+                          </div>
+                          <div className="mt-1 flex items-start gap-1.5 text-xs text-slate-500">
+                            <Award className="h-3.5 w-3.5 mt-0.5 shrink-0 text-slate-400" /> {doc.training}
+                          </div>
+                          <div className="mt-2 flex flex-wrap gap-1.5">
+                            {doc.expertise.map((e) => (
+                              <span key={e} className="inline-flex items-center rounded-md bg-[#0047AB]/8 px-2 py-1 text-[11px] font-medium text-[#0047AB]">{e}</span>
+                            ))}
+                          </div>
+                          <div className="mt-2 text-[11px] text-slate-400">{doc.surgeries} surgeries performed</div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                  <div className="rounded-lg bg-amber-50 border border-amber-100 p-3 text-xs text-amber-800 flex items-start gap-2">
+                    <AlertCircle className="h-3.5 w-3.5 mt-0.5 shrink-0" />
+                    <span>To add, remove, or edit a doctor&apos;s profile shown here and on the public website, contact your developer — this list is currently managed in code for accuracy.</span>
+                  </div>
                 </div>
               </div>
             )}

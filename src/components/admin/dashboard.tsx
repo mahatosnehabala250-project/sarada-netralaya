@@ -434,10 +434,10 @@ function SidebarContent({ onLogout }: { onLogout: () => void }) {
         </a>
         <a href="#appointments" className={linkCls}><CalendarDays className={iconCls} /> Appointments</a>
         <a href="#patients" className={linkCls}><Users className={iconCls} /> Patients</a>
-        <a href="/admin/settings" className={linkCls}><UserCircle2 className={iconCls} /> Doctors</a>
+        <a href="/admin/settings?tab=doctors" className={linkCls}><UserCircle2 className={iconCls} /> Doctors</a>
         <a href="/reviews" className={linkCls}><Star className={iconCls} /> Reviews</a>
         <a href="/api/admin/appointments/export" className={linkCls}><Download className={iconCls} /> Reports</a>
-        <a href="/admin/settings" className={linkCls}><UserCircle2 className={iconCls} /> Settings</a>
+        <a href="/admin/settings?tab=account" className={linkCls}><UserCircle2 className={iconCls} /> Settings</a>
 
         <div className="px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">More Modules</div>
         {[
