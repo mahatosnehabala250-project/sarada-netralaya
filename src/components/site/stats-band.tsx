@@ -1,7 +1,7 @@
 import { Users, Stethoscope, Eye, Award } from "lucide-react";
 
 const METRICS = [
-  { icon: Stethoscope, value: "1,000+", label: "Surgeries Performed" },
+  { icon: Stethoscope, value: "50,000+", label: "Surgeries Performed" },
   { icon: Award, value: "15 Yrs", label: "Doctor's Experience" },
   { icon: Eye, value: "6", label: "Eye Care Services" },
   { icon: Users, value: "Since 2015", label: "Trusted Care" },

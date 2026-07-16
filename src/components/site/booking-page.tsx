@@ -209,7 +209,7 @@ export function BookingPage() {
               <div className="space-y-2.5">
                 {[
                   { icon: ShieldCheck, text: "Trusted eye care since 2015" },
-                  { icon: CheckCircle2, text: "1,000+ surgeries performed" },
+                  { icon: CheckCircle2, text: "50,000+ surgeries performed" },
                   { icon: Eye, text: "FICO (U.K.) qualified surgeon" },
                   { icon: Clock, text: "Same-day appointment available" },
                 ].map((item) => (

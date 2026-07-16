@@ -95,7 +95,7 @@ export function Hero() {
               {/* Stats */}
               <div className="mt-8 flex items-center gap-5 pt-6 border-t border-[#0047AB]/20">
                 <div>
-                  <div className="text-2xl font-bold text-[#0047AB] ">1,000+</div>
+                  <div className="text-2xl font-bold text-[#0047AB] ">50,000+</div>
                   <div className="text-xs text-[#0047AB]/70 font-medium">Surgeries</div>
                 </div>
                 <div className="h-8 w-px bg-[#0047AB]/20" />
