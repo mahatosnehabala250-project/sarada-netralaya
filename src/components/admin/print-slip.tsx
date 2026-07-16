@@ -40,7 +40,7 @@ export function printAppointmentSlip(a: Appt) {
     border: 1px solid #e2e8f0;
   }
   .header {
-    background: linear-gradient(135deg, #0b6e8f, #084f67);
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
     color: #fff; padding: 20px 24px; display: flex; align-items: center; gap: 12px;
   }
   .logo {
@@ -54,27 +54,27 @@ export function printAppointmentSlip(a: Appt) {
     background: #f0f9fb; padding: 12px 24px; display: flex;
     justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0;
   }
-  .ref-band .label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #0b6e8f; font-weight: 700; }
-  .ref-band .ref { font-size: 20px; font-weight: 800; color: #084f67; font-family: monospace; }
+  .ref-band .label { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #3b82f6; font-weight: 700; }
+  .ref-band .ref { font-size: 20px; font-weight: 800; color: #2563eb; font-family: monospace; }
   .ref-band .status {
     font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 999px;
     border: 1px solid;
   }
   .body { padding: 20px 24px; }
-  .patient-name { font-size: 22px; font-weight: 700; color: #084f67; }
+  .patient-name { font-size: 22px; font-weight: 700; color: #2563eb; }
   .patient-sub { font-size: 13px; color: #64748b; margin-top: 2px; }
   .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 18px; }
   .field { background: #f8fafc; border-radius: 10px; padding: 10px 12px; border: 1px solid #e2e8f0; }
-  .field .k { font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; color: #0b6e8f; font-weight: 700; }
+  .field .k { font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; color: #3b82f6; font-weight: 700; }
   .field .v { font-size: 13px; font-weight: 600; color: #0f2f3a; margin-top: 3px; }
-  .note { margin-top: 14px; background: #f0f9fb; border-left: 3px solid #0b6e8f; padding: 10px 12px; border-radius: 6px; }
-  .note .k { font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; color: #0b6e8f; font-weight: 700; }
+  .note { margin-top: 14px; background: #f0f9fb; border-left: 3px solid #3b82f6; padding: 10px 12px; border-radius: 6px; }
+  .note .k { font-size: 9px; text-transform: uppercase; letter-spacing: 0.08em; color: #3b82f6; font-weight: 700; }
   .note .v { font-size: 12px; color: #334155; margin-top: 3px; line-height: 1.5; }
   .footer {
     margin-top: 18px; padding-top: 14px; border-top: 1px dashed #cbd5e1;
     font-size: 10px; color: #64748b; line-height: 1.6;
   }
-  .footer strong { color: #084f67; }
+  .footer strong { color: #2563eb; }
   .footer .addr { margin-top: 6px; }
   .instructions {
     margin-top: 12px; background: #fffbeb; border: 1px solid #fde68a;

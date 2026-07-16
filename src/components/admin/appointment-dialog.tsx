@@ -145,7 +145,7 @@ export function AppointmentDetailDialog({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 gap-0">
           {/* Header band */}
-          <div className="bg-gradient-to-r from-[#0b6e8f] to-[#084f67] px-6 py-5 flex items-start justify-between gap-3">
+          <div className="bg-gradient-to-r from-[#3b82f6] to-[#2563eb] px-6 py-5 flex items-start justify-between gap-3">
             <div className="text-white">
               <DialogTitle className="text-lg font-bold flex items-center gap-2">
                 Appointment
@@ -189,7 +189,7 @@ export function AppointmentDetailDialog({
       <AlertDialog open={confirmDelete} onOpenChange={setConfirmDelete}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle className="text-[#084f67]">Delete this appointment?</AlertDialogTitle>
+            <AlertDialogTitle className="text-[#2563eb]">Delete this appointment?</AlertDialogTitle>
             <AlertDialogDescription>
               This will permanently delete the appointment <strong>#{appt.ref}</strong> for{" "}
               <strong>{appt.name}</strong>. This action cannot be undone. Consider cancelling
@@ -220,13 +220,13 @@ function ViewMode({ appt, onEdit }: { appt: Appt; onEdit: () => void }) {
     <>
       <div className="grid sm:grid-cols-2 gap-4">
         <InfoBlock icon={User} label="Patient">
-          <div className="font-bold text-[#084f67]">{appt.name}</div>
+          <div className="font-bold text-[#2563eb]">{appt.name}</div>
           <div className="text-sm text-slate-500 mt-0.5">
             {appt.age != null ? `${appt.age} years old` : "Age not specified"}
           </div>
         </InfoBlock>
         <InfoBlock icon={Phone} label="Mobile">
-          <a href={telHref(appt.phone)} className="font-bold text-[#0b6e8f] hover:underline text-base">
+          <a href={telHref(appt.phone)} className="font-bold text-[#3b82f6] hover:underline text-base">
             {formatPhone(appt.phone)}
           </a>
           <a
@@ -245,7 +245,7 @@ function ViewMode({ appt, onEdit }: { appt: Appt; onEdit: () => void }) {
           <div className="font-semibold text-slate-800">{appt.timeSlot}</div>
         </InfoBlock>
         <InfoBlock icon={appt.department === "optical" ? Glasses : Eye} label="Doctor">
-          <span className="inline-flex items-center gap-1 rounded-md bg-[#0b6e8f]/8 px-2 py-0.5 text-sm font-semibold text-[#0b6e8f]">
+          <span className="inline-flex items-center gap-1 rounded-md bg-[#3b82f6]/8 px-2 py-0.5 text-sm font-semibold text-[#3b82f6]">
             {doctorOrDeptLabel(appt.doctor, appt.department)}
           </span>
         </InfoBlock>
@@ -305,25 +305,25 @@ function EditMode(props: {
         <div>
           <Label className="text-sm font-semibold text-slate-700">Patient Name</Label>
           <Input value={props.name} onChange={(e) => props.setName(e.target.value)} maxLength={80}
-            className="mt-1.5 bg-slate-50 border-slate-200 focus-visible:border-[#0b6e8f]" />
+            className="mt-1.5 bg-slate-50 border-slate-200 focus-visible:border-[#3b82f6]" />
         </div>
         <div>
           <Label className="text-sm font-semibold text-slate-700">Mobile Number</Label>
           <Input value={props.phone}
             onChange={(e) => props.setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
-            inputMode="numeric" className="mt-1.5 bg-slate-50 border-slate-200 focus-visible:border-[#0b6e8f]" />
+            inputMode="numeric" className="mt-1.5 bg-slate-50 border-slate-200 focus-visible:border-[#3b82f6]" />
         </div>
         <div>
           <Label className="text-sm font-semibold text-slate-700">Age</Label>
           <Input value={props.age}
             onChange={(e) => props.setAge(e.target.value.replace(/\D/g, "").slice(0, 3))}
             inputMode="numeric" placeholder="Optional"
-            className="mt-1.5 bg-slate-50 border-slate-200 focus-visible:border-[#0b6e8f]" />
+            className="mt-1.5 bg-slate-50 border-slate-200 focus-visible:border-[#3b82f6]" />
         </div>
         <div>
           <Label className="text-sm font-semibold text-slate-700">Status</Label>
           <select value={props.status} onChange={(e) => props.setStatus(e.target.value as Status)}
-            className="mt-1.5 h-10 w-full appearance-none rounded-md border border-slate-200 bg-slate-50 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#0b6e8f]/25 focus:border-[#0b6e8f]">
+            className="mt-1.5 h-10 w-full appearance-none rounded-md border border-slate-200 bg-slate-50 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#3b82f6]/25 focus:border-[#3b82f6]">
             {(["pending", "confirmed", "done", "cancelled"] as Status[]).map((s) => (
               <option key={s} value={s}>{STATUS_META[s].emoji} {STATUS_META[s].label}</option>
             ))}
@@ -332,7 +332,7 @@ function EditMode(props: {
         <div>
           <Label className="text-sm font-semibold text-slate-700">Doctor</Label>
           <select value={props.doctor} onChange={(e) => props.setDoctor(e.target.value as DoctorId)}
-            className="mt-1.5 h-10 w-full appearance-none rounded-md border border-slate-200 bg-slate-50 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#0b6e8f]/25 focus:border-[#0b6e8f]">
+            className="mt-1.5 h-10 w-full appearance-none rounded-md border border-slate-200 bg-slate-50 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#3b82f6]/25 focus:border-[#3b82f6]">
             {DOCTOR_CHOICES.map((d) => (
               <option key={d.id} value={d.id}>{d.name}</option>
             ))}
@@ -342,12 +342,12 @@ function EditMode(props: {
           <Label className="text-sm font-semibold text-slate-700">Preferred Date</Label>
           <Input type="date" min={props.today} value={props.preferredDate}
             onChange={(e) => props.setPreferredDate(e.target.value)}
-            className="mt-1.5 bg-slate-50 border-slate-200 focus-visible:border-[#0b6e8f]" />
+            className="mt-1.5 bg-slate-50 border-slate-200 focus-visible:border-[#3b82f6]" />
         </div>
         <div className="sm:col-span-2">
           <Label className="text-sm font-semibold text-slate-700">Time Slot</Label>
           <select value={props.timeSlot} onChange={(e) => props.setTimeSlot(e.target.value)}
-            className="mt-1.5 h-10 w-full appearance-none rounded-md border border-slate-200 bg-slate-50 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#0b6e8f]/25 focus:border-[#0b6e8f]">
+            className="mt-1.5 h-10 w-full appearance-none rounded-md border border-slate-200 bg-slate-50 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#3b82f6]/25 focus:border-[#3b82f6]">
             {TIME_SLOTS.map((s) => (
               <option key={s} value={s}>{s}</option>
             ))}
@@ -356,7 +356,7 @@ function EditMode(props: {
         <div className="sm:col-span-2">
           <Label className="text-sm font-semibold text-slate-700">Note</Label>
           <Textarea value={props.note} onChange={(e) => props.setNote(e.target.value)} maxLength={500}
-            className="mt-1.5 bg-slate-50 border-slate-200 focus-visible:border-[#0b6e8f] min-h-[80px]" />
+            className="mt-1.5 bg-slate-50 border-slate-200 focus-visible:border-[#3b82f6] min-h-[80px]" />
         </div>
       </div>
 
@@ -371,7 +371,7 @@ function EditMode(props: {
             <X className="h-4 w-4 mr-1.5" /> Cancel
           </Button>
           <Button onClick={props.onSave} disabled={props.saving}
-            className="bg-[#0b6e8f] hover:bg-[#084f67] text-white">
+            className="bg-[#3b82f6] hover:bg-[#2563eb] text-white">
             {props.saving ? <Loader2 className="h-4 w-4 mr-1.5 animate-spin" /> : <Save className="h-4 w-4 mr-1.5" />}
             Save Changes
           </Button>

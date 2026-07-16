@@ -26,7 +26,7 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 const DEPT_COLORS: Record<string, string> = {
-  eye_care: "#0b6e8f",
+  eye_care: "#3b82f6",
   optical: "#10b981",
 };
 
@@ -61,8 +61,8 @@ export function AnalyticsPanel() {
 
   if (loading) {
     return (
-      <div className="rounded-2xl bg-white border border-[#0b6e8f]/10 p-6 shadow-sm">
-        <div className="flex items-center gap-2 text-[#0b6e8f]">
+      <div className="rounded-2xl bg-white border border-[#3b82f6]/10 p-6 shadow-sm">
+        <div className="flex items-center gap-2 text-[#3b82f6]">
           <Loader2 className="h-4 w-4 animate-spin" />
           <span className="text-sm font-medium">Loading analytics...</span>
         </div>
@@ -79,19 +79,19 @@ export function AnalyticsPanel() {
   return (
     <div className="grid lg:grid-cols-3 gap-4">
       {/* Weekly trend — spans 2 cols */}
-      <div className="lg:col-span-2 rounded-2xl bg-white border border-[#0b6e8f]/10 p-5 shadow-sm">
+      <div className="lg:col-span-2 rounded-2xl bg-white border border-[#3b82f6]/10 p-5 shadow-sm">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center gap-2">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#0b6e8f]/10 text-[#0b6e8f]">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#3b82f6]/10 text-[#3b82f6]">
               <TrendingUp className="h-4 w-4" />
             </span>
             <div>
-              <h3 className="text-sm font-bold text-[#084f67]">Booking Trend</h3>
+              <h3 className="text-sm font-bold text-[#2563eb]">Booking Trend</h3>
               <p className="text-[11px] text-slate-500">Appointments per day · last 7 days</p>
             </div>
           </div>
           <div className="text-right">
-            <div className="text-xl font-bold text-[#084f67] tabular-nums">
+            <div className="text-xl font-bold text-[#2563eb] tabular-nums">
               {stats.weekly.reduce((s, w) => s + w.bookings, 0)}
             </div>
             <div className="text-[10px] text-slate-400 uppercase tracking-wider">this week</div>
@@ -104,7 +104,7 @@ export function AnalyticsPanel() {
               <XAxis dataKey="label" tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} />
               <YAxis tick={{ fontSize: 11, fill: "#64748b" }} axisLine={false} tickLine={false} allowDecimals={false} />
               <Tooltip
-                cursor={{ fill: "#0b6e8f08" }}
+                cursor={{ fill: "#3b82f608" }}
                 contentStyle={{
                   borderRadius: 10, border: "1px solid #e2e8f0", fontSize: 12,
                   boxShadow: "0 4px 12px rgba(0,0,0,0.08)",
@@ -114,7 +114,7 @@ export function AnalyticsPanel() {
               />
               <Bar dataKey="bookings" radius={[6, 6, 0, 0]} maxBarSize={42}>
                 {stats.weekly.map((entry, i) => (
-                  <Cell key={i} fill={entry.bookings > 0 ? "#0b6e8f" : "#cbd5e1"} />
+                  <Cell key={i} fill={entry.bookings > 0 ? "#3b82f6" : "#cbd5e1"} />
                 ))}
               </Bar>
             </BarChart>
@@ -123,13 +123,13 @@ export function AnalyticsPanel() {
       </div>
 
       {/* Status distribution donut */}
-      <div className="rounded-2xl bg-white border border-[#0b6e8f]/10 p-5 shadow-sm">
+      <div className="rounded-2xl bg-white border border-[#3b82f6]/10 p-5 shadow-sm">
         <div className="flex items-center gap-2 mb-3">
-          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#0b6e8f]/10 text-[#0b6e8f]">
+          <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#3b82f6]/10 text-[#3b82f6]">
             <PieIcon className="h-4 w-4" />
           </span>
           <div>
-            <h3 className="text-sm font-bold text-[#084f67]">Status Mix</h3>
+            <h3 className="text-sm font-bold text-[#2563eb]">Status Mix</h3>
             <p className="text-[11px] text-slate-500">All appointments</p>
           </div>
         </div>
@@ -155,7 +155,7 @@ export function AnalyticsPanel() {
             </PieChart>
           </ResponsiveContainer>
           <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none">
-            <span className="text-2xl font-bold text-[#084f67] tabular-nums">{totalStatus}</span>
+            <span className="text-2xl font-bold text-[#2563eb] tabular-nums">{totalStatus}</span>
             <span className="text-[9px] uppercase tracking-wider text-slate-400">Total</span>
           </div>
         </div>
@@ -172,13 +172,13 @@ export function AnalyticsPanel() {
 
       {/* Today's slot occupancy */}
       {stats.slotOccupancy.some((s) => s.count > 0) && (
-        <div className="lg:col-span-3 rounded-2xl bg-white border border-[#0b6e8f]/10 p-5 shadow-sm">
+        <div className="lg:col-span-3 rounded-2xl bg-white border border-[#3b82f6]/10 p-5 shadow-sm">
           <div className="flex items-center gap-2 mb-4">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#0b6e8f]/10 text-[#0b6e8f]">
+            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[#3b82f6]/10 text-[#3b82f6]">
               <CalendarClock className="h-4 w-4" />
             </span>
             <div>
-              <h3 className="text-sm font-bold text-[#084f67]">Today's Slot Occupancy</h3>
+              <h3 className="text-sm font-bold text-[#2563eb]">Today's Slot Occupancy</h3>
               <p className="text-[11px] text-slate-500">Active appointments per time slot (excl. cancelled)</p>
             </div>
           </div>
@@ -190,11 +190,11 @@ export function AnalyticsPanel() {
                 <div key={s.slot} className="rounded-xl border border-slate-200 bg-slate-50/50 p-3">
                   <div className="flex items-center justify-between mb-2">
                     <span className="text-[11px] font-semibold text-slate-600 leading-tight">{s.slot}</span>
-                    <span className="text-lg font-bold text-[#084f67] tabular-nums">{s.count}</span>
+                    <span className="text-lg font-bold text-[#2563eb] tabular-nums">{s.count}</span>
                   </div>
                   <div className="h-1.5 rounded-full bg-slate-200 overflow-hidden">
                     <div
-                      className="h-full rounded-full bg-gradient-to-r from-[#0b6e8f] to-[#10b981] transition-all"
+                      className="h-full rounded-full bg-gradient-to-r from-[#3b82f6] to-[#60a5fa] transition-all"
                       style={{ width: `${pct}%` }}
                     />
                   </div>
