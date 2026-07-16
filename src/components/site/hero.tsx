@@ -9,32 +9,34 @@ export function Hero() {
   return (
     <section id="top" className="relative bg-[#0047AB]">
       {/* Top bar */}
-      <div className="bg-[#0047AB] text-[#0047AB] text-xs sm:text-sm py-2 relative z-10">
+      <div className="bg-[#0047AB] text-white text-xs sm:text-sm py-2 relative z-10">
         <div className="mx-auto max-w-[1920px] px-4 sm:px-6 lg:px-8 flex items-center justify-between gap-3">
           <span className="flex items-center gap-1.5">
             <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
             Mon–Sat · 9:30 AM – 7:00 PM
           </span>
-          <a href={`tel:${PHONES.primaryTel}`} className="hidden sm:flex items-center gap-1.5 font-semibold hover:text-emerald-300 transition-colors">
+          <a href={`tel:${PHONES.primaryTel}`} className="hidden sm:flex items-center gap-1.5 font-semibold hover:text-blue-200 transition-colors">
             <Phone className="h-3 w-3" /> {PHONES.primary}
           </a>
         </div>
       </div>
 
-      {/* Full-width image with text on the empty left area */}
-      <div className="relative w-full min-h-[500px] sm:min-h-[600px] lg:min-h-[750px]">
-        <Image
-          src="/images/hero-final.png"
-          alt="Eye examination — doctor examining patient at Sarada Netralaya"
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover"
-        />
+      {/* Mobile/tablet: clean photo band, text panel below.
+          Desktop (lg+): full-bleed photo with text over its empty left side. */}
+      <div className="relative w-full lg:min-h-[750px]">
+        <div className="relative aspect-[4/3] sm:aspect-[16/9] lg:absolute lg:inset-0 lg:aspect-auto">
+          <Image
+            src="/images/hero-final.png"
+            alt="Eye examination — doctor examining patient at Sarada Netralaya"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-[70%_center] lg:object-center"
+          />
+        </div>
 
-        {/* Text positioned over the empty left side of the image */}
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full lg:w-[42%] px-6 sm:px-10 lg:px-14 py-10">
+        <div className="bg-white lg:bg-transparent lg:absolute lg:inset-0 lg:flex lg:items-center">
+          <div className="w-full lg:w-[42%] px-6 sm:px-10 lg:px-14 py-8 sm:py-10">
             <div className="max-w-lg">
               {/* Subtitle */}
               <div className="text-[#0047AB]/90 text-xs sm:text-sm font-bold uppercase tracking-[0.15em] mb-3 ">
@@ -61,14 +63,14 @@ export function Hero() {
               <div className="mt-8 flex flex-col sm:flex-row gap-3">
                 <Link
                   href="/book"
-                  className="group inline-flex items-center justify-center gap-2 rounded-lg bg-white hover:bg-gray-100 px-7 py-4 text-base font-bold text-[#0047AB] shadow-lg transition-all min-h-[52px]"
+                  className="group inline-flex items-center justify-center gap-2 rounded-lg bg-[#0047AB] hover:bg-[#003a8c] px-7 py-4 text-base font-bold text-white shadow-lg transition-all min-h-[52px]"
                 >
                   Book Appointment
                   <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-0.5" />
                 </Link>
                 <a
                   href={`tel:${PHONES.primaryTel}`}
-                  className="inline-flex items-center justify-center gap-2 rounded-lg border-2 border-white text-[#0047AB] px-7 py-4 text-base font-bold hover:bg-[#0047AB]/10 transition-colors min-h-[52px] backdrop-blur-sm"
+                  className="inline-flex items-center justify-center gap-2 rounded-lg border-2 border-[#0047AB] text-[#0047AB] px-7 py-4 text-base font-bold hover:bg-[#0047AB]/10 transition-colors min-h-[52px]"
                 >
                   <Phone className="h-5 w-5" />
                   Call Now
@@ -76,17 +78,17 @@ export function Hero() {
               </div>
 
               {/* Stats */}
-              <div className="mt-8 flex items-center gap-5 pt-6 border-t border-[#0047AB]/30">
+              <div className="mt-8 flex items-center gap-5 pt-6 border-t border-[#0047AB]/20">
                 <div>
                   <div className="text-2xl font-bold text-[#0047AB] ">1,000+</div>
                   <div className="text-xs text-[#0047AB]/70 font-medium">Surgeries</div>
                 </div>
-                <div className="h-8 w-px bg-white/30" />
+                <div className="h-8 w-px bg-[#0047AB]/20" />
                 <div>
                   <div className="text-2xl font-bold text-[#0047AB] ">15</div>
                   <div className="text-xs text-[#0047AB]/70 font-medium">Yrs Experience</div>
                 </div>
-                <div className="h-8 w-px bg-white/30" />
+                <div className="h-8 w-px bg-[#0047AB]/20" />
                 <div>
                   <div className="text-2xl font-bold text-[#0047AB] ">Since 2015</div>
                   <div className="text-xs text-[#0047AB]/70 font-medium">Trusted Care</div>

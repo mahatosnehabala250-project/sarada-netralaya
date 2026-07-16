@@ -32,7 +32,7 @@ export function Footer() {
 
           {/* Contact */}
           <div>
-            <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-300/50 mb-3 sm:mb-4">Contact</div>
+            <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-blue-200/70 mb-3 sm:mb-4">Contact</div>
             <ul className="space-y-2.5 sm:space-y-3 text-sm">
               <li className="flex items-start gap-2 text-white/60">
                 <MapPin className="h-4 w-4 mt-0.5 shrink-0 text-white/30" />
@@ -53,10 +53,10 @@ export function Footer() {
 
           {/* Links */}
           <div>
-            <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-emerald-300/50 mb-3 sm:mb-4">Quick Links</div>
+            <div className="text-[10px] font-bold uppercase tracking-[0.2em] text-blue-200/70 mb-3 sm:mb-4">Quick Links</div>
             <ul className="space-y-2 sm:space-y-2.5 text-sm">
-              <li><a href="#services" className="text-white/60 hover:text-white">Care</a></li>
-              <li><a href="#doctor" className="text-white/60 hover:text-white">Surgeon</a></li>
+              <li><a href="#services" className="text-white/60 hover:text-white">Our Services</a></li>
+              <li><a href="#doctor" className="text-white/60 hover:text-white">Our Doctors</a></li>
               <li><Link href="/gallery" className="text-white/60 hover:text-white">Gallery</Link></li>
               <li><Link href="/reviews" className="text-white/60 hover:text-white">Reviews</Link></li>
               <li><Link href="/book" className="text-white/60 hover:text-white">Book Appointment</Link></li>
