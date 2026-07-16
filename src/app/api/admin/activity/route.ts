@@ -10,7 +10,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { ensureDbSchema } from "@/lib/db-ensure";
 import { isOwnerAuthenticated } from "@/lib/auth";
-import { DEPT_LABEL, type Department } from "@/lib/appointments";
+import { doctorOrDeptLabel } from "@/lib/appointments";
 import { timeAgoIST } from "@/lib/ist";
 
 export const runtime = "nodejs";
@@ -36,6 +36,7 @@ export async function GET(_req: NextRequest) {
         name: true,
         phone: true,
         department: true,
+        doctor: true,
         status: true,
         preferredDate: true,
         timeSlot: true,
@@ -52,7 +53,8 @@ export async function GET(_req: NextRequest) {
     ref: a.ref,
     name: a.name,
     phoneLast4: a.phone.slice(-4),
-    department: DEPT_LABEL[a.department as Department] ?? a.department,
+    department: a.department,
+    doctorLabel: doctorOrDeptLabel(a.doctor, a.department),
     status: a.status,
     preferredDate: a.preferredDate,
     timeSlot: a.timeSlot,

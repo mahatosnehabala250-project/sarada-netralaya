@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/tooltip";
 import { toast } from "@/lib/toast";
 import {
-  DEPT_LABEL, STATUS_META, type Status, type Department,
+  STATUS_META, DOCTOR_CHOICES, doctorOrDeptLabel, type Status, type Department, type DoctorId,
 } from "@/lib/appointment-shared";
 import { greetingIST, fullTodayIST, formatDateLong, formatCreatedAtIST, timeAgoIST } from "@/lib/ist";
 import { PHONES } from "@/lib/site-info";
@@ -31,7 +31,7 @@ import { printAppointmentSlip } from "@/components/admin/print-slip";
 
 type Appt = {
   id: string; ref: string; name: string; phone: string; age: number | null;
-  department: string; preferredDate: string; timeSlot: string;
+  department: string; doctor: string | null; preferredDate: string; timeSlot: string;
   note: string | null; status: string; createdAt: string;
 };
 
@@ -64,6 +64,7 @@ export function AdminDashboard() {
 
   const [tab, setTab] = useState<Tab>("today");
   const [department, setDepartment] = useState<"all" | Department>("all");
+  const [doctor, setDoctor] = useState<"all" | DoctorId>("all");
   const [status, setStatus] = useState<"all" | Status>("all");
   const [q, setQ] = useState("");
   const [qDebounced, setQDebounced] = useState("");
@@ -95,7 +96,7 @@ export function AdminDashboard() {
     if (!silent) setLoading(true);
     else setRefreshing(true);
     try {
-      const params = new URLSearchParams({ tab, department, status, q: qDebounced });
+      const params = new URLSearchParams({ tab, department, doctor, status, q: qDebounced });
       if (tab === "range") {
         if (dateFrom) params.set("dateFrom", dateFrom);
         if (dateTo) params.set("dateTo", dateTo);
@@ -108,7 +109,7 @@ export function AdminDashboard() {
       setKpis(data.kpis ?? kpis);
     } catch { toast.error("Failed to load appointments"); }
     finally { setLoading(false); setRefreshing(false); }
-  }, [tab, department, status, qDebounced, dateFrom, dateTo]);
+  }, [tab, department, doctor, status, qDebounced, dateFrom, dateTo]);
 
   useEffect(() => { fetchList(); }, [fetchList]);
 
@@ -241,7 +242,7 @@ export function AdminDashboard() {
               <TooltipProvider delayDuration={200}>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <a href={`/api/admin/appointments/export?${new URLSearchParams({ tab, department, status, q: qDebounced, ...(tab === "range" && dateFrom ? { dateFrom } : {}), ...(tab === "range" && dateTo ? { dateTo } : {}) }).toString()}`}>
+                    <a href={`/api/admin/appointments/export?${new URLSearchParams({ tab, department, doctor, status, q: qDebounced, ...(tab === "range" && dateFrom ? { dateFrom } : {}), ...(tab === "range" && dateTo ? { dateTo } : {}) }).toString()}`}>
                       <Button size="sm" className="bg-white border border-slate-200 text-slate-600 hover:bg-slate-50">
                         <Download className="h-4 w-4 mr-1.5" /> Export
                       </Button>
@@ -286,6 +287,8 @@ export function AdminDashboard() {
             <div className="mt-3 flex flex-wrap items-center gap-2">
               <FilterDropdown icon={Filter} label="Department" value={department} onChange={(v) => setDepartment(v as typeof department)}
                 options={[{ value: "all", label: "All Departments" }, { value: "eye_care", label: "Eye Care" }, { value: "optical", label: "Optical" }]} />
+              <FilterDropdown icon={UserCircle2} label="Doctor" value={doctor} onChange={(v) => setDoctor(v as typeof doctor)}
+                options={[{ value: "all", label: "All Doctors" }, ...DOCTOR_CHOICES.map((d) => ({ value: d.id, label: d.name }))]} />
               <FilterDropdown icon={CheckCircle2} label="Status" value={status} onChange={(v) => setStatus(v as typeof status)}
                 options={[{ value: "all", label: "All Statuses" }, { value: "pending", label: "⏳ Pending" }, { value: "confirmed", label: "📌 Confirmed" }, { value: "done", label: "✅ Done" }, { value: "cancelled", label: "✕ Cancelled" }]} />
               {someSelected && (
@@ -327,7 +330,7 @@ export function AdminDashboard() {
             {loading ? (
               <LoadingState />
             ) : visibleItems.length === 0 ? (
-              <EmptyState tab={tab} hasFilters={department !== "all" || status !== "all" || qDebounced !== "" || (tab === "range" && (dateFrom !== "" || dateTo !== ""))} onClear={() => { setDepartment("all"); setStatus("all"); setQ(""); setDateFrom(""); setDateTo(""); }} />
+              <EmptyState tab={tab} hasFilters={department !== "all" || doctor !== "all" || status !== "all" || qDebounced !== "" || (tab === "range" && (dateFrom !== "" || dateTo !== ""))} onClear={() => { setDepartment("all"); setDoctor("all"); setStatus("all"); setQ(""); setDateFrom(""); setDateTo(""); }} />
             ) : (
               <>
                 {/* Desktop table */}
@@ -526,7 +529,7 @@ function ApptRow({ a, busy, onAction, onView, selected, onToggleSelect }: { a: A
         <div className="text-xs text-slate-500 mt-0.5">{a.timeSlot}</div>
       </td>
       <td className="px-4 py-3">
-        <span className="inline-flex items-center gap-1 rounded-md bg-[#3b82f6]/8 px-2 py-0.5 text-xs font-semibold text-[#3b82f6]">{DEPT_LABEL[a.department as Department] ?? a.department}</span>
+        <span className="inline-flex items-center gap-1 rounded-md bg-[#3b82f6]/8 px-2 py-0.5 text-xs font-semibold text-[#3b82f6]">{doctorOrDeptLabel(a.doctor, a.department)}</span>
       </td>
       <td className="px-4 py-3 max-w-[220px]"><p className="text-xs text-slate-500 line-clamp-2">{a.note || "—"}</p></td>
       <td className="px-4 py-3">
@@ -569,8 +572,8 @@ function ApptCard({ a, busy, onAction, onView }: { a: Appt; busy: boolean; onAct
           <div className="text-slate-500">{a.timeSlot}</div>
         </div>
         <div className="rounded-lg bg-slate-50 p-2">
-          <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Department</div>
-          <div className="font-medium text-[#374151] mt-0.5">{DEPT_LABEL[a.department as Department] ?? a.department}</div>
+          <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Doctor</div>
+          <div className="font-medium text-[#374151] mt-0.5">{doctorOrDeptLabel(a.doctor, a.department)}</div>
         </div>
       </div>
       {a.note && <div className="mt-2 text-xs text-slate-500 bg-slate-50 rounded-lg p-2 border border-slate-100"><span className="font-semibold text-[#3b82f6]">Note: </span>{a.note}</div>}

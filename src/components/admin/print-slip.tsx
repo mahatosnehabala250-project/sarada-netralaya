@@ -2,13 +2,13 @@
 
 import { useEffect, useRef } from "react";
 import { Eye } from "lucide-react";
-import { DEPT_LABEL, STATUS_META, type Department, type Status } from "@/lib/appointment-shared";
+import { STATUS_META, doctorOrDeptLabel, type Status } from "@/lib/appointment-shared";
 import { formatDateLong } from "@/lib/ist";
-import { SITE, ADDRESS, PHONES, DOCTOR } from "@/lib/site-info";
+import { SITE, ADDRESS, PHONES } from "@/lib/site-info";
 
 export type Appt = {
   id: string; ref: string; name: string; phone: string; age: number | null;
-  department: string; preferredDate: string; timeSlot: string;
+  department: string; doctor: string | null; preferredDate: string; timeSlot: string;
   note: string | null; status: string; createdAt: string;
 };
 
@@ -19,7 +19,7 @@ export type Appt = {
 export function printAppointmentSlip(a: Appt) {
   const st = a.status as Status;
   const meta = STATUS_META[st];
-  const dept = DEPT_LABEL[a.department as Department] ?? a.department;
+  const dept = doctorOrDeptLabel(a.doctor, a.department);
 
   const html = `<!DOCTYPE html>
 <html lang="en">
@@ -110,12 +110,8 @@ export function printAppointmentSlip(a: Appt) {
       <div class="patient-sub">${a.age != null ? `${escapeHtml(String(a.age))} years old` : "Age not specified"} · ${escapeHtml(a.phone)}</div>
       <div class="grid">
         <div class="field">
-          <div class="k">Department</div>
+          <div class="k">Doctor</div>
           <div class="v">${escapeHtml(dept)}</div>
-        </div>
-        <div class="field">
-          <div class="k">Consultant</div>
-          <div class="v">${escapeHtml(DOCTOR.name)}</div>
         </div>
         <div class="field">
           <div class="k">Preferred Date</div>

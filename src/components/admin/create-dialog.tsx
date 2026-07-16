@@ -14,14 +14,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/lib/toast";
 import {
-  TIME_SLOTS, DEPARTMENTS, DEPT_LABEL, STATUSES, STATUS_META,
-  type Status, type Department,
+  TIME_SLOTS, STATUSES, STATUS_META, DOCTOR_CHOICES,
+  type Status, type DoctorId,
 } from "@/lib/appointment-shared";
 import { todayISTString } from "@/lib/ist";
 
 export type NewAppt = {
   id: string; ref: string; name: string; phone: string; age: number | null;
-  department: string; preferredDate: string; timeSlot: string;
+  department: string; doctor: string | null; preferredDate: string; timeSlot: string;
   note: string | null; status: string; createdAt: string;
 };
 
@@ -36,7 +36,7 @@ export function CreateAppointmentDialog({
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [age, setAge] = useState("");
-  const [department, setDepartment] = useState<Department>("eye_care");
+  const [doctor, setDoctor] = useState<DoctorId>("nitin-dhira");
   const [preferredDate, setPreferredDate] = useState("");
   const [timeSlot, setTimeSlot] = useState("");
   const [note, setNote] = useState("");
@@ -48,7 +48,7 @@ export function CreateAppointmentDialog({
   useEffect(() => {
     if (open) {
       // reset on open
-      setName(""); setPhone(""); setAge(""); setDepartment("eye_care");
+      setName(""); setPhone(""); setAge(""); setDoctor("nitin-dhira");
       setPreferredDate(""); setTimeSlot(""); setNote(""); setStatus("confirmed");
       setSuccess(null);
     }
@@ -75,7 +75,7 @@ export function CreateAppointmentDialog({
           name: name.trim(),
           phone: phone.trim(),
           age: age || undefined,
-          department,
+          doctor,
           preferredDate,
           timeSlot,
           note: note.trim() || undefined,
@@ -157,21 +157,25 @@ export function CreateAppointmentDialog({
               {/* Appointment group */}
               <SectionHeader icon={CalendarDays} title="Appointment Details" />
               <div className="grid sm:grid-cols-2 gap-4 mb-5">
-                <div>
-                  <Label className="text-sm font-semibold text-slate-700">Department <span className="text-rose-500">*</span></Label>
-                  <div className="grid grid-cols-2 gap-2 mt-1.5">
-                    {DEPARTMENTS.map((d) => {
-                      const active = department === d;
+                <div className="sm:col-span-2">
+                  <Label className="text-sm font-semibold text-slate-700">See Doctor <span className="text-rose-500">*</span></Label>
+                  <div className="space-y-2 mt-1.5">
+                    {DOCTOR_CHOICES.map((d) => {
+                      const active = doctor === d.id;
+                      const Icon = d.id === "optical" ? Glasses : Eye;
                       return (
-                        <button key={d} type="button" onClick={() => setDepartment(d)}
-                          className={`group flex items-center gap-2 rounded-lg border px-3 py-2.5 text-left transition-all ${
+                        <button key={d.id} type="button" onClick={() => setDoctor(d.id)}
+                          className={`group flex w-full items-center gap-2 rounded-lg border px-3 py-2.5 text-left transition-all ${
                             active ? "border-[#0b6e8f] bg-teal-50 ring-1 ring-[#0b6e8f]/30"
                                    : "border-slate-200 bg-slate-50 hover:border-[#0b6e8f]/40"
                           }`}>
-                          <span className={`flex h-7 w-7 items-center justify-center rounded-md ${active ? "bg-[#0b6e8f] text-white" : "bg-white text-slate-400"}`}>
-                            {d === "eye_care" ? <Eye className="h-4 w-4" /> : <Glasses className="h-4 w-4" />}
+                          <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md ${active ? "bg-[#0b6e8f] text-white" : "bg-white text-slate-400"}`}>
+                            <Icon className="h-4 w-4" />
                           </span>
-                          <span className={`text-sm font-semibold ${active ? "text-[#084f67]" : "text-slate-600"}`}>{DEPT_LABEL[d]}</span>
+                          <span className="min-w-0">
+                            <span className={`block text-sm font-semibold truncate ${active ? "text-[#084f67]" : "text-slate-600"}`}>{d.name}</span>
+                            <span className="block text-xs text-slate-400 truncate">{d.role}</span>
+                          </span>
                         </button>
                       );
                     })}

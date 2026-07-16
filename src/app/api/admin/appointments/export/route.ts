@@ -4,7 +4,7 @@ import { NextRequest } from "next/server";
 import { db } from "@/lib/db"
 import { ensureDbSchema } from "@/lib/db-ensure";
 import { isOwnerAuthenticated } from "@/lib/auth";
-import { DEPT_LABEL } from "@/lib/appointments";
+import { DEPT_LABEL, doctorOrDeptLabel } from "@/lib/appointments";
 import { formatDateLong, formatCreatedAtIST, todayISTString } from "@/lib/ist";
 
 export const runtime = "nodejs";
@@ -34,6 +34,7 @@ export async function GET(req: NextRequest) {
   const url = req.nextUrl;
   const tab = url.searchParams.get("tab") ?? "all";
   const department = url.searchParams.get("department") ?? "all";
+  const doctor = url.searchParams.get("doctor") ?? "all";
   const status = url.searchParams.get("status") ?? "all";
   const q = url.searchParams.get("q")?.trim() ?? "";
   const dateFrom = url.searchParams.get("dateFrom")?.trim() ?? "";
@@ -43,6 +44,7 @@ export async function GET(req: NextRequest) {
 
   const where: Record<string, unknown> = {};
   if (department !== "all") where.department = department;
+  if (doctor !== "all") where.doctor = doctor;
   if (status !== "all") where.status = status;
   if (q) {
     where.OR = [
@@ -78,6 +80,7 @@ export async function GET(req: NextRequest) {
     "Name",
     "Phone",
     "Age",
+    "Doctor",
     "Department",
     "Preferred Date",
     "Time Slot",
@@ -92,6 +95,7 @@ export async function GET(req: NextRequest) {
       a.name,
       a.phone,
       a.age ?? "",
+      doctorOrDeptLabel(a.doctor, a.department),
       DEPT_LABEL[a.department as keyof typeof DEPT_LABEL] ?? a.department,
       formatDateLong(a.preferredDate),
       a.timeSlot,

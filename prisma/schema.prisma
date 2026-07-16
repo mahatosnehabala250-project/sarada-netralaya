@@ -28,6 +28,9 @@ model Appointment {
   phone          String
   age            Int?
   department     String
+  // Which doctor the patient chose to see ("nitin-dhira" | "nitish-bharadwaj" | "optical").
+  // Nullable: rows created before doctor selection existed have no value here.
+  doctor         String?
   preferredDate  String
   timeSlot       String
   note           String?

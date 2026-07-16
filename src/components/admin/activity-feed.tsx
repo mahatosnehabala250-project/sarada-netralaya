@@ -13,6 +13,7 @@ type ActivityItem = {
   name: string;
   phoneLast4: string;
   department: string;
+  doctorLabel: string;
   status: string;
   preferredDate: string;
   timeSlot: string;
@@ -114,8 +115,8 @@ export function ActivityFeed({ onView }: { onView?: (id: string) => void }) {
                   </span>
                   <span className="text-slate-300">·</span>
                   <span className="inline-flex items-center gap-0.5">
-                    {a.department === "Eye Care" ? <Eye className="h-2.5 w-2.5" /> : <Glasses className="h-2.5 w-2.5" />}
-                    {a.department}
+                    {a.department === "optical" ? <Glasses className="h-2.5 w-2.5" /> : <Eye className="h-2.5 w-2.5" />}
+                    {a.doctorLabel}
                   </span>
                   <span className="text-slate-300">·</span>
                   <span className="inline-flex items-center gap-0.5">

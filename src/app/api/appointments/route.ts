@@ -10,6 +10,7 @@ import {
   bookingSchema,
   generateUniqueRef,
   computeRequestHash,
+  departmentForDoctor,
 } from "@/lib/appointments";
 import {
   getClientIp,
@@ -142,7 +143,8 @@ export async function POST(req: NextRequest) {
         name: d.name,
         phone: d.phone,
         age: d.age,
-        department: d.department,
+        doctor: d.doctor,
+        department: departmentForDoctor(d.doctor),
         preferredDate: d.preferredDate,
         timeSlot: d.timeSlot,
         note: d.note,
@@ -184,6 +186,7 @@ export async function POST(req: NextRequest) {
         name: created.name,
         age: created.age,
         phone: created.phone,
+        doctor: created.doctor,
         department: created.department as "eye_care" | "optical",
         preferredDate: created.preferredDate,
         timeSlot: created.timeSlot,

@@ -8,10 +8,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { ensureDbSchema } from "@/lib/db-ensure";
 import {
-  DEPT_LABEL,
+  doctorOrDeptLabel,
   STATUS_META,
   type Status,
-  type Department,
 } from "@/lib/appointments";
 import {
   getClientIp,
@@ -128,7 +127,8 @@ export async function POST(req: NextRequest) {
       name: appt.name,
       phoneLast4: appt.phone.slice(-4),
       age: appt.age,
-      department: DEPT_LABEL[appt.department as Department] ?? appt.department,
+      department: appt.department,
+      doctorLabel: doctorOrDeptLabel(appt.doctor, appt.department),
       preferredDate: appt.preferredDate,
       preferredDateLabel: formatDateLong(appt.preferredDate),
       timeSlot: appt.timeSlot,

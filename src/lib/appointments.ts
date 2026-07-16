@@ -5,7 +5,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { addDaysIST, isValidISTDate, todayISTString } from "@/lib/ist";
 import {
-  DEPARTMENTS,
+  DOCTOR_IDS,
   TIME_SLOTS,
 } from "@/lib/appointment-shared";
 
@@ -25,7 +25,7 @@ export const bookingSchema = z.object({
     }
     return age;
   }),
-  department: z.enum(DEPARTMENTS, { error: "Please choose a department" }),
+  doctor: z.enum(DOCTOR_IDS, { error: "Please choose a doctor" }),
   preferredDate: z.string().refine((date) => {
     if (!isValidISTDate(date)) return false;
     return date >= todayISTString() && date <= addDaysIST(MAX_BOOKING_DAYS_AHEAD);
@@ -66,13 +66,13 @@ export async function generateUniqueRef(): Promise<string> {
 export function computeRequestHash(d: {
   name: string;
   phone: string;
-  department: string;
+  doctor: string;
   preferredDate: string;
   timeSlot: string;
 }): string {
   return createHash("sha256")
     .update(
-      [d.name.trim().toLowerCase(), d.phone, d.department, d.preferredDate, d.timeSlot].join("|"),
+      [d.name.trim().toLowerCase(), d.phone, d.doctor, d.preferredDate, d.timeSlot].join("|"),
     )
     .digest("hex");
 }

@@ -18,6 +18,7 @@ type Result = {
   phoneLast4: string;
   age: number | null;
   department: string;
+  doctorLabel: string;
   preferredDateLabel: string;
   timeSlot: string;
   status: string;
@@ -207,7 +208,7 @@ export function TrackAppointment() {
                   <DetailBlock icon={Phone} label="Mobile" value={`••••••${result.phoneLast4}`} />
                   <DetailBlock icon={CalendarCheck} label="Date" value={result.preferredDateLabel} />
                   <DetailBlock icon={Clock} label="Time Slot" value={result.timeSlot} />
-                  <DetailBlock icon={result.department === "Eye Care" ? Eye : Glasses} label="Department" value={result.department} />
+                  <DetailBlock icon={result.department === "optical" ? Glasses : Eye} label="Doctor" value={result.doctorLabel} />
                 </div>
 
                 {result.note && (

@@ -18,8 +18,8 @@ import {
 } from "@/components/ui/alert-dialog";
 import { toast } from "@/lib/toast";
 import {
-  DEPT_LABEL, STATUS_META, TIME_SLOTS, DEPARTMENTS,
-  type Status, type Department,
+  STATUS_META, TIME_SLOTS, DOCTOR_CHOICES, doctorOrDeptLabel,
+  type Status, type DoctorId,
 } from "@/lib/appointment-shared";
 import { formatDateLong, formatCreatedAtIST, timeAgoIST, todayISTString } from "@/lib/ist";
 import { formatPhone, telHref } from "@/lib/utils";
@@ -32,6 +32,7 @@ export type Appt = {
   phone: string;
   age: number | null;
   department: string;
+  doctor: string | null;
   preferredDate: string;
   timeSlot: string;
   note: string | null;
@@ -56,7 +57,7 @@ export function AppointmentDetailDialog({
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [age, setAge] = useState("");
-  const [department, setDepartment] = useState<Department>("eye_care");
+  const [doctor, setDoctor] = useState<DoctorId>("nitin-dhira");
   const [preferredDate, setPreferredDate] = useState("");
   const [timeSlot, setTimeSlot] = useState("");
   const [note, setNote] = useState("");
@@ -69,7 +70,11 @@ export function AppointmentDetailDialog({
       setName(appt.name);
       setPhone(appt.phone);
       setAge(appt.age != null ? String(appt.age) : "");
-      setDepartment(appt.department as Department);
+      setDoctor(
+        appt.doctor && DOCTOR_CHOICES.some((d) => d.id === appt.doctor)
+          ? (appt.doctor as DoctorId)
+          : appt.department === "optical" ? "optical" : "nitin-dhira"
+      );
       setPreferredDate(appt.preferredDate);
       setTimeSlot(appt.timeSlot);
       setNote(appt.note ?? "");
@@ -98,7 +103,7 @@ export function AppointmentDetailDialog({
           name: name.trim(),
           phone: phone.trim(),
           age: age || null,
-          department,
+          doctor,
           preferredDate,
           timeSlot,
           note: note.trim(),
@@ -165,7 +170,7 @@ export function AppointmentDetailDialog({
                 name={name} setName={setName}
                 phone={phone} setPhone={setPhone}
                 age={age} setAge={setAge}
-                department={department} setDepartment={setDepartment}
+                doctor={doctor} setDoctor={setDoctor}
                 preferredDate={preferredDate} setPreferredDate={setPreferredDate}
                 timeSlot={timeSlot} setTimeSlot={setTimeSlot}
                 note={note} setNote={setNote}
@@ -239,9 +244,9 @@ function ViewMode({ appt, onEdit }: { appt: Appt; onEdit: () => void }) {
         <InfoBlock icon={Clock} label="Time Slot">
           <div className="font-semibold text-slate-800">{appt.timeSlot}</div>
         </InfoBlock>
-        <InfoBlock icon={appt.department === "eye_care" ? Eye : Glasses} label="Department">
+        <InfoBlock icon={appt.department === "optical" ? Glasses : Eye} label="Doctor">
           <span className="inline-flex items-center gap-1 rounded-md bg-[#0b6e8f]/8 px-2 py-0.5 text-sm font-semibold text-[#0b6e8f]">
-            {DEPT_LABEL[appt.department as Department] ?? appt.department}
+            {doctorOrDeptLabel(appt.doctor, appt.department)}
           </span>
         </InfoBlock>
         <InfoBlock icon={AlertCircle} label="Current Status">
@@ -285,7 +290,7 @@ function EditMode(props: {
   name: string; setName: (v: string) => void;
   phone: string; setPhone: (v: string) => void;
   age: string; setAge: (v: string) => void;
-  department: Department; setDepartment: (v: Department) => void;
+  doctor: DoctorId; setDoctor: (v: DoctorId) => void;
   preferredDate: string; setPreferredDate: (v: string) => void;
   timeSlot: string; setTimeSlot: (v: string) => void;
   note: string; setNote: (v: string) => void;
@@ -325,11 +330,11 @@ function EditMode(props: {
           </select>
         </div>
         <div>
-          <Label className="text-sm font-semibold text-slate-700">Department</Label>
-          <select value={props.department} onChange={(e) => props.setDepartment(e.target.value as Department)}
+          <Label className="text-sm font-semibold text-slate-700">Doctor</Label>
+          <select value={props.doctor} onChange={(e) => props.setDoctor(e.target.value as DoctorId)}
             className="mt-1.5 h-10 w-full appearance-none rounded-md border border-slate-200 bg-slate-50 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#0b6e8f]/25 focus:border-[#0b6e8f]">
-            {DEPARTMENTS.map((d) => (
-              <option key={d} value={d}>{DEPT_LABEL[d]}</option>
+            {DOCTOR_CHOICES.map((d) => (
+              <option key={d.id} value={d.id}>{d.name}</option>
             ))}
           </select>
         </div>

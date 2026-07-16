@@ -7,7 +7,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db"
 import { ensureDbSchema } from "@/lib/db-ensure";
 import { isOwnerAuthenticated } from "@/lib/auth";
-import { STATUSES, DEPARTMENTS, TIME_SLOTS, type Status } from "@/lib/appointments";
+import { STATUSES, DEPARTMENTS, TIME_SLOTS, DOCTOR_IDS, departmentForDoctor, type Status, type DoctorId } from "@/lib/appointments";
 import { todayISTString } from "@/lib/ist";
 import { getFees } from "@/lib/settings";
 
@@ -83,7 +83,13 @@ export async function PATCH(
     data.timeSlot = body.timeSlot;
   }
 
-  if (body.department !== undefined) {
+  if (body.doctor !== undefined) {
+    if (!DOCTOR_IDS.includes(body.doctor as DoctorId)) {
+      return NextResponse.json({ error: "Invalid doctor" }, { status: 400 });
+    }
+    data.doctor = body.doctor;
+    data.department = departmentForDoctor(body.doctor as DoctorId);
+  } else if (body.department !== undefined) {
     if (!DEPARTMENTS.includes(body.department as never)) {
       return NextResponse.json({ error: "Invalid department" }, { status: 400 });
     }

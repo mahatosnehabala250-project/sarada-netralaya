@@ -73,7 +73,7 @@ export const DOCTOR = {
   qualifications: "DNB, FICO (U.K.)",
   training: "International Council of Ophthalmology (ICO), United Kingdom",
   role: "Consultant Eye Surgeon & Founder",
-  bio: "With 15 years of dedicated ophthalmic practice and over 1,000 surgeries performed, Dr. Nitin G Dhira leads Sarada Netralaya with a commitment to precision, safety and compassionate care. Holding the FICO qualification from the International Council of Ophthalmology (United Kingdom), he specialises in cataract surgery, squint correction and pterygium treatment.",
+  bio: "With 15 years of dedicated ophthalmic practice and over 50,000 surgeries performed, Dr. Nitin G Dhira leads Sarada Netralaya with a commitment to precision, safety and compassionate care. Holding the FICO qualification from the International Council of Ophthalmology (United Kingdom), he specialises in cataract surgery, squint correction and pterygium treatment.",
 } as const;
 
 export const DOCTORS = [
@@ -83,9 +83,9 @@ export const DOCTORS = [
     training: "International Council of Ophthalmology (ICO), United Kingdom",
     role: "Consultant Eye Surgeon & Founder",
     experience: "15 years",
-    bio: "With 15 years of dedicated ophthalmic practice and over 1,000 surgeries performed, Dr. Nitin G Dhira leads Sarada Netralaya with a commitment to precision, safety and compassionate care. Holding the FICO qualification from the International Council of Ophthalmology (United Kingdom), he specialises in cataract surgery, squint correction and pterygium treatment.",
+    bio: "With 15 years of dedicated ophthalmic practice and over 50,000 surgeries performed, Dr. Nitin G Dhira leads Sarada Netralaya with a commitment to precision, safety and compassionate care. Holding the FICO qualification from the International Council of Ophthalmology (United Kingdom), he specialises in cataract surgery, squint correction and pterygium treatment.",
     expertise: ["Cataract Surgery", "Squint Correction", "Pterygium", "Glaucoma & Retina"],
-    surgeries: "1,000+",
+    surgeries: "50,000+",
     awards: [
       "Ophthalmic Premier League Award",
       "Academic Presentations",

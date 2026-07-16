@@ -1,6 +1,8 @@
 // Telegram Bot notification integration.
 // Fire-and-forget: a failed notification must never fail a booking.
 
+import { DOCTOR_LABEL, type DoctorId } from "@/lib/appointment-shared";
+
 const BOT_TOKEN = process.env.TELEGRAM_BOT_TOKEN;
 const CHAT_ID = process.env.TELEGRAM_CHAT_ID;
 
@@ -9,14 +11,15 @@ export interface BookingNotifyInput {
   name: string;
   age?: number | null;
   phone: string;
+  doctor?: string | null;
   department: "eye_care" | "optical";
   preferredDate: string; // yyyy-MM-dd
   timeSlot: string;
   note?: string | null;
 }
 
-const DEPT_LABEL: Record<string, string> = {
-  eye_care: "Eye Care — Dr. Nitin Dhira",
+const DEPT_LABEL_FALLBACK: Record<string, string> = {
+  eye_care: "Eye Care",
   optical: "Optical Services",
 };
 
@@ -30,7 +33,9 @@ function formatPhone(phone: string): string {
 /** Format the Telegram message body (HTML for bold labels). */
 export function formatBookingMessage(b: BookingNotifyInput): string {
   const agePart = b.age ? ` (${b.age} yrs)` : "";
-  const dept = DEPT_LABEL[b.department] ?? b.department;
+  const dept = b.doctor && b.doctor in DOCTOR_LABEL
+    ? DOCTOR_LABEL[b.doctor as DoctorId]
+    : DEPT_LABEL_FALLBACK[b.department] ?? b.department;
   const dateLabel = formatDateForMessage(b.preferredDate);
   const note = b.note?.trim() ? `\n📝 <i>"${escapeHtml(b.note.trim())}"</i>` : "";
   const phone = formatPhone(b.phone);

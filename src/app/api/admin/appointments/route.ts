@@ -27,6 +27,7 @@ export async function GET(req: NextRequest) {
   const url = req.nextUrl;
   const tab = url.searchParams.get("tab") ?? "all"; // today|upcoming|past|all|range
   const department = url.searchParams.get("department") ?? "all"; // all|eye_care|optical
+  const doctor = url.searchParams.get("doctor") ?? "all"; // all|nitin-dhira|nitish-bharadwaj|optical
   const status = url.searchParams.get("status") ?? "all"; // all|pending|confirmed|done|cancelled
   const q = url.searchParams.get("q")?.trim() ?? "";
   const dateFrom = url.searchParams.get("dateFrom")?.trim() ?? ""; // yyyy-MM-dd
@@ -37,6 +38,7 @@ export async function GET(req: NextRequest) {
   // Build where clause
   const where: Record<string, unknown> = {};
   if (department !== "all") where.department = department;
+  if (doctor !== "all") where.doctor = doctor;
   if (status !== "all") where.status = status;
   if (q) {
     where.OR = [
