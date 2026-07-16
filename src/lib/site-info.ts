@@ -107,7 +107,7 @@ export const DOCTORS = [
       "2nd Prize — Focus Online Quiz 2021",
       "Certificate of Excellence in Fellowship",
     ],
-    image: null,
+    image: "/images/doctor-nitish.png",
   },
 ] as const;
 
