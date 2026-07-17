@@ -27,7 +27,7 @@ export function Hero() {
       <div className="relative w-full lg:min-h-[750px]">
         <div className="relative lg:hidden aspect-[1023/1537] w-full">
           <Image
-            src="/images/hero-mobile.png"
+            src="/images/hero-mobile.jpg"
             alt="Your Vision, Our Mission — expert eye care at Sarada Netralaya; doctor examining a patient"
             fill
             priority
@@ -37,7 +37,7 @@ export function Hero() {
         </div>
         <div className="relative hidden lg:block lg:absolute lg:inset-0">
           <Image
-            src="/images/hero-final.png"
+            src="/images/hero-final.jpg"
             alt="Eye examination — doctor examining patient at Sarada Netralaya"
             fill
             priority

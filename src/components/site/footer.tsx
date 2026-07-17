@@ -11,7 +11,7 @@ export function Footer() {
           {/* Brand */}
           <div>
             <div className="flex items-center gap-2.5 flex-wrap">
-              <Image src="/images/logo.png" alt="Sarada Netralaya logo" width={44} height={30} className="shrink-0" />
+              <Image src="/images/logo.jpg" alt="Sarada Netralaya logo" width={44} height={30} className="shrink-0" />
               <div className="leading-none">
                 <span className="font-serif-display text-lg sm:text-xl font-bold">Sarada Netralaya</span>
                 <span className="block text-[10px] uppercase tracking-[0.2em] text-white/40 mt-1">Est. 2015</span>

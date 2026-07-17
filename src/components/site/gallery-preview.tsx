@@ -5,10 +5,10 @@ import Link from "next/link";
 import { ArrowRight, Camera } from "lucide-react";
 
 const PREVIEW = [
-  { src: "/images/operation-theater.png", title: "Operation Theater" },
-  { src: "/images/waiting-hall.png", title: "Waiting Area" },
-  { src: "/images/consult-room.png", title: "Consultation Room" },
-  { src: "/images/optical-lab.png", title: "Optical Lab" },
+  { src: "/images/operation-theater.jpg", title: "Operation Theater" },
+  { src: "/images/waiting-hall.jpg", title: "Waiting Area" },
+  { src: "/images/consult-room.jpg", title: "Consultation Room" },
+  { src: "/images/optical-lab.jpg", title: "Optical Lab" },
 ];
 
 export function GalleryPreview() {

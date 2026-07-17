@@ -48,13 +48,22 @@ export async function GET(req: NextRequest) {
     ];
   }
   if (tab === "today") {
-    where.preferredDate = today;
+    // "Today" = bookings MADE today (createdAt is today) OR appointments scheduled for today
+    const todayStart = new Date(today + "T00:00:00.000Z");
+    const todayEnd = new Date(today + "T23:59:59.999Z");
+    const orConditions: Record<string, unknown>[] = [
+      { preferredDate: today },
+      { createdAt: { gte: todayStart, lte: todayEnd } },
+    ];
+    if (where.OR && Array.isArray(where.OR)) {
+      orConditions.push(...(where.OR as Record<string, unknown>[]));
+    }
+    where.OR = orConditions;
   } else if (tab === "upcoming") {
     where.preferredDate = { gte: today };
   } else if (tab === "past") {
     where.preferredDate = { lt: today };
   } else if (tab === "range" && dateFrom && dateTo) {
-    // custom date range (inclusive both ends)
     where.preferredDate = { gte: dateFrom, lte: dateTo };
   }
 

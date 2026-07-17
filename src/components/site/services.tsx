@@ -14,7 +14,7 @@ type Service = {
 
 const SERVICES: Service[] = [
   {
-    image: "/images/service-cataract.png",
+    image: "/images/service-cataract.jpg",
     tag: "Surgical",
     title: "Cataract & Comprehensive Eye Care",
     desc: "From cataract surgery to glaucoma and retina treatment — complete medical eye care under one roof.",
@@ -26,7 +26,7 @@ const SERVICES: Service[] = [
     ],
   },
   {
-    image: "/images/service-diagnostics.png",
+    image: "/images/service-diagnostics.jpg",
     tag: "Diagnostics",
     title: "Advanced Technology & Diagnostics",
     desc: "Precision instrumentation for accurate diagnosis and modern surgical outcomes — all in-house, no running around.",
@@ -38,7 +38,7 @@ const SERVICES: Service[] = [
     ],
   },
   {
-    image: "/images/service-optical.png",
+    image: "/images/service-optical.jpg",
     tag: "Eyewear",
     title: "Optical Services & Eyewear",
     desc: "A dedicated optical counter with a wide variety of spectacles — get your new glasses right where you got your eyes tested.",

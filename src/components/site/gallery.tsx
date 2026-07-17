@@ -12,14 +12,14 @@ type Photo = {
 };
 
 const PHOTOS: Photo[] = [
-  { src: "/images/gate-view.png", title: "Hospital Entrance", desc: "Sarada Netralaya — 33, Swastik Ambika Tower, Near HDFC Bank, Baradwari, Jamshedpur", category: "Facility" },
-  { src: "/images/operation-theater.png", title: "Operation Theater", desc: "State-of-the-art Phaco surgery suite with advanced microscope", category: "Surgical" },
-  { src: "/images/waiting-hall.png", title: "Patient Waiting Area", desc: "Comfortable, welcoming space for patients and families", category: "Facility" },
-  { src: "/images/consult-room.png", title: "Consultation Room", desc: "Modern examination room with slit lamp and diagnostic equipment", category: "Diagnostics" },
-  { src: "/images/reception.png", title: "Reception", desc: "Friendly front desk to assist you with bookings and queries", category: "Facility" },
-  { src: "/images/service-diagnostics.png", title: "OCT & Diagnostic Lab", desc: "Advanced OCT, Optical Biometry and Auto Refractometer — all under one roof", category: "Diagnostics" },
-  { src: "/images/service-cataract.png", title: "Phaco Machine", desc: "Latest phacoemulsification technology for painless cataract surgery", category: "Surgical" },
-  { src: "/images/service-optical.png", title: "Eyewear Collection", desc: "Wide range of frames for every budget, including kids' frames", category: "Optical" },
+  { src: "/images/gate-view.jpg", title: "Hospital Entrance", desc: "Sarada Netralaya — 33, Swastik Ambika Tower, Near HDFC Bank, Baradwari, Jamshedpur", category: "Facility" },
+  { src: "/images/operation-theater.jpg", title: "Operation Theater", desc: "State-of-the-art Phaco surgery suite with advanced microscope", category: "Surgical" },
+  { src: "/images/waiting-hall.jpg", title: "Patient Waiting Area", desc: "Comfortable, welcoming space for patients and families", category: "Facility" },
+  { src: "/images/consult-room.jpg", title: "Consultation Room", desc: "Modern examination room with slit lamp and diagnostic equipment", category: "Diagnostics" },
+  { src: "/images/reception.jpg", title: "Reception", desc: "Friendly front desk to assist you with bookings and queries", category: "Facility" },
+  { src: "/images/service-diagnostics.jpg", title: "OCT & Diagnostic Lab", desc: "Advanced OCT, Optical Biometry and Auto Refractometer — all under one roof", category: "Diagnostics" },
+  { src: "/images/service-cataract.jpg", title: "Phaco Machine", desc: "Latest phacoemulsification technology for painless cataract surgery", category: "Surgical" },
+  { src: "/images/service-optical.jpg", title: "Eyewear Collection", desc: "Wide range of frames for every budget, including kids' frames", category: "Optical" },
 ];
 
 const CATEGORIES = ["All", "Surgical", "Diagnostics", "Facility", "Optical"];

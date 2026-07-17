@@ -49,7 +49,7 @@ export function AdminLogin() {
       <header className="bg-white border-b border-slate-200">
         <div className="mx-auto max-w-md px-4 py-3.5 flex items-center justify-between">
           <div className="flex items-center gap-2.5">
-            <Image src="/images/logo.png" alt="Sarada Netralaya" width={40} height={27} className="shrink-0" />
+            <Image src="/images/logo.jpg" alt="Sarada Netralaya" width={40} height={27} className="shrink-0" />
             <div className="leading-none">
               <span className="text-sm font-bold text-[#374151]">Sarada Netralaya</span>
               <span className="block text-[10px] text-slate-400 mt-0.5">Owner Dashboard</span>

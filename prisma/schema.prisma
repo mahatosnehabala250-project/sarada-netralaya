@@ -6,9 +6,8 @@ generator client {
 }
 
 datasource db {
-  provider  = "postgresql"
-  url       = env("DATABASE_URL")   // pooled (pgbouncer) — used at runtime
-  directUrl = env("DIRECT_URL")     // direct connection — used for migrations
+  provider  = "sqlite"
+  url       = env("DATABASE_URL")
 }
 
 // Key-value store for editable clinic settings (e.g. consultation fees).

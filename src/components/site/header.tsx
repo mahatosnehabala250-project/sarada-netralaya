@@ -52,7 +52,7 @@ export function SiteHeader() {
           onClick={(e) => { e.preventDefault(); window.scrollTo({ top: 0, behavior: "smooth" }); }}
           className="flex items-center gap-2.5 shrink-0"
         >
-          <Image src="/images/logo.png" alt="Sarada Netralaya logo" width={40} height={27} className="shrink-0" />
+          <Image src="/images/logo.jpg" alt="Sarada Netralaya logo" width={40} height={27} className="shrink-0" />
           <div className="leading-none">
             <div className="text-lg sm:text-xl font-bold text-[#0047AB] whitespace-nowrap">Sarada Netralaya</div>
             <div className="hidden sm:block text-[10px] uppercase tracking-[0.15em] text-[#0047AB] font-semibold mt-0.5">Eye Care Hospital</div>

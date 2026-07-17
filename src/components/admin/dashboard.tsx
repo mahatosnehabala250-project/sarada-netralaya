@@ -59,7 +59,7 @@ export function AdminDashboard() {
   const [items, setItems] = useState<Appt[]>([]);
   const [kpis, setKpis] = useState<Kpis>({ today: 0, pending: 0, upcoming: 0, done: 0, cancelled: 0, total: 0 });
   const [total, setTotal] = useState(0);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
   const [tab, setTab] = useState<Tab>("today");
@@ -172,7 +172,7 @@ export function AdminDashboard() {
   return (
     <div className="min-h-screen bg-[#f8f9fa] flex">
       {/* Sidebar (desktop) */}
-      <aside className="hidden lg:flex w-60 shrink-0 flex-col bg-white border-r border-slate-200">
+      <aside className="hidden lg:flex w-60 shrink-0 flex-col bg-white border-r border-slate-200 sticky top-0 h-screen">
         <SidebarContent onLogout={logout} />
       </aside>
 
@@ -611,12 +611,21 @@ function ActionBtn({ busy, onClick, title, className, children }: { busy: boolea
 /* ---------- States ---------- */
 function LoadingState() {
   return (
-    <div className="rounded-xl bg-white border border-slate-200 p-10 shadow-sm">
-      <div className="flex flex-col items-center justify-center text-center py-10">
-        <Loader2 className="h-8 w-8 animate-spin text-[#3b82f6]" />
-        <p className="mt-3 text-sm text-slate-500">Loading appointments...</p>
+    <div className="rounded-xl bg-white border border-slate-200 shadow-sm overflow-hidden">
+      <div className="bg-slate-50 px-4 py-3 text-xs uppercase tracking-wider text-slate-400 font-semibold">Loading...</div>
+      <div className="divide-y divide-slate-100">
+        {[0, 1, 2, 3, 4].map((i) => (
+          <div key={i} className="flex items-center gap-4 px-4 py-4">
+            <div className="h-4 w-4 rounded bg-slate-100" />
+            <div className="flex-1 space-y-2">
+              <div className="h-4 w-32 rounded bg-slate-100" />
+              <div className="h-3 w-48 rounded bg-slate-50" />
+            </div>
+            <div className="h-6 w-20 rounded-full bg-slate-100" />
+            <div className="h-8 w-24 rounded-lg bg-slate-100" />
+          </div>
+        ))}
       </div>
-      <div className="mt-4 space-y-2">{[0, 1, 2].map((i) => <div key={i} className="h-14 rounded-lg bg-slate-50 animate-pulse" />)}</div>
     </div>
   );
 }
@@ -624,7 +633,7 @@ function LoadingState() {
 function EmptyState({ tab, hasFilters, onClear }: { tab: Tab; hasFilters: boolean; onClear: () => void }) {
   const message = hasFilters
     ? "No appointments match your current filters. Try clearing them or switching tabs."
-    : tab === "today" ? "No appointments scheduled for today. Switch to 'Upcoming' to view future bookings."
+    : tab === "today" ? "No new bookings or appointments for today. New bookings from the website will appear here automatically — check 'Upcoming' for future appointments."
     : tab === "upcoming" ? "No upcoming appointments. New bookings from the website will appear here automatically."
     : tab === "past" ? "No past appointments yet. Completed and past-date appointments will show up here."
     : "There are no appointments in the system yet. Bookings made from the website will appear here.";

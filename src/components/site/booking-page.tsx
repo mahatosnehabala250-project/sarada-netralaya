@@ -84,7 +84,7 @@ export function BookingPage() {
             <ArrowLeft className="h-4 w-4" /> Back to Home
           </Link>
           <div className="flex items-center gap-2">
-            <Image src="/images/logo.png" alt="Sarada Netralaya" width={32} height={22} className="shrink-0" />
+            <Image src="/images/logo.jpg" alt="Sarada Netralaya" width={32} height={22} className="shrink-0" />
             <span className="font-bold text-white text-sm sm:text-base">Book Appointment</span>
           </div>
         </div>
@@ -242,7 +242,7 @@ export function BookingPage() {
 
             {/* Image */}
             <div className="relative rounded-2xl overflow-hidden shadow-md aspect-[4/3] hidden lg:block">
-              <Image src="/images/waiting-hall.png" alt="Our comfortable waiting area" fill sizes="320px" className="object-cover" />
+              <Image src="/images/waiting-hall.jpg" alt="Our comfortable waiting area" fill sizes="320px" className="object-cover" />
               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-[#0047AB]/80 to-transparent p-3">
                 <p className="text-white text-xs font-bold">Our waiting area</p>
               </div>
