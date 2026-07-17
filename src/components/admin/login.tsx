@@ -85,7 +85,7 @@ export function AdminLogin() {
                 <div className="relative mt-1.5">
                   <Mail className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                   <Input id="email" type="email" autoComplete="email" value={email}
-                    onChange={(e) => setEmail(e.target.value)} placeholder="saradanetralayajsr@gmail.com"
+                    onChange={(e) => setEmail(e.target.value)} placeholder="your@email.com"
                     className="h-11 pl-9 bg-slate-50 border-slate-200 focus-visible:border-[#0047AB] focus-visible:bg-white focus-visible:ring-[#0047AB]/20" />
                 </div>
               </div>
@@ -112,17 +112,6 @@ export function AdminLogin() {
             </form>
           </div>
 
-          {process.env.NODE_ENV !== "production" && (
-            <div className="mt-4 rounded-xl bg-slate-50 border border-slate-200 p-3.5 text-xs">
-              <div className="flex items-center gap-1.5 text-[#0047AB] font-bold uppercase tracking-wider text-[10px] mb-1.5">
-                <Lock className="h-3 w-3" /> Demo Credentials (Dev Only)
-              </div>
-              <div className="grid grid-cols-2 gap-2 text-slate-600">
-                <div><span className="text-slate-400">Email:</span><br /><code className="text-[#0047AB] font-mono text-[11px]">owner@saradanetralaya.in</code></div>
-                <div><span className="text-slate-400">Password:</span><br /><code className="text-[#0047AB] font-mono text-[11px]">Sarada@2026</code></div>
-              </div>
-            </div>
-          )}
 
           <div className="mt-6 text-center">
             <Link href="/" className="inline-flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#0047AB]">
