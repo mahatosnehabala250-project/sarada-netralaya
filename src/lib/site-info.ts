@@ -90,7 +90,7 @@ export const DOCTORS = [
       "Ophthalmic Premier League Award",
       "Academic Presentations",
     ],
-    image: "/images/doctor-real.png",
+    image: "/images/doctor-real.jpg",
   },
   {
     name: "Dr. Nitish R Bharadwaj",
