@@ -28,7 +28,7 @@ export function Doctor() {
               <div className="relative">
                 {doc.image ? (
                   <div className="relative aspect-[16/10] overflow-hidden">
-                    <Image src={doc.image} alt={doc.name} fill sizes="(min-width: 1024px) 36rem, 100vw" className="object-cover" />
+                    <Image src={doc.image} alt={doc.name} fill quality={90} sizes="(min-width: 1024px) 36rem, 100vw" className="object-cover" />
                   </div>
                 ) : (
                   <div className="relative aspect-[16/10] bg-gradient-to-br from-[#0047AB] to-[#003a8c] flex items-center justify-center">

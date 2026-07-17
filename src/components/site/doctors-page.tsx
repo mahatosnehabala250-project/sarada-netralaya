@@ -53,6 +53,7 @@ export function DoctorsPage() {
                           src={doc.image}
                           alt={doc.name}
                           fill
+                          quality={90}
                           sizes="(min-width: 1024px) 24rem, 100vw"
                           className="object-cover"
                         />
