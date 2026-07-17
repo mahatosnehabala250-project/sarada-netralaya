@@ -37,7 +37,7 @@ export function Hero() {
         </div>
         <div className="relative hidden lg:block lg:absolute lg:inset-0">
           <Image
-            src="/images/hero-final.jpg"
+            src="/images/hero-final.png"
             alt="Eye examination — doctor examining patient at Sarada Netralaya"
             fill
             priority
