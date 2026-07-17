@@ -58,3 +58,9 @@ server.log
 *.db
 *.db-journal
 owner-settings.json
+
+# Internal dev logs & one-off deploy scripts (may contain tokens/secrets — never publish)
+worklog.md
+deploy-vercel.ts
+deploy-*.ts
+*.secret

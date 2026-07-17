@@ -91,8 +91,8 @@ Create `.env.local` in the project root:
 DATABASE_URL=file:/home/z/my-project/db/custom.db
 
 # Owner dashboard login (single account)
-OWNER_EMAIL=owner@saradanetralaya.in
-OWNER_PASSWORD=Sarada@2026
+OWNER_EMAIL=owner@example.com
+OWNER_PASSWORD=change-me-to-a-strong-password
 SESSION_SECRET=change-this-to-a-long-random-string
 
 # Telegram bot (optional — leave empty to skip notifications in dev)

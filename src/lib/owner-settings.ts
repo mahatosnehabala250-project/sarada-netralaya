@@ -16,7 +16,7 @@ function getEnvPasswordHash(): string {
     if (process.env.NODE_ENV === "production") {
       throw new Error("OWNER_PASSWORD must be set in production");
     }
-    if (!envPasswordHash) envPasswordHash = bcrypt.hashSync("Sarada@2026", 12);
+    if (!envPasswordHash) envPasswordHash = bcrypt.hashSync("dev-only-change-me", 12);
     return envPasswordHash;
   }
   if (!envPasswordHash) envPasswordHash = bcrypt.hashSync(plain, 12);
