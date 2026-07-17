@@ -33,6 +33,7 @@ export function AdminLogin() {
       const data = await res.json();
       if (!res.ok) {
         toast.error(data.error ?? "Login failed");
+        setLoading(false);
         return;
       }
       toast.success("Welcome back! Loading dashboard...");

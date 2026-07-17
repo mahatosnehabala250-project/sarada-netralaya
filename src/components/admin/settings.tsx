@@ -1,10 +1,9 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import {
-  Lock, ArrowLeft, Loader2, Check, Shield, KeyRound, EyeOff, Eye,
+  Lock, Loader2, Check, Shield, KeyRound, EyeOff, Eye,
   AlertCircle, User, Mail, Calendar, Building2, Phone, Clock,
   ChevronRight, IndianRupee, Save, Stethoscope, GraduationCap, Award,
 } from "lucide-react";
@@ -97,25 +96,8 @@ export function AdminSettings() {
   }
 
   return (
-    <div className="min-h-screen bg-[#f8f9fa]">
-      {/* Top bar */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-40">
-        <div className="mx-auto max-w-5xl px-4 sm:px-6 py-3.5 flex items-center justify-between">
-          <Link href="/admin" className="inline-flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-[#0047AB] group">
-            <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-slate-50 group-hover:bg-[#0047AB]/5">
-              <ArrowLeft className="h-4 w-4" />
-            </span>
-            Back to Dashboard
-          </Link>
-          <div className="flex items-center gap-2">
-            <Shield className="h-4 w-4 text-[#0047AB]" />
-            <span className="text-sm font-bold text-[#374151]">Settings</span>
-          </div>
-        </div>
-      </header>
-
-      <div className="mx-auto max-w-5xl px-4 sm:px-6 py-8">
-        <h1 className="text-2xl font-bold text-[#374151] mb-6">Owner Settings</h1>
+    <>
+      <h1 className="text-2xl font-bold text-[#374151] mb-6">Owner Settings</h1>
 
         <div className="grid lg:grid-cols-[220px_1fr] gap-6">
           {/* Tab sidebar */}
@@ -332,8 +314,7 @@ export function AdminSettings() {
             )}
           </div>
         </div>
-      </div>
-    </div>
+    </>
   );
 }
 

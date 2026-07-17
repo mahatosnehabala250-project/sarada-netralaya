@@ -1,19 +1,17 @@
 import { isOwnerAuthenticated } from "@/lib/auth";
 import { AdminLogin } from "@/components/admin/login";
-import { AdminDashboard } from "@/components/admin/dashboard";
+import { DashboardContent } from "@/components/admin/dashboard-content";
 
-// SSR: decide which view to render based on session cookie.
 export const dynamic = "force-dynamic";
 export const runtime = "nodejs";
 
-// Never index the admin surface — defense-in-depth alongside robots.txt
-// and the X-Robots-Tag header set in middleware.
 export const metadata = {
-  title: "Owner Login — Sarada Netralaya",
+  title: "Dashboard — Sarada Netralaya",
   robots: { index: false, follow: false },
 };
 
 export default async function AdminPage() {
   const authed = await isOwnerAuthenticated();
-  return authed ? <AdminDashboard /> : <AdminLogin />;
+  if (!authed) return <AdminLogin />;
+  return <DashboardContent />;
 }

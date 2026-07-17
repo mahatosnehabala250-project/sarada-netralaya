@@ -25,7 +25,7 @@ export async function GET(req: NextRequest) {
   if (authFail) return authFail;
 
   const url = req.nextUrl;
-  const tab = url.searchParams.get("tab") ?? "all"; // today|upcoming|past|all|range
+  const tab = url.searchParams.get("tab") ?? "all"; // today|today_bookings|upcoming|past|all|range
   const department = url.searchParams.get("department") ?? "all"; // all|eye_care|optical
   const doctor = url.searchParams.get("doctor") ?? "all"; // all|nitin-dhira|nitish-bharadwaj|optical
   const status = url.searchParams.get("status") ?? "all"; // all|pending|confirmed|done|cancelled
@@ -48,17 +48,11 @@ export async function GET(req: NextRequest) {
     ];
   }
   if (tab === "today") {
-    // "Today" = bookings MADE today (createdAt is today) OR appointments scheduled for today
-    const todayStart = new Date(today + "T00:00:00.000Z");
-    const todayEnd = new Date(today + "T23:59:59.999Z");
-    const orConditions: Record<string, unknown>[] = [
-      { preferredDate: today },
-      { createdAt: { gte: todayStart, lte: todayEnd } },
-    ];
-    if (where.OR && Array.isArray(where.OR)) {
-      orConditions.push(...(where.OR as Record<string, unknown>[]));
-    }
-    where.OR = orConditions;
+    where.preferredDate = today;
+  } else if (tab === "today_bookings") {
+    const todayStartUTC = new Date(today + "T00:00:00+05:30");
+    const tomorrowStartUTC = new Date(todayStartUTC.getTime() + 86400000);
+    where.createdAt = { gte: todayStartUTC, lt: tomorrowStartUTC };
   } else if (tab === "upcoming") {
     where.preferredDate = { gte: today };
   } else if (tab === "past") {
@@ -87,29 +81,33 @@ export async function GET(req: NextRequest) {
 
   // KPI counts (across all data, ignoring filters, for dashboard tiles)
   const monthPrefix = today.slice(0, 7); // "YYYY-MM" — current month in IST
-  let todayCount = 0, pendingCount = 0, upcomingCount = 0, doneCount = 0,
-    cancelledCount = 0, totalCount = 0, uniquePatients = 0, doneThisMonth = 0;
+  let todayCount = 0, todayBookingsCount = 0, pendingCount = 0, upcomingCount = 0,
+    doneCount = 0, cancelledCount = 0, totalCount = 0, uniquePatients = 0, doneThisMonth = 0;
   let revenueThisMonth = 0;
   const fees = await getFees();
+  const todayStartUTC = new Date(today + "T00:00:00+05:30");
+  const tomorrowStartUTC = new Date(todayStartUTC.getTime() + 86400000);
   try {
     const [
-      tCount, pCount, uCount, dCount, cCount, allCount, patientGroups, doneMonthRows,
+      tCount, tbCount, pCount, uCount, dCount, cCount, allCount, patientGroups, doneMonthRows,
     ] = await Promise.all([
       db.appointment.count({ where: { preferredDate: today } }),
+      db.appointment.count({ where: { createdAt: { gte: todayStartUTC, lt: tomorrowStartUTC } } }),
       db.appointment.count({ where: { status: "pending" } }),
       db.appointment.count({ where: { preferredDate: { gte: today } } }),
       db.appointment.count({ where: { status: "done" } }),
       db.appointment.count({ where: { status: "cancelled" } }),
       db.appointment.count(),
-      db.appointment.groupBy({ by: ["phone"] }),         // distinct patients
-      db.appointment.findMany({                          // completed this month, by dept
+      db.appointment.groupBy({ by: ["phone"] }),
+      db.appointment.findMany({
         where: { status: "done", preferredDate: { startsWith: monthPrefix } },
         select: { department: true, feeCharged: true },
       }),
     ]);
-    todayCount = tCount; pendingCount = pCount; upcomingCount = uCount;
-    doneCount = dCount; cancelledCount = cCount; totalCount = allCount;
-    uniquePatients = patientGroups.length; doneThisMonth = doneMonthRows.length;
+    todayCount = tCount; todayBookingsCount = tbCount; pendingCount = pCount;
+    upcomingCount = uCount; doneCount = dCount; cancelledCount = cCount;
+    totalCount = allCount; uniquePatients = patientGroups.length;
+    doneThisMonth = doneMonthRows.length;
 
     // Revenue = sum of the fee captured when each visit was marked done.
     // Legacy rows completed before fee capture existed fall back to the
@@ -130,6 +128,7 @@ export async function GET(req: NextRequest) {
     total,
     kpis: {
       today: todayCount,
+      todayBookings: todayBookingsCount,
       pending: pendingCount,
       upcoming: upcomingCount,
       done: doneCount,
