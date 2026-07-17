@@ -1,69 +1,63 @@
+import Link from "next/link";
 import { Star, ExternalLink, Quote } from "lucide-react";
+import { REVIEWS, REVIEWS_URL } from "@/lib/site-info";
 
-// Real Google review links provided by the clinic. We link to the genuine
-// reviews rather than displaying invented quotes.
-const GOOGLE_REVIEWS = [
-  "https://share.google/98WwefXxUgmmAGbG9",
-  "https://share.google/q8lwbznXXrmvEufcT",
-  "https://share.google/DE81V7IuKvVQz0cZN",
-  "https://share.google/CAca3lzRmOr0klUWy",
-  "https://share.google/uC126e8QifN42eDXa",
-];
+// Show the 3 most detailed reviews on the homepage; full list on /reviews.
+const FEATURED = REVIEWS.slice(0, 3);
 
-const REVIEWS_SEARCH =
-  "https://www.google.com/search?q=Sarada+Netralaya+Baradwari+Jamshedpur+reviews";
+function initials(name: string) {
+  return name.trim().split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase();
+}
 
 export function Testimonials() {
   return (
     <section id="testimonials" className="py-14 sm:py-20 lg:py-24 bg-slate-50">
-      <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8 text-center">
-        <span className="inline-block text-xs font-bold uppercase tracking-[0.2em] text-[#0047AB] mb-3">
-          Patient Reviews
-        </span>
-        <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#0047AB]">
-          What our patients say
-        </h2>
-        <p className="mt-4 text-base text-slate-600 max-w-xl mx-auto">
-          Our patients share their experiences on Google. Read genuine reviews
-          from people we&apos;ve cared for at Sarada Netralaya.
-        </p>
+      <div className="mx-auto max-w-6xl px-4 sm:px-6 lg:px-8">
+        <div className="text-center mb-10 sm:mb-14 max-w-2xl mx-auto">
+          <span className="inline-block text-xs font-bold uppercase tracking-[0.2em] text-[#0047AB] mb-3">
+            Patient Reviews
+          </span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#0047AB]">
+            What our patients say
+          </h2>
+          <p className="mt-4 text-base text-slate-600">
+            Genuine reviews from patients we&apos;ve cared for at Sarada Netralaya.
+          </p>
+        </div>
 
-        {/* Real Google review links */}
-        <div className="mt-10 grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-          {GOOGLE_REVIEWS.map((url, i) => (
-            <a
-              key={url}
-              href={url}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group rounded-2xl bg-white border border-slate-200 p-5 text-left shadow-sm hover:shadow-lg hover:border-[#0047AB]/30 transition-all"
-            >
-              <Quote className="h-6 w-6 text-[#0047AB]/20" fill="currentColor" />
-              <div className="mt-3 flex">
-                {[0, 1, 2, 3, 4].map((s) => (
-                  <Star key={s} className="h-4 w-4 fill-amber-400 text-amber-400" />
+        <div className="grid md:grid-cols-3 gap-5">
+          {FEATURED.map((r) => (
+            <article key={r.name + r.when} className="flex flex-col rounded-2xl bg-white border border-slate-200 p-6 shadow-sm">
+              <Quote className="h-7 w-7 text-[#0047AB]/15" fill="currentColor" />
+              <div className="mt-2 flex">
+                {Array.from({ length: r.rating }).map((_, i) => (
+                  <Star key={i} className="h-4 w-4 fill-amber-400 text-amber-400" />
                 ))}
               </div>
-              <div className="mt-3 text-sm font-semibold text-[#0047AB]">
-                Verified Google Review #{i + 1}
+              <p className="mt-3 flex-1 text-sm text-slate-600 leading-relaxed line-clamp-[10]">{r.text}</p>
+              <div className="mt-5 flex items-center gap-3 pt-4 border-t border-slate-100">
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-[#0047AB] text-white text-sm font-bold">
+                  {initials(r.name)}
+                </span>
+                <div className="min-w-0">
+                  <div className="font-bold text-[#0047AB] text-sm truncate">{r.name}</div>
+                  <div className="text-xs text-slate-400">{r.detail} · {r.when}</div>
+                </div>
               </div>
-              <span className="mt-1 inline-flex items-center gap-1 text-xs font-medium text-slate-500 group-hover:text-[#0047AB]">
-                Read on Google
-                <ExternalLink className="h-3 w-3" />
-              </span>
-            </a>
+            </article>
           ))}
         </div>
 
-        <a
-          href={REVIEWS_SEARCH}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="mt-10 inline-flex items-center justify-center gap-2 rounded-lg bg-[#0047AB] px-7 py-3.5 text-sm font-bold text-white shadow-lg hover:bg-[#003a8c] transition-colors"
-        >
-          Read all reviews on Google
-          <ExternalLink className="h-4 w-4" />
-        </a>
+        <div className="mt-10 text-center">
+          <div className="flex flex-col sm:flex-row gap-3 justify-center">
+            <Link href="/reviews" className="inline-flex items-center justify-center gap-2 rounded-lg bg-[#0047AB] px-7 py-3.5 text-sm font-bold text-white hover:bg-[#003a8c] transition-colors">
+              Read all patient reviews
+            </Link>
+            <a href={REVIEWS_URL} target="_blank" rel="noopener noreferrer" className="inline-flex items-center justify-center gap-2 rounded-lg border border-slate-200 bg-white px-7 py-3.5 text-sm font-bold text-[#0047AB] hover:bg-slate-50 transition-colors">
+              View on Google <ExternalLink className="h-4 w-4" />
+            </a>
+          </div>
+        </div>
       </div>
     </section>
   );

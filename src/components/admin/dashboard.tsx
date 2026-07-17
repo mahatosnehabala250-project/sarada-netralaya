@@ -18,10 +18,10 @@ import {
 } from "@/components/ui/tooltip";
 import { toast } from "@/lib/toast";
 import {
-  DEPT_LABEL, STATUS_META, type Status, type Department,
-} from "@/lib/appointments";
+  STATUS_META, DOCTOR_CHOICES, doctorOrDeptLabel, type Status, type Department, type DoctorId,
+} from "@/lib/appointment-shared";
 import { greetingIST, fullTodayIST, formatDateLong, formatCreatedAtIST, timeAgoIST } from "@/lib/ist";
-import { PHONES, SITE } from "@/lib/site-info";
+import { PHONES } from "@/lib/site-info";
 import { formatPhone, telHref } from "@/lib/utils";
 import { AppointmentDetailDialog } from "@/components/admin/appointment-dialog";
 import { CreateAppointmentDialog, type NewAppt } from "@/components/admin/create-dialog";
@@ -31,14 +31,18 @@ import { printAppointmentSlip } from "@/components/admin/print-slip";
 
 type Appt = {
   id: string; ref: string; name: string; phone: string; age: number | null;
-  department: string; preferredDate: string; timeSlot: string;
+  department: string; doctor: string | null; preferredDate: string; timeSlot: string;
   note: string | null; status: string; createdAt: string;
 };
 
 type Kpis = {
   today: number; pending: number; upcoming: number;
   done: number; cancelled: number; total: number;
+  patients?: number; doneThisMonth?: number; revenueThisMonth?: number;
+  fees?: { eye_care: number; optical: number };
 };
+
+const inr = (n: number) => "₹" + Number(n || 0).toLocaleString("en-IN");
 
 type Tab = "today" | "upcoming" | "past" | "all" | "range";
 
@@ -60,6 +64,7 @@ export function AdminDashboard() {
 
   const [tab, setTab] = useState<Tab>("today");
   const [department, setDepartment] = useState<"all" | Department>("all");
+  const [doctor, setDoctor] = useState<"all" | DoctorId>("all");
   const [status, setStatus] = useState<"all" | Status>("all");
   const [q, setQ] = useState("");
   const [qDebounced, setQDebounced] = useState("");
@@ -91,7 +96,7 @@ export function AdminDashboard() {
     if (!silent) setLoading(true);
     else setRefreshing(true);
     try {
-      const params = new URLSearchParams({ tab, department, status, q: qDebounced });
+      const params = new URLSearchParams({ tab, department, doctor, status, q: qDebounced });
       if (tab === "range") {
         if (dateFrom) params.set("dateFrom", dateFrom);
         if (dateTo) params.set("dateTo", dateTo);
@@ -104,7 +109,7 @@ export function AdminDashboard() {
       setKpis(data.kpis ?? kpis);
     } catch { toast.error("Failed to load appointments"); }
     finally { setLoading(false); setRefreshing(false); }
-  }, [tab, department, status, qDebounced, dateFrom, dateTo]);
+  }, [tab, department, doctor, status, qDebounced, dateFrom, dateTo]);
 
   useEffect(() => { fetchList(); }, [fetchList]);
 
@@ -193,13 +198,39 @@ export function AdminDashboard() {
           <button onClick={() => fetchList(true)} aria-label="Refresh"><RefreshCw className={`h-5 w-5 text-slate-500 ${refreshing ? "animate-spin" : ""}`} /></button>
         </header>
 
+        {/* Desktop top bar */}
+        <header className="hidden lg:flex sticky top-0 z-30 items-center gap-4 bg-white border-b border-slate-200 px-6 h-16">
+          <div className="min-w-0">
+            <h1 className="text-lg font-bold text-[#374151] leading-tight">Dashboard</h1>
+            <p className="text-xs text-[#6b7280]">Welcome back, Admin! Here&apos;s what&apos;s happening today.</p>
+          </div>
+          <div className="ml-auto relative w-72">
+            <Search className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
+            <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search patients, appointments…" className="h-10 pl-9 rounded-full bg-slate-50 border-slate-200 focus-visible:border-[#3b82f6] focus-visible:ring-[#3b82f6]/20" />
+          </div>
+          <button onClick={() => { setStatus("pending"); setTab("all"); }} title="Pending appointments" className="relative flex h-10 w-10 items-center justify-center rounded-full border border-slate-200 text-slate-500 hover:text-[#3b82f6] hover:border-[#3b82f6] transition-colors">
+            <Bell className="h-5 w-5" />
+            {kpis.pending > 0 && <span className="absolute -top-1 -right-1 flex h-5 min-w-[20px] items-center justify-center rounded-full bg-rose-500 px-1 text-[10px] font-bold text-white border-2 border-white">{kpis.pending}</span>}
+          </button>
+          <div className="flex items-center gap-2 pl-1">
+            <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-[#3b82f6] to-[#2563eb] text-white text-xs font-bold">AU</span>
+            <div className="leading-tight">
+              <div className="text-sm font-semibold text-[#374151]">Admin User</div>
+              <div className="text-[11px] text-slate-400">Super Admin</div>
+            </div>
+            <button onClick={logout} title="Logout" className="ml-2 flex h-9 w-9 items-center justify-center rounded-full border border-slate-200 text-slate-400 hover:text-rose-600 hover:border-rose-200 hover:bg-rose-50 transition-colors">
+              <LogOut className="h-4 w-4" />
+            </button>
+          </div>
+        </header>
+
         {/* Content */}
         <main className="flex-1 p-4 sm:p-6 max-w-[1400px] w-full mx-auto">
           {/* Header row */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6">
             <div>
-              <h1 className="text-2xl font-bold text-[#374151]">Dashboard</h1>
-              <p className="text-sm text-[#6b7280] mt-0.5">{greeting}! Here's what's happening today · {todayStr}</p>
+              <h2 className="text-xl font-bold text-[#374151]">Today&apos;s Overview</h2>
+              <p className="text-sm text-[#6b7280] mt-0.5">{greeting}! · {todayStr}</p>
             </div>
             <div className="flex items-center gap-2">
               <Button variant="outline" size="sm" onClick={() => fetchList(true)} className="border-slate-200 text-slate-600 hover:bg-slate-50">
@@ -211,7 +242,7 @@ export function AdminDashboard() {
               <TooltipProvider delayDuration={200}>
                 <Tooltip>
                   <TooltipTrigger asChild>
-                    <a href={`/api/admin/appointments/export?${new URLSearchParams({ tab, department, status, q: qDebounced, ...(tab === "range" && dateFrom ? { dateFrom } : {}), ...(tab === "range" && dateTo ? { dateTo } : {}) }).toString()}`}>
+                    <a href={`/api/admin/appointments/export?${new URLSearchParams({ tab, department, doctor, status, q: qDebounced, ...(tab === "range" && dateFrom ? { dateFrom } : {}), ...(tab === "range" && dateTo ? { dateTo } : {}) }).toString()}`}>
                       <Button size="sm" className="bg-white border border-slate-200 text-slate-600 hover:bg-slate-50">
                         <Download className="h-4 w-4 mr-1.5" /> Export
                       </Button>
@@ -225,10 +256,10 @@ export function AdminDashboard() {
 
           {/* KPI tiles — 4 cards matching mockup */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-            <KpiCard icon={CalendarCheck} label="Today's Appointments" value={kpis.today} iconColor="text-[#3b82f6]" iconBg="bg-[#3b82f6]/10" valueColor="text-[#3b82f6]" />
-            <KpiCard icon={Users} label="Total Patients" value={kpis.total} iconColor="text-[#10b981]" iconBg="bg-[#10b981]/10" valueColor="text-[#374151]" />
-            <KpiCard icon={Eye} label="Pending Review" value={kpis.pending} iconColor="text-[#8b5cf6]" iconBg="bg-[#8b5cf6]/10" valueColor="text-[#8b5cf6]" />
-            <KpiCard icon={CheckCircle2} label="Completed" value={kpis.done} iconColor="text-[#f59e0b]" iconBg="bg-[#f59e0b]/10" valueColor="text-[#374151]" />
+            <KpiCard icon={CalendarCheck} label="Today's Appointments" value={kpis.today} sub={kpis.pending ? `${kpis.pending} pending review` : "All reviewed"} iconColor="text-[#3b82f6]" iconBg="bg-[#3b82f6]/10" valueColor="text-[#3b82f6]" />
+            <KpiCard icon={Users} label="Total Patients" value={kpis.patients ?? 0} sub="Unique patient records" iconColor="text-[#10b981]" iconBg="bg-[#10b981]/10" valueColor="text-[#374151]" />
+            <KpiCard icon={CheckCircle2} label="Completed This Month" value={kpis.doneThisMonth ?? 0} sub={`${kpis.done} completed all-time`} iconColor="text-[#8b5cf6]" iconBg="bg-[#8b5cf6]/10" valueColor="text-[#374151]" />
+            <KpiCard icon={DollarSign} label="Est. Revenue (Month)" value={inr(kpis.revenueThisMonth ?? 0)} sub={kpis.fees ? `Eye ${inr(kpis.fees.eye_care)} · Optical ${inr(kpis.fees.optical)}` : "per-department fees"} iconColor="text-[#f59e0b]" iconBg="bg-[#f59e0b]/10" valueColor="text-[#374151]" />
           </div>
 
           {/* Analytics charts */}
@@ -237,7 +268,7 @@ export function AdminDashboard() {
           </div>
 
           {/* Filters */}
-          <div className="mt-6 rounded-xl bg-white border border-slate-200 p-4 shadow-sm">
+          <div id="appointments" className="mt-6 rounded-xl bg-white border border-slate-200 p-4 shadow-sm scroll-mt-20">
             <div className="flex flex-col sm:flex-row gap-3 sm:items-center sm:justify-between">
               <div className="inline-flex rounded-lg bg-slate-100 p-1 self-start">
                 {TABS.map((t) => (
@@ -256,6 +287,8 @@ export function AdminDashboard() {
             <div className="mt-3 flex flex-wrap items-center gap-2">
               <FilterDropdown icon={Filter} label="Department" value={department} onChange={(v) => setDepartment(v as typeof department)}
                 options={[{ value: "all", label: "All Departments" }, { value: "eye_care", label: "Eye Care" }, { value: "optical", label: "Optical" }]} />
+              <FilterDropdown icon={UserCircle2} label="Doctor" value={doctor} onChange={(v) => setDoctor(v as typeof doctor)}
+                options={[{ value: "all", label: "All Doctors" }, ...DOCTOR_CHOICES.map((d) => ({ value: d.id, label: d.name }))]} />
               <FilterDropdown icon={CheckCircle2} label="Status" value={status} onChange={(v) => setStatus(v as typeof status)}
                 options={[{ value: "all", label: "All Statuses" }, { value: "pending", label: "⏳ Pending" }, { value: "confirmed", label: "📌 Confirmed" }, { value: "done", label: "✅ Done" }, { value: "cancelled", label: "✕ Cancelled" }]} />
               {someSelected && (
@@ -293,11 +326,11 @@ export function AdminDashboard() {
           )}
 
           {/* List */}
-          <div className="mt-5">
+          <div id="patients" className="mt-5 scroll-mt-20">
             {loading ? (
               <LoadingState />
             ) : visibleItems.length === 0 ? (
-              <EmptyState tab={tab} hasFilters={department !== "all" || status !== "all" || qDebounced !== "" || (tab === "range" && (dateFrom !== "" || dateTo !== ""))} onClear={() => { setDepartment("all"); setStatus("all"); setQ(""); setDateFrom(""); setDateTo(""); }} />
+              <EmptyState tab={tab} hasFilters={department !== "all" || doctor !== "all" || status !== "all" || qDebounced !== "" || (tab === "range" && (dateFrom !== "" || dateTo !== ""))} onClear={() => { setDepartment("all"); setDoctor("all"); setStatus("all"); setQ(""); setDateFrom(""); setDateTo(""); }} />
             ) : (
               <>
                 {/* Desktop table */}
@@ -381,56 +414,55 @@ export function AdminDashboard() {
 
 /* ---------- Sidebar ---------- */
 function SidebarContent({ onLogout }: { onLogout: () => void }) {
+  const linkCls = "group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#3b82f6] transition-colors";
+  const iconCls = "h-[18px] w-[18px] text-slate-400 group-hover:text-[#3b82f6]";
   return (
     <div className="flex flex-col h-full">
       {/* Brand */}
       <div className="p-4 border-b border-slate-100">
         <div className="flex items-center gap-2.5">
-          <Image src="/images/logo.png" alt="Sarada Netralaya" width={36} height={24} className="shrink-0" />
+          <Image src="/images/logo.png" alt="Sarada Netralaya" width={38} height={26} className="shrink-0" />
           <div className="leading-none">
             <div className="text-sm font-bold text-[#374151]">Sarada Netralaya</div>
-            <div className="text-[10px] text-slate-400 mt-0.5">We Care, We Cure</div>
+            <div className="text-[10px] text-slate-400 mt-0.5">Clear Vision, Better Life</div>
           </div>
         </div>
       </div>
 
       {/* Nav */}
       <nav className="flex-1 p-3 space-y-0.5 overflow-y-auto">
-        <div className="px-3 pb-2 pt-1 text-[10px] font-bold uppercase tracking-wider text-slate-400">Main</div>
         <a href="/admin" className="flex items-center gap-3 rounded-lg bg-[#3b82f6] px-3 py-2.5 text-sm font-bold text-white shadow-sm">
-          <CalendarDays className="h-4 w-4" /> Appointments
+          <BarChart3 className="h-[18px] w-[18px]" /> Dashboard
         </a>
-        <a href="/admin/settings" className="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#3b82f6] transition-colors">
-          <UserCircle2 className="h-4 w-4 text-slate-400 group-hover:text-[#3b82f6]" /> Settings
-        </a>
-        <div className="px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">Links</div>
-        <a href="/" className="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#3b82f6] transition-colors">
-          <ExternalLink className="h-4 w-4 text-slate-400 group-hover:text-[#3b82f6]" /> View Website
-        </a>
-        <a href="/book" className="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#3b82f6] transition-colors">
-          <CalendarCheck className="h-4 w-4 text-slate-400 group-hover:text-[#3b82f6]" /> Book Appointment
-        </a>
-        <a href="/gallery" className="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#3b82f6] transition-colors">
-          <Eye className="h-4 w-4 text-slate-400 group-hover:text-[#3b82f6]" /> Gallery
-        </a>
-        <a href="/reviews" className="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#3b82f6] transition-colors">
-          <Star className="h-4 w-4 text-slate-400 group-hover:text-[#3b82f6]" /> Reviews
-        </a>
-        <a href="/track" className="group flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-600 hover:bg-slate-50 hover:text-[#3b82f6] transition-colors">
-          <Search className="h-4 w-4 text-slate-400 group-hover:text-[#3b82f6]" /> Track Appointment
-        </a>
+        <a href="#appointments" className={linkCls}><CalendarDays className={iconCls} /> Appointments</a>
+        <a href="#patients" className={linkCls}><Users className={iconCls} /> Patients</a>
+        <a href="/admin/settings?tab=doctors" className={linkCls}><UserCircle2 className={iconCls} /> Doctors</a>
+        <a href="/reviews" className={linkCls}><Star className={iconCls} /> Reviews</a>
+        <a href="/api/admin/appointments/export" className={linkCls}><Download className={iconCls} /> Reports</a>
+        <a href="/admin/settings?tab=account" className={linkCls}><UserCircle2 className={iconCls} /> Settings</a>
+
+        <div className="px-3 pt-4 pb-2 text-[10px] font-bold uppercase tracking-wider text-slate-400">Site</div>
+        <a href="/" className={linkCls}><ExternalLink className={iconCls} /> View Website</a>
+        <a href="/gallery" className={linkCls}><Eye className={iconCls} /> Gallery</a>
       </nav>
 
       {/* Help + User */}
       <div className="p-3 border-t border-slate-100 space-y-2">
-        <div className="flex items-center gap-2.5 rounded-lg bg-slate-50 px-3 py-2.5">
-          <span className="flex h-8 w-8 items-center justify-center rounded-full bg-[#3b82f6] text-white text-xs font-bold">SN</span>
+        <a href={`https://wa.me/${PHONES.whatsapp}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2.5 rounded-xl bg-[#3b82f6]/5 border border-[#3b82f6]/10 px-3 py-2.5 hover:bg-[#3b82f6]/10 transition-colors">
+          <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-[#3b82f6] text-white"><Headphones className="h-4 w-4" /></span>
+          <div className="leading-tight min-w-0">
+            <div className="text-[13px] font-bold text-[#374151]">Need Help?</div>
+            <div className="text-[11px] text-slate-400">Get quick support</div>
+          </div>
+        </a>
+        <div className="flex items-center gap-2.5 rounded-lg px-2 py-2">
+          <span className="flex h-9 w-9 items-center justify-center rounded-full bg-gradient-to-br from-[#3b82f6] to-[#2563eb] text-white text-xs font-bold">AU</span>
           <div className="leading-tight min-w-0 flex-1">
-            <div className="text-sm font-semibold text-[#374151] truncate">Sarada Owner</div>
-            <div className="text-[11px] text-slate-400 truncate">{SITE.domain}</div>
+            <div className="text-sm font-semibold text-[#374151] truncate">Admin User</div>
+            <div className="text-[11px] text-slate-400 truncate">Super Admin</div>
           </div>
         </div>
-        <button onClick={onLogout} className="w-full flex items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-rose-500 hover:bg-rose-50 transition-colors">
+        <button onClick={onLogout} className="w-full flex items-center justify-center gap-2 rounded-lg border border-rose-200 bg-rose-50 px-3 py-2.5 text-sm font-bold text-rose-600 hover:bg-rose-100 transition-colors">
           <LogOut className="h-4 w-4" /> Logout
         </button>
       </div>
@@ -438,17 +470,22 @@ function SidebarContent({ onLogout }: { onLogout: () => void }) {
   );
 }
 
-/* ---------- KPI Card (matching mockup: icon top, value large, label below) ---------- */
+/* ---------- KPI Card (mockup style: label top, big value, icon top-right, subtext) ---------- */
 function KpiCard({
-  icon: Icon, label, value, iconColor, iconBg, valueColor,
-}: { icon: typeof Eye; label: string; value: number; iconColor: string; iconBg: string; valueColor: string }) {
+  icon: Icon, label, value, sub, iconColor, iconBg, valueColor,
+}: { icon: typeof Eye; label: string; value: number | string; sub?: string; iconColor: string; iconBg: string; valueColor: string }) {
   return (
     <div className="rounded-xl bg-white border border-slate-200 p-5 shadow-sm hover:shadow-md transition-shadow">
-      <span className={`flex h-10 w-10 items-center justify-center rounded-lg ${iconBg} ${iconColor}`}>
-        <Icon className="h-5 w-5" strokeWidth={2} />
-      </span>
-      <div className={`mt-3 text-3xl font-bold ${valueColor} tabular-nums leading-none`}>{value}</div>
-      <p className="mt-2 text-sm text-[#6b7280] font-medium leading-tight">{label}</p>
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <p className="text-sm text-[#6b7280] font-medium leading-tight">{label}</p>
+          <div className={`mt-2 text-2xl sm:text-[1.75rem] font-bold ${valueColor} tabular-nums leading-none`}>{value}</div>
+        </div>
+        <span className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-lg ${iconBg} ${iconColor}`}>
+          <Icon className="h-5 w-5" strokeWidth={2} />
+        </span>
+      </div>
+      {sub && <p className="mt-3 text-xs text-slate-400 truncate">{sub}</p>}
     </div>
   );
 }
@@ -492,7 +529,7 @@ function ApptRow({ a, busy, onAction, onView, selected, onToggleSelect }: { a: A
         <div className="text-xs text-slate-500 mt-0.5">{a.timeSlot}</div>
       </td>
       <td className="px-4 py-3">
-        <span className="inline-flex items-center gap-1 rounded-md bg-[#3b82f6]/8 px-2 py-0.5 text-xs font-semibold text-[#3b82f6]">{DEPT_LABEL[a.department as Department] ?? a.department}</span>
+        <span className="inline-flex items-center gap-1 rounded-md bg-[#3b82f6]/8 px-2 py-0.5 text-xs font-semibold text-[#3b82f6]">{doctorOrDeptLabel(a.doctor, a.department)}</span>
       </td>
       <td className="px-4 py-3 max-w-[220px]"><p className="text-xs text-slate-500 line-clamp-2">{a.note || "—"}</p></td>
       <td className="px-4 py-3">
@@ -535,20 +572,30 @@ function ApptCard({ a, busy, onAction, onView }: { a: Appt; busy: boolean; onAct
           <div className="text-slate-500">{a.timeSlot}</div>
         </div>
         <div className="rounded-lg bg-slate-50 p-2">
-          <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Department</div>
-          <div className="font-medium text-[#374151] mt-0.5">{DEPT_LABEL[a.department as Department] ?? a.department}</div>
+          <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Doctor</div>
+          <div className="font-medium text-[#374151] mt-0.5">{doctorOrDeptLabel(a.doctor, a.department)}</div>
         </div>
       </div>
       {a.note && <div className="mt-2 text-xs text-slate-500 bg-slate-50 rounded-lg p-2 border border-slate-100"><span className="font-semibold text-[#3b82f6]">Note: </span>{a.note}</div>}
-      <div className="mt-3 flex flex-wrap gap-2">
-        <button onClick={() => onView(a)} className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-[#3b82f6]"><EyeIcon className="h-3.5 w-3.5" /> Details</button>
-        <a href={telHref(a.phone)} className="inline-flex items-center gap-1.5 rounded-lg border border-[#3b82f6]/20 px-3 py-1.5 text-xs font-semibold text-[#3b82f6] hover:bg-[#3b82f6]/5"><Phone className="h-3.5 w-3.5" /> Call</a>
-        <button onClick={() => printAppointmentSlip(a)} className="inline-flex items-center gap-1.5 rounded-lg border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-50 hover:text-[#3b82f6]"><Printer className="h-3.5 w-3.5" /> Slip</button>
-        {st === "pending" && <ActionBtn busy={busy} onClick={() => onAction(a.id, "confirmed")} title="Confirm" className="border-sky-200 text-sky-700 hover:bg-sky-50 !px-3 !h-8 text-xs"><Check className="h-3.5 w-3.5" /> Confirm</ActionBtn>}
-        {(st === "confirmed" || st === "pending") && <ActionBtn busy={busy} onClick={() => onAction(a.id, "done")} title="Mark Done" className="border-emerald-200 text-emerald-700 hover:bg-emerald-50 !px-3 !h-8 text-xs"><CheckCircle2 className="h-3.5 w-3.5" /> Done</ActionBtn>}
-        {(st === "pending" || st === "confirmed") && <ActionBtn busy={busy} onClick={() => onAction(a.id, "cancelled")} title="Cancel" className="border-rose-200 text-rose-600 hover:bg-rose-50 !px-3 !h-8 text-xs ml-auto"><X className="h-3.5 w-3.5" /> Cancel</ActionBtn>}
+      <div className="mt-3 grid grid-cols-3 gap-2">
+        <CardBtn onClick={() => onView(a)} className="border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-[#3b82f6]"><EyeIcon className="h-3.5 w-3.5" /> Details</CardBtn>
+        <a href={telHref(a.phone)} className="inline-flex items-center justify-center gap-1.5 rounded-lg border border-[#3b82f6]/20 px-2 py-2 text-xs font-semibold text-[#3b82f6] hover:bg-[#3b82f6]/5"><Phone className="h-3.5 w-3.5" /> Call</a>
+        <CardBtn onClick={() => printAppointmentSlip(a)} className="border-slate-200 text-slate-600 hover:bg-slate-50 hover:text-[#3b82f6]"><Printer className="h-3.5 w-3.5" /> Slip</CardBtn>
+        {st === "pending" && <CardBtn busy={busy} onClick={() => onAction(a.id, "confirmed")} className="border-sky-200 text-sky-700 hover:bg-sky-50"><Check className="h-3.5 w-3.5" /> Confirm</CardBtn>}
+        {(st === "confirmed" || st === "pending") && <CardBtn busy={busy} onClick={() => onAction(a.id, "done")} className="border-emerald-200 text-emerald-700 hover:bg-emerald-50"><CheckCircle2 className="h-3.5 w-3.5" /> Done</CardBtn>}
+        {(st === "pending" || st === "confirmed") && <CardBtn busy={busy} onClick={() => onAction(a.id, "cancelled")} className="border-rose-200 text-rose-600 hover:bg-rose-50"><X className="h-3.5 w-3.5" /> Cancel</CardBtn>}
       </div>
     </div>
+  );
+}
+
+/* Full-width text+icon button for the mobile appointment card grid. */
+function CardBtn({ busy, onClick, className, children }: { busy?: boolean; onClick: () => void; className?: string; children: React.ReactNode }) {
+  return (
+    <button onClick={onClick} disabled={busy}
+      className={`inline-flex items-center justify-center gap-1.5 rounded-lg border px-2 py-2 text-xs font-semibold disabled:opacity-50 disabled:cursor-wait ${className ?? ""}`}>
+      {busy ? <Loader2 className="h-3.5 w-3.5 animate-spin" /> : children}
+    </button>
   );
 }
 

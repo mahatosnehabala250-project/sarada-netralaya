@@ -6,7 +6,7 @@ import { db } from "@/lib/db"
 import { ensureDbSchema } from "@/lib/db-ensure";
 import { isOwnerAuthenticated } from "@/lib/auth";
 import {
-  bookingSchema, generateUniqueRef, DEPARTMENTS, TIME_SLOTS, STATUSES, type Status,
+  bookingSchema, generateUniqueRef, departmentForDoctor, TIME_SLOTS, STATUSES, type Status,
 } from "@/lib/appointments";
 import { todayISTString } from "@/lib/ist";
 import { notifyNewBooking } from "@/lib/telegram";
@@ -59,7 +59,8 @@ export async function POST(req: NextRequest) {
       name: d.name,
       phone: d.phone,
       age: d.age,
-      department: d.department,
+      doctor: d.doctor,
+      department: departmentForDoctor(d.doctor),
       preferredDate: d.preferredDate,
       timeSlot: d.timeSlot,
       note: d.note,
@@ -76,6 +77,7 @@ export async function POST(req: NextRequest) {
         name: created.name,
         age: created.age,
         phone: created.phone,
+        doctor: created.doctor,
         department: created.department as "eye_care" | "optical",
         preferredDate: created.preferredDate,
         timeSlot: created.timeSlot,
@@ -91,4 +93,4 @@ export async function POST(req: NextRequest) {
 }
 
 // Re-export for type-narrowing consumers
-export { DEPARTMENTS, TIME_SLOTS };
+export { TIME_SLOTS };

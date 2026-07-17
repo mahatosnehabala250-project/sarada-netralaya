@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { isOwnerAuthenticated } from "@/lib/auth";
 import { AdminLogin } from "@/components/admin/login";
 import { AdminSettings } from "@/components/admin/settings";
@@ -17,5 +18,9 @@ export default async function AdminSettingsPage() {
     // Not logged in — show the login screen (same as /admin)
     return <AdminLogin />;
   }
-  return <AdminSettings />;
+  return (
+    <Suspense fallback={null}>
+      <AdminSettings />
+    </Suspense>
+  );
 }

@@ -8,40 +8,26 @@ import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { ensureDbSchema } from "@/lib/db-ensure";
 import {
+  doctorOrDeptLabel,
+  STATUS_META,
+  type Status,
+} from "@/lib/appointments";
+import {
+  getClientIp,
   checkLookupRateLimit,
   checkRefLockout,
   recordRefFailure,
   clearRefFailures,
-  DEPT_LABEL,
-  STATUS_META,
-  type Status,
-  type Department,
-} from "@/lib/appointments";
+} from "@/lib/request-security";
 import { formatDateLong } from "@/lib/ist";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-function getClientIp(req: NextRequest): string {
-  // Vercel overwrites X-Forwarded-For at the edge with the real client IP
-  // as the first entry. We trust this on Vercel. On other hosts, fall back
-  // to x-real-ip, then "unknown".
-  const fwd = req.headers.get("x-forwarded-for");
-  if (fwd) {
-    const first = fwd.split(",")[0].trim();
-    // Basic sanity: only allow valid IPv4/IPv6 chars.
-    if (/^[0-9a-fA-F.:]+$/.test(first)) return first;
-  }
-  const real = req.headers.get("x-real-ip");
-  if (real && /^[0-9a-fA-F.:]+$/.test(real.trim())) return real.trim();
-  return "unknown";
-}
-
 export async function POST(req: NextRequest) {
-  // Per-IP rate limit (stricter than booking).
+  // Per-IP rate limit (stricter than booking) — shared across instances.
   const ip = getClientIp(req);
-  const lookupRateKey = `lookup::${ip}`;
-  const rl = checkLookupRateLimit(lookupRateKey);
+  const rl = await checkLookupRateLimit(ip);
   if (!rl.ok) {
     return NextResponse.json(
       {
@@ -66,7 +52,7 @@ export async function POST(req: NextRequest) {
 
   if (!ref || !/^\d{4,8}$/.test(ref)) {
     return NextResponse.json(
-      { error: "Please enter your 6-digit booking reference number" },
+      { error: "Please enter your booking reference number (6–8 digits)" },
       { status: 400 }
     );
   }
@@ -80,7 +66,7 @@ export async function POST(req: NextRequest) {
 
   // Per-ref lockout — if too many failed attempts against this ref, deny
   // even with the right phone. Protects against targeted enumeration.
-  const lock = checkRefLockout(ref);
+  const lock = await checkRefLockout(ref);
   if (lock.locked) {
     return NextResponse.json(
       {
@@ -120,7 +106,7 @@ export async function POST(req: NextRequest) {
     appt.phone === phone ||
     (phone.length === 4 && appt.phone.endsWith(phone));
   if (!phoneMatches) {
-    recordRefFailure(ref);
+    await recordRefFailure(ref);
     return NextResponse.json(
       { error: "The reference and phone number do not match. Please verify and try again." },
       { status: 403 }
@@ -128,7 +114,7 @@ export async function POST(req: NextRequest) {
   }
 
   // Successful lookup — clear any prior failed attempts for this ref.
-  clearRefFailures(ref);
+  await clearRefFailures(ref);
 
   const st = appt.status as Status;
   const meta = STATUS_META[st];
@@ -141,7 +127,8 @@ export async function POST(req: NextRequest) {
       name: appt.name,
       phoneLast4: appt.phone.slice(-4),
       age: appt.age,
-      department: DEPT_LABEL[appt.department as Department] ?? appt.department,
+      department: appt.department,
+      doctorLabel: doctorOrDeptLabel(appt.doctor, appt.department),
       preferredDate: appt.preferredDate,
       preferredDateLabel: formatDateLong(appt.preferredDate),
       timeSlot: appt.timeSlot,

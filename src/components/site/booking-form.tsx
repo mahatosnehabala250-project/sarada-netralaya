@@ -8,11 +8,11 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/lib/toast";
-import { TIME_SLOTS } from "@/lib/appointments";
+import { TIME_SLOTS, DOCTOR_CHOICES, type DoctorId } from "@/lib/appointment-shared";
 import { todayISTString } from "@/lib/ist";
 import { PHONES } from "@/lib/site-info";
 
-type Dept = "" | "eye_care" | "optical";
+type DoctorField = "" | DoctorId;
 
 export function BookingForm() {
   const [submitting, setSubmitting] = useState(false);
@@ -20,19 +20,22 @@ export function BookingForm() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [age, setAge] = useState("");
-  const [department, setDepartment] = useState<Dept>("");
+  const [doctor, setDoctor] = useState<DoctorField>("");
   const [preferredDate, setPreferredDate] = useState("");
   const [timeSlot, setTimeSlot] = useState("");
   const [note, setNote] = useState("");
   const [website, setWebsite] = useState("");
   const [touched, setTouched] = useState<Record<string, boolean>>({});
+  // Stable per-attempt key: a retry after a network error reuses it, so the
+  // server can return the original booking instead of creating a duplicate.
+  const [idempotencyKey, setIdempotencyKey] = useState(() => crypto.randomUUID());
   const today = todayISTString();
 
   function fieldError(field: string): string | null {
     switch (field) {
       case "name": return !name.trim() ? "Required" : name.trim().length < 2 ? "Too short" : null;
       case "phone": return !phone.trim() ? "Required" : !/^[6-9]\d{9}$/.test(phone.trim()) ? "Enter a valid 10-digit mobile" : null;
-      case "department": return department ? null : "Choose a department";
+      case "doctor": return doctor ? null : "Choose a doctor";
       case "preferredDate": return !preferredDate ? "Required" : preferredDate < today ? "Cannot be in the past" : null;
       case "timeSlot": return timeSlot ? null : "Choose a slot";
       default: return null;
@@ -40,7 +43,7 @@ export function BookingForm() {
   }
 
   function validate(): string | null {
-    const fields = ["name", "phone", "department", "preferredDate", "timeSlot"];
+    const fields = ["name", "phone", "doctor", "preferredDate", "timeSlot"];
     setTouched(Object.fromEntries(fields.map((f) => [f, true])));
     for (const f of fields) { const e = fieldError(f); if (e) return e; }
     return null;
@@ -56,13 +59,14 @@ export function BookingForm() {
       const res = await fetch("/api/appointments", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name: name.trim(), phone: phone.trim(), age: age || undefined, department, preferredDate, timeSlot, note: note.trim() || undefined, website }),
+        body: JSON.stringify({ name: name.trim(), phone: phone.trim(), age: age || undefined, doctor, preferredDate, timeSlot, note: note.trim() || undefined, website, idempotencyKey }),
       });
       const data = await res.json();
       if (!res.ok) { toast.error(data.error ?? "Something went wrong"); return; }
       setSuccess({ ref: data.ref, message: data.message });
       toast.success("Appointment requested");
-      setName(""); setPhone(""); setAge(""); setDepartment(""); setPreferredDate(""); setTimeSlot(""); setNote(""); setWebsite(""); setTouched({});
+      setIdempotencyKey(crypto.randomUUID()); // fresh key for the next booking
+      setName(""); setPhone(""); setAge(""); setDoctor(""); setPreferredDate(""); setTimeSlot(""); setNote(""); setWebsite(""); setTouched({});
     } catch { toast.error("Network error"); }
     finally { setSubmitting(false); }
   }
@@ -125,18 +129,21 @@ export function BookingForm() {
                 <Input value={age} onChange={(e) => setAge(e.target.value.replace(/\D/g, "").slice(0, 3))} placeholder="e.g. 62" inputMode="numeric"
                   className="h-12 sm:h-11 border-slate-200 focus-visible:border-[#0047AB] focus-visible:ring-[#0047AB]/20 text-base" />
               </Field>
-              <Field label="Department" required error={touched.department ? fieldError("department") : null}>
-                <div className="grid grid-cols-2 gap-2" onBlur={() => setTouched((t) => ({ ...t, department: true }))}>
-                  {[
-                    { v: "eye_care" as const, l: "Eye Care", icon: Eye },
-                    { v: "optical" as const, l: "Optical", icon: Glasses },
-                  ].map((d) => {
-                    const active = department === d.v;
+              <Field className="sm:col-span-2" label="See Doctor" required error={touched.doctor ? fieldError("doctor") : null}>
+                <div className="space-y-2" onBlur={() => setTouched((t) => ({ ...t, doctor: true }))}>
+                  {DOCTOR_CHOICES.map((d) => {
+                    const active = doctor === d.id;
+                    const Icon = d.id === "optical" ? Glasses : Eye;
                     return (
-                      <button key={d.v} type="button" onClick={() => { setDepartment(d.v); setTouched((t) => ({ ...t, department: true })); }}
-                        className={`flex items-center gap-2 rounded-lg border px-3 py-3 text-left transition-all min-h-[48px] ${active ? "border-[#0047AB] bg-emerald-50 ring-1 ring-[#0047AB]/30" : "border-slate-200 hover:border-slate-300"}`}>
-                        <d.icon className={`h-4 w-4 shrink-0 ${active ? "text-[#0047AB]" : "text-slate-400"}`} />
-                        <span className={`text-sm font-semibold ${active ? "text-[#0047AB]" : "text-slate-600"}`}>{d.l}</span>
+                      <button key={d.id} type="button" onClick={() => { setDoctor(d.id); setTouched((t) => ({ ...t, doctor: true })); }}
+                        className={`flex w-full items-center gap-3 rounded-lg border px-3.5 py-3 text-left transition-all min-h-[56px] ${active ? "border-[#0047AB] bg-blue-50 ring-1 ring-[#0047AB]/30" : "border-slate-200 hover:border-slate-300"}`}>
+                        <span className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-lg ${active ? "bg-[#0047AB] text-white" : "bg-slate-100 text-slate-400"}`}>
+                          <Icon className="h-4 w-4" />
+                        </span>
+                        <span className="min-w-0">
+                          <span className={`block text-sm font-semibold truncate ${active ? "text-[#0047AB]" : "text-slate-700"}`}>{d.name}</span>
+                          <span className="block text-xs text-slate-400 truncate">{d.role}</span>
+                        </span>
                       </button>
                     );
                   })}
@@ -180,9 +187,9 @@ export function BookingForm() {
   );
 }
 
-function Field({ label, required, hint, error, children }: { label: string; required?: boolean; hint?: string; error?: string | null; children: React.ReactNode }) {
+function Field({ label, required, hint, error, className, children }: { label: string; required?: boolean; hint?: string; error?: string | null; className?: string; children: React.ReactNode }) {
   return (
-    <div>
+    <div className={className}>
       <div className="flex items-baseline justify-between mb-1.5">
         <Label className="text-sm font-semibold text-[#0047AB]">{label} {required && <span className="text-rose-500">*</span>}</Label>
         {hint && <span className="text-[11px] text-slate-400">{hint}</span>}

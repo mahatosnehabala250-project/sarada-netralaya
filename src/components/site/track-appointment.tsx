@@ -18,6 +18,7 @@ type Result = {
   phoneLast4: string;
   age: number | null;
   department: string;
+  doctorLabel: string;
   preferredDateLabel: string;
   timeSlot: string;
   status: string;
@@ -132,14 +133,14 @@ export function TrackAppointment() {
                     id="ref"
                     value={ref}
                     onChange={(e) => setRef(e.target.value)}
-                    placeholder="e.g. 874598"
+                    placeholder="e.g. 87459812"
                     inputMode="numeric"
                     maxLength={10}
                     className="h-11 pl-9 bg-slate-50 border-slate-200 focus-visible:border-[#0047AB] focus-visible:bg-white font-mono"
                   />
                 </div>
                 <p className="mt-1 text-[11px] text-slate-400">
-                  The 6-digit number from your booking confirmation
+                  The reference number from your booking confirmation
                 </p>
               </div>
 
@@ -207,7 +208,7 @@ export function TrackAppointment() {
                   <DetailBlock icon={Phone} label="Mobile" value={`••••••${result.phoneLast4}`} />
                   <DetailBlock icon={CalendarCheck} label="Date" value={result.preferredDateLabel} />
                   <DetailBlock icon={Clock} label="Time Slot" value={result.timeSlot} />
-                  <DetailBlock icon={result.department === "Eye Care" ? Eye : Glasses} label="Department" value={result.department} />
+                  <DetailBlock icon={result.department === "optical" ? Glasses : Eye} label="Doctor" value={result.doctorLabel} />
                 </div>
 
                 {result.note && (

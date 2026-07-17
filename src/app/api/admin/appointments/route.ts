@@ -7,6 +7,7 @@ import { ensureDbSchema } from "@/lib/db-ensure";
 import { isOwnerAuthenticated } from "@/lib/auth";
 import { STATUSES, type Status } from "@/lib/appointments";
 import { todayISTString } from "@/lib/ist";
+import { getFees } from "@/lib/settings";
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
@@ -26,6 +27,7 @@ export async function GET(req: NextRequest) {
   const url = req.nextUrl;
   const tab = url.searchParams.get("tab") ?? "all"; // today|upcoming|past|all|range
   const department = url.searchParams.get("department") ?? "all"; // all|eye_care|optical
+  const doctor = url.searchParams.get("doctor") ?? "all"; // all|nitin-dhira|nitish-bharadwaj|optical
   const status = url.searchParams.get("status") ?? "all"; // all|pending|confirmed|done|cancelled
   const q = url.searchParams.get("q")?.trim() ?? "";
   const dateFrom = url.searchParams.get("dateFrom")?.trim() ?? ""; // yyyy-MM-dd
@@ -36,6 +38,7 @@ export async function GET(req: NextRequest) {
   // Build where clause
   const where: Record<string, unknown> = {};
   if (department !== "all") where.department = department;
+  if (doctor !== "all") where.doctor = doctor;
   if (status !== "all") where.status = status;
   if (q) {
     where.OR = [
@@ -74,16 +77,14 @@ export async function GET(req: NextRequest) {
   }
 
   // KPI counts (across all data, ignoring filters, for dashboard tiles)
+  const monthPrefix = today.slice(0, 7); // "YYYY-MM" — current month in IST
   let todayCount = 0, pendingCount = 0, upcomingCount = 0, doneCount = 0,
-    cancelledCount = 0, totalCount = 0;
+    cancelledCount = 0, totalCount = 0, uniquePatients = 0, doneThisMonth = 0;
+  let revenueThisMonth = 0;
+  const fees = await getFees();
   try {
-    [
-      todayCount,
-      pendingCount,
-      upcomingCount,
-      doneCount,
-      cancelledCount,
-      totalCount,
+    const [
+      tCount, pCount, uCount, dCount, cCount, allCount, patientGroups, doneMonthRows,
     ] = await Promise.all([
       db.appointment.count({ where: { preferredDate: today } }),
       db.appointment.count({ where: { status: "pending" } }),
@@ -91,7 +92,26 @@ export async function GET(req: NextRequest) {
       db.appointment.count({ where: { status: "done" } }),
       db.appointment.count({ where: { status: "cancelled" } }),
       db.appointment.count(),
+      db.appointment.groupBy({ by: ["phone"] }),         // distinct patients
+      db.appointment.findMany({                          // completed this month, by dept
+        where: { status: "done", preferredDate: { startsWith: monthPrefix } },
+        select: { department: true, feeCharged: true },
+      }),
     ]);
+    todayCount = tCount; pendingCount = pCount; upcomingCount = uCount;
+    doneCount = dCount; cancelledCount = cCount; totalCount = allCount;
+    uniquePatients = patientGroups.length; doneThisMonth = doneMonthRows.length;
+
+    // Revenue = sum of the fee captured when each visit was marked done.
+    // Legacy rows completed before fee capture existed fall back to the
+    // current per-department fee from Settings.
+    revenueThisMonth = doneMonthRows.reduce(
+      (sum, a) =>
+        sum +
+        (a.feeCharged ??
+          (a.department === "eye_care" ? fees.eye_care : fees.optical)),
+      0
+    );
   } catch {
     // DB unavailable — KPIs stay 0
   }
@@ -106,6 +126,10 @@ export async function GET(req: NextRequest) {
       done: doneCount,
       cancelled: cancelledCount,
       total: totalCount,
+      patients: uniquePatients,
+      doneThisMonth,
+      revenueThisMonth,
+      fees,
     },
   });
 }
@@ -133,10 +157,29 @@ export async function PATCH(req: NextRequest) {
     return NextResponse.json({ error: "Invalid status" }, { status: 400 });
   }
 
-  const updated = await db.appointment.update({
-    where: { id },
-    data: { status: newStatus },
-  });
+  let updated;
+  try {
+    const existing = await db.appointment.findUnique({ where: { id } });
+    if (!existing) {
+      return NextResponse.json({ error: "Not found" }, { status: 404 });
+    }
+
+    // Capture the consultation fee the first time a visit is marked done,
+    // so later fee changes in Settings don't rewrite past revenue.
+    let feeCharged = existing.feeCharged;
+    if (newStatus === "done" && feeCharged == null) {
+      const fees = await getFees();
+      feeCharged = existing.department === "eye_care" ? fees.eye_care : fees.optical;
+    }
+
+    updated = await db.appointment.update({
+      where: { id },
+      data: { status: newStatus, feeCharged, version: { increment: 1 } },
+    });
+  } catch (dbErr) {
+    console.error("[admin/appointments patch] DB error:", dbErr);
+    return NextResponse.json({ error: "Update failed" }, { status: 500 });
+  }
 
   return NextResponse.json({ ok: true, item: updated });
 }

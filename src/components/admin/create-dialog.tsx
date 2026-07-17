@@ -14,14 +14,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "@/lib/toast";
 import {
-  TIME_SLOTS, DEPARTMENTS, DEPT_LABEL, STATUSES, STATUS_META,
-  type Status, type Department,
-} from "@/lib/appointments";
+  TIME_SLOTS, STATUSES, STATUS_META, DOCTOR_CHOICES,
+  type Status, type DoctorId,
+} from "@/lib/appointment-shared";
 import { todayISTString } from "@/lib/ist";
 
 export type NewAppt = {
   id: string; ref: string; name: string; phone: string; age: number | null;
-  department: string; preferredDate: string; timeSlot: string;
+  department: string; doctor: string | null; preferredDate: string; timeSlot: string;
   note: string | null; status: string; createdAt: string;
 };
 
@@ -36,7 +36,7 @@ export function CreateAppointmentDialog({
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [age, setAge] = useState("");
-  const [department, setDepartment] = useState<Department>("eye_care");
+  const [doctor, setDoctor] = useState<DoctorId>("nitin-dhira");
   const [preferredDate, setPreferredDate] = useState("");
   const [timeSlot, setTimeSlot] = useState("");
   const [note, setNote] = useState("");
@@ -48,7 +48,7 @@ export function CreateAppointmentDialog({
   useEffect(() => {
     if (open) {
       // reset on open
-      setName(""); setPhone(""); setAge(""); setDepartment("eye_care");
+      setName(""); setPhone(""); setAge(""); setDoctor("nitin-dhira");
       setPreferredDate(""); setTimeSlot(""); setNote(""); setStatus("confirmed");
       setSuccess(null);
     }
@@ -75,7 +75,7 @@ export function CreateAppointmentDialog({
           name: name.trim(),
           phone: phone.trim(),
           age: age || undefined,
-          department,
+          doctor,
           preferredDate,
           timeSlot,
           note: note.trim() || undefined,
@@ -98,7 +98,7 @@ export function CreateAppointmentDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0 gap-0">
         {/* Header */}
-        <div className="bg-gradient-to-r from-emerald-500 to-teal-600 px-6 py-5 flex items-center gap-3">
+        <div className="bg-gradient-to-r from-[#3b82f6] to-[#2563eb] px-6 py-5 flex items-center gap-3">
           <span className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/15 backdrop-blur-sm">
             <UserPlus className="h-5 w-5 text-white" />
           </span>
@@ -124,16 +124,16 @@ export function CreateAppointmentDialog({
                   <Label className="text-sm font-semibold text-slate-700">Patient Name <span className="text-rose-500">*</span></Label>
                   <Input value={name} onChange={(e) => setName(e.target.value)} maxLength={80}
                     placeholder="e.g. Ramesh Kumar"
-                    className="mt-1.5 bg-slate-50 border-slate-200 focus-visible:border-[#0b6e8f] focus-visible:bg-white" />
+                    className="mt-1.5 bg-slate-50 border-slate-200 focus-visible:border-[#3b82f6] focus-visible:bg-white" />
                 </div>
                 <div>
                   <Label className="text-sm font-semibold text-slate-700">Mobile Number <span className="text-rose-500">*</span></Label>
                   <div className="flex items-stretch mt-1.5">
-                    <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-slate-200 bg-slate-100 text-sm font-semibold text-[#084f67]">+91</span>
+                    <span className="inline-flex items-center px-3 rounded-l-md border border-r-0 border-slate-200 bg-slate-100 text-sm font-semibold text-[#2563eb]">+91</span>
                     <Input value={phone}
                       onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
                       placeholder="98765 43210" inputMode="numeric"
-                      className="rounded-l-none bg-slate-50 border-slate-200 focus-visible:border-[#0b6e8f] focus-visible:bg-white" />
+                      className="rounded-l-none bg-slate-50 border-slate-200 focus-visible:border-[#3b82f6] focus-visible:bg-white" />
                   </div>
                 </div>
                 <div>
@@ -141,12 +141,12 @@ export function CreateAppointmentDialog({
                   <Input value={age}
                     onChange={(e) => setAge(e.target.value.replace(/\D/g, "").slice(0, 3))}
                     placeholder="Optional" inputMode="numeric"
-                    className="mt-1.5 bg-slate-50 border-slate-200 focus-visible:border-[#0b6e8f] focus-visible:bg-white" />
+                    className="mt-1.5 bg-slate-50 border-slate-200 focus-visible:border-[#3b82f6] focus-visible:bg-white" />
                 </div>
                 <div>
                   <Label className="text-sm font-semibold text-slate-700">Initial Status</Label>
                   <select value={status} onChange={(e) => setStatus(e.target.value as Status)}
-                    className="mt-1.5 h-10 w-full appearance-none rounded-md border border-slate-200 bg-slate-50 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#0b6e8f]/25 focus:border-[#0b6e8f]">
+                    className="mt-1.5 h-10 w-full appearance-none rounded-md border border-slate-200 bg-slate-50 px-3 text-sm focus:outline-none focus:ring-2 focus:ring-[#3b82f6]/25 focus:border-[#3b82f6]">
                     {STATUSES.map((s) => (
                       <option key={s} value={s}>{STATUS_META[s].emoji} {STATUS_META[s].label}</option>
                     ))}
@@ -157,21 +157,25 @@ export function CreateAppointmentDialog({
               {/* Appointment group */}
               <SectionHeader icon={CalendarDays} title="Appointment Details" />
               <div className="grid sm:grid-cols-2 gap-4 mb-5">
-                <div>
-                  <Label className="text-sm font-semibold text-slate-700">Department <span className="text-rose-500">*</span></Label>
-                  <div className="grid grid-cols-2 gap-2 mt-1.5">
-                    {DEPARTMENTS.map((d) => {
-                      const active = department === d;
+                <div className="sm:col-span-2">
+                  <Label className="text-sm font-semibold text-slate-700">See Doctor <span className="text-rose-500">*</span></Label>
+                  <div className="space-y-2 mt-1.5">
+                    {DOCTOR_CHOICES.map((d) => {
+                      const active = doctor === d.id;
+                      const Icon = d.id === "optical" ? Glasses : Eye;
                       return (
-                        <button key={d} type="button" onClick={() => setDepartment(d)}
-                          className={`group flex items-center gap-2 rounded-lg border px-3 py-2.5 text-left transition-all ${
-                            active ? "border-[#0b6e8f] bg-teal-50 ring-1 ring-[#0b6e8f]/30"
-                                   : "border-slate-200 bg-slate-50 hover:border-[#0b6e8f]/40"
+                        <button key={d.id} type="button" onClick={() => setDoctor(d.id)}
+                          className={`group flex w-full items-center gap-2 rounded-lg border px-3 py-2.5 text-left transition-all ${
+                            active ? "border-[#3b82f6] bg-blue-50 ring-1 ring-[#3b82f6]/30"
+                                   : "border-slate-200 bg-slate-50 hover:border-[#3b82f6]/40"
                           }`}>
-                          <span className={`flex h-7 w-7 items-center justify-center rounded-md ${active ? "bg-[#0b6e8f] text-white" : "bg-white text-slate-400"}`}>
-                            {d === "eye_care" ? <Eye className="h-4 w-4" /> : <Glasses className="h-4 w-4" />}
+                          <span className={`flex h-7 w-7 shrink-0 items-center justify-center rounded-md ${active ? "bg-[#3b82f6] text-white" : "bg-white text-slate-400"}`}>
+                            <Icon className="h-4 w-4" />
                           </span>
-                          <span className={`text-sm font-semibold ${active ? "text-[#084f67]" : "text-slate-600"}`}>{DEPT_LABEL[d]}</span>
+                          <span className="min-w-0">
+                            <span className={`block text-sm font-semibold truncate ${active ? "text-[#2563eb]" : "text-slate-600"}`}>{d.name}</span>
+                            <span className="block text-xs text-slate-400 truncate">{d.role}</span>
+                          </span>
                         </button>
                       );
                     })}
@@ -183,7 +187,7 @@ export function CreateAppointmentDialog({
                     <CalendarDays className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                     <Input type="date" min={today} value={preferredDate}
                       onChange={(e) => setPreferredDate(e.target.value)}
-                      className="pl-9 bg-slate-50 border-slate-200 focus-visible:border-[#0b6e8f] focus-visible:bg-white" />
+                      className="pl-9 bg-slate-50 border-slate-200 focus-visible:border-[#3b82f6] focus-visible:bg-white" />
                   </div>
                 </div>
                 <div className="sm:col-span-2">
@@ -191,7 +195,7 @@ export function CreateAppointmentDialog({
                   <div className="relative mt-1.5">
                     <Clock className="pointer-events-none absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400 z-10" />
                     <select value={timeSlot} onChange={(e) => setTimeSlot(e.target.value)}
-                      className="h-10 w-full appearance-none rounded-md border border-slate-200 bg-slate-50 pl-9 pr-9 text-sm focus:outline-none focus:ring-2 focus:ring-[#0b6e8f]/25 focus:border-[#0b6e8f]">
+                      className="h-10 w-full appearance-none rounded-md border border-slate-200 bg-slate-50 pl-9 pr-9 text-sm focus:outline-none focus:ring-2 focus:ring-[#3b82f6]/25 focus:border-[#3b82f6]">
                       <option value="">Select a slot</option>
                       {TIME_SLOTS.map((s) => <option key={s} value={s}>{s}</option>)}
                     </select>
@@ -204,7 +208,7 @@ export function CreateAppointmentDialog({
                   <Label className="text-sm font-semibold text-slate-700">Note</Label>
                   <Textarea value={note} onChange={(e) => setNote(e.target.value)} maxLength={500}
                     placeholder="Optional — reason for visit, patient concerns, etc."
-                    className="mt-1.5 bg-slate-50 border-slate-200 focus-visible:border-[#0b6e8f] focus-visible:bg-white min-h-[70px]" />
+                    className="mt-1.5 bg-slate-50 border-slate-200 focus-visible:border-[#3b82f6] focus-visible:bg-white min-h-[70px]" />
                 </div>
               </div>
 
@@ -215,7 +219,7 @@ export function CreateAppointmentDialog({
                   <X className="h-4 w-4 mr-1.5" /> Cancel
                 </Button>
                 <Button onClick={submit} disabled={saving}
-                  className="bg-emerald-500 hover:bg-emerald-600 text-white">
+                  className="bg-[#3b82f6] hover:bg-[#2563eb] text-white">
                   {saving ? <Loader2 className="h-4 w-4 mr-1.5 animate-spin" /> : <Save className="h-4 w-4 mr-1.5" />}
                   Create Appointment
                 </Button>
@@ -231,10 +235,10 @@ export function CreateAppointmentDialog({
 function SectionHeader({ icon: Icon, title }: { icon: typeof User; title: string }) {
   return (
     <div className="flex items-center gap-2 mb-3.5">
-      <span className="flex h-6 w-6 items-center justify-center rounded-md bg-[#0b6e8f]/10 text-[#0b6e8f]">
+      <span className="flex h-6 w-6 items-center justify-center rounded-md bg-[#3b82f6]/10 text-[#3b82f6]">
         <Icon className="h-3.5 w-3.5" strokeWidth={2.2} />
       </span>
-      <h3 className="text-xs font-bold uppercase tracking-wider text-[#084f67]">{title}</h3>
+      <h3 className="text-xs font-bold uppercase tracking-wider text-[#2563eb]">{title}</h3>
       <div className="flex-1 h-px bg-slate-100" />
     </div>
   );
@@ -246,13 +250,13 @@ function CreatedSuccess({ appt, onDone }: { appt: NewAppt; onDone: () => void })
       <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-emerald-100 ring-8 ring-emerald-50">
         <CheckCircle2 className="h-9 w-9 text-emerald-600" />
       </div>
-      <h3 className="mt-4 text-lg font-bold text-[#084f67]">Appointment Created!</h3>
+      <h3 className="mt-4 text-lg font-bold text-[#2563eb]">Appointment Created!</h3>
       <p className="mt-1 text-sm text-slate-600">
-        Booking reference <span className="font-mono font-bold text-[#0b6e8f]">#{appt.ref}</span> for{" "}
+        Booking reference <span className="font-mono font-bold text-[#3b82f6]">#{appt.ref}</span> for{" "}
         <span className="font-semibold">{appt.name}</span>.
       </p>
       <div className="mt-5 flex justify-center gap-2">
-        <Button onClick={onDone} className="bg-[#0b6e8f] hover:bg-[#084f67] text-white">
+        <Button onClick={onDone} className="bg-[#3b82f6] hover:bg-[#2563eb] text-white">
           Done
         </Button>
       </div>

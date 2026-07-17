@@ -31,7 +31,7 @@ export default function Error({
         <div className="text-5xl mb-4" aria-hidden>
           ⚠️
         </div>
-        <h1 className="text-2xl font-bold text-[#0a3d4a] mb-2">
+        <h1 className="text-2xl font-bold text-[#0047AB] mb-2">
           Something went wrong
         </h1>
         <p className="text-sm text-slate-600 mb-6">
@@ -39,7 +39,7 @@ export default function Error({
           again. If the problem persists, call us at{" "}
           <a
             href="tel:+917091090014"
-            className="text-[#0b6e8f] font-semibold hover:underline"
+            className="text-[#0047AB] font-semibold hover:underline"
           >
             +91 70910 90014
           </a>
@@ -48,13 +48,13 @@ export default function Error({
         <div className="flex gap-2 justify-center">
           <button
             onClick={reset}
-            className="inline-flex items-center justify-center rounded-xl bg-[#10b981] hover:bg-[#059669] text-white px-5 py-2.5 text-sm font-bold min-h-[44px]"
+            className="inline-flex items-center justify-center rounded-xl bg-[#0047AB] hover:bg-[#003a8c] text-white px-5 py-2.5 text-sm font-bold min-h-[44px]"
           >
             Try again
           </button>
           <Link
             href="/"
-            className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white text-[#0a3d4a] px-5 py-2.5 text-sm font-bold hover:bg-slate-50 min-h-[44px]"
+            className="inline-flex items-center justify-center rounded-xl border border-slate-200 bg-white text-[#0047AB] px-5 py-2.5 text-sm font-bold hover:bg-slate-50 min-h-[44px]"
           >
             Back to Home
           </Link>
