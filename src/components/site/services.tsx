@@ -41,12 +41,11 @@ const SERVICES: Service[] = [
     image: "/images/service-optical.png",
     tag: "Eyewear",
     title: "Optical Services & Eyewear",
-    desc: "Eyeglasses for every budget, contact lenses, and computerized eye testing — with a wide range of kids' frames.",
+    desc: "A dedicated optical counter with a wide variety of spectacles — get your new glasses right where you got your eyes tested.",
     items: [
-      "Eyeglasses for Every Budget",
-      "Contact Lenses",
-      "Computerized Eye Testing",
-      "Kids' Frames",
+      "Wide Variety of Spectacles",
+      "Frames for Every Budget",
+      "Prescription Spectacles Made to Order",
     ],
   },
 ];

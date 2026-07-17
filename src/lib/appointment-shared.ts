@@ -58,7 +58,7 @@ export type DoctorId = (typeof DOCTOR_IDS)[number];
 export const DOCTOR_CHOICES: { id: DoctorId; name: string; role: string; department: Department }[] = [
   { id: "nitin-dhira", name: "Dr. Nitin G Dhira", role: "Consultant Eye Surgeon & Founder", department: "eye_care" },
   { id: "nitish-bharadwaj", name: "Dr. Nitish R Bharadwaj", role: "Consultant Eye Surgeon", department: "eye_care" },
-  { id: "optical", name: "Optical Services", role: "Spectacles, contact lenses & eye testing", department: "optical" },
+  { id: "optical", name: "Optical Services", role: "Spectacles & eyewear counter", department: "optical" },
 ];
 
 export const DOCTOR_LABEL: Record<DoctorId, string> = {

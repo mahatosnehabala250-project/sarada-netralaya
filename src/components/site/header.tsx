@@ -9,7 +9,7 @@ import { PHONES } from "@/lib/site-info";
 
 const NAV = [
   { label: "Services", href: "#services" },
-  { label: "Doctor", href: "#doctor" },
+  { label: "Doctors", href: "/doctors" },
   { label: "Gallery", href: "/gallery" },
   { label: "Reviews", href: "/reviews" },
   { label: "FAQ", href: "#faq" },

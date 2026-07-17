@@ -124,7 +124,7 @@ export function printAppointmentSlip(a: Appt) {
       </div>
       ${a.note ? `<div class="note"><div class="k">Patient's Note</div><div class="v">${escapeHtml(a.note)}</div></div>` : ""}
       <div class="instructions">
-        <strong>Please bring:</strong> a valid photo ID, any previous eye prescription or old spectacles, and this reference number. For dilated retina/glaucoma checks, please arrange a driver — do not drive yourself back.
+        <strong>Please bring:</strong> any previous eye prescription or old spectacles, and this reference number. For dilated retina/glaucoma checks, please arrange a driver — do not drive yourself back.
       </div>
       <div class="footer">
         <strong>${escapeHtml(SITE.name)}</strong> · ${escapeHtml(SITE.tagline)}<br>
