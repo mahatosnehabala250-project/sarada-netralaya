@@ -1,6 +1,7 @@
 import Link from "next/link";
-import { Star, ArrowLeft, Quote, ExternalLink } from "lucide-react";
+import { Star, Quote, ExternalLink } from "lucide-react";
 import { REVIEWS, REVIEWS_URL } from "@/lib/site-info";
+import { SiteHeader } from "./header";
 
 function initials(name: string) {
   return name.trim().split(/\s+/).map((w) => w[0]).slice(0, 2).join("").toUpperCase();
@@ -11,20 +12,7 @@ export function ReviewsPage() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* Header */}
-      <header className="bg-[#0047AB] text-white sticky top-0 z-40">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <Link href="/" className="inline-flex items-center gap-2 text-sm font-semibold text-white/80 hover:text-white">
-            <ArrowLeft className="h-4 w-4" /> Back to Home
-          </Link>
-          <div className="flex items-center gap-2">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#003a8c] to-[#3b82f6]">
-              <Star className="h-4 w-4 text-white fill-white" />
-            </span>
-            <span className="font-bold text-white">Reviews</span>
-          </div>
-        </div>
-      </header>
+      <SiteHeader />
 
       {/* Rating summary */}
       <div className="bg-white border-b border-slate-200">

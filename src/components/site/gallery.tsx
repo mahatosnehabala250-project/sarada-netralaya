@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, Camera } from "lucide-react";
+import { SiteHeader } from "./header";
 
 type Photo = {
   src: string;
@@ -34,20 +34,7 @@ export function GalleryPage() {
 
   return (
     <div className="min-h-screen bg-slate-50">
-      {/* Header */}
-      <header className="bg-[#0047AB] text-white sticky top-0 z-40">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
-          <Link href="/" className="inline-flex items-center gap-2 text-sm font-semibold text-white/80 hover:text-white">
-            <ArrowLeft className="h-4 w-4" /> Back to Home
-          </Link>
-          <div className="flex items-center gap-2">
-            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-[#003a8c] to-[#3b82f6]">
-              <Camera className="h-4 w-4 text-white" />
-            </span>
-            <span className="font-bold text-white">Gallery</span>
-          </div>
-        </div>
-      </header>
+      <SiteHeader />
 
       {/* Hero */}
       <div className="bg-white border-b border-slate-200">

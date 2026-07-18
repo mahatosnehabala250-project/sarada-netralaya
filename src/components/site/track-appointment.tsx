@@ -4,13 +4,14 @@ import { useState } from "react";
 import Link from "next/link";
 import {
   Search, Loader2, CalendarCheck, Clock, Eye, Glasses, User,
-  AlertCircle, ArrowLeft, CheckCircle2, Phone, FileText,
+  AlertCircle, CheckCircle2, Phone, FileText,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { toast } from "@/lib/toast";
 import { PHONES } from "@/lib/site-info";
+import { SiteHeader } from "./header";
 
 type Result = {
   ref: string;
@@ -81,18 +82,7 @@ export function TrackAppointment() {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f0f9fb] to-white flex flex-col">
-      {/* Header */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-40">
-        <div className="mx-auto max-w-3xl px-4 sm:px-6 py-4 flex items-center justify-between">
-          <Link href="/" className="inline-flex items-center gap-2 text-sm font-semibold text-[#003a8c] hover:text-[#0047AB]">
-            <ArrowLeft className="h-4 w-4" /> Back to Home
-          </Link>
-          <div className="flex items-center gap-2">
-            <span className="text-lg">👁️</span>
-            <span className="font-bold text-[#003a8c]">Sarada Netralaya</span>
-          </div>
-        </div>
-      </header>
+      <SiteHeader />
 
       <main className="flex-1 flex items-center justify-center px-4 py-12">
         <div className="w-full max-w-lg">
