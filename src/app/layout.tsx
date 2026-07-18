@@ -60,6 +60,14 @@ export const metadata: Metadata = {
     siteName: "Sarada Netralaya",
     type: "website",
     locale: "en_IN",
+    images: [
+      {
+        url: "/images/hero-final.jpg",
+        width: 1672,
+        height: 941,
+        alt: "Sarada Netralaya — Eye Care Hospital, Baradwari, Jamshedpur",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
@@ -67,6 +75,7 @@ export const metadata: Metadata = {
       "Sarada Netralaya — Eye Care Hospital in Baradwari, Jamshedpur",
     description:
       "Trusted eye care since 2015. Cataract, Glaucoma, Retina, Squint & more. Book appointment online.",
+    images: ["/images/hero-final.jpg"],
   },
   robots: {
     index: true,

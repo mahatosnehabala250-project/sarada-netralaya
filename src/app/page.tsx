@@ -24,7 +24,7 @@ const jsonLd = {
   url: SITE.url,
   telephone: PHONES.primaryTel,
   email: EMAIL,
-  image: `${SITE.url}/images/hero-eye.png`,
+  image: `${SITE.url}/images/hero-final.png`,
   priceRange: "₹₹",
   currenciesAccepted: "INR",
   address: {

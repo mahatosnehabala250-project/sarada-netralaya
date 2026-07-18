@@ -4,6 +4,11 @@ const nextConfig: NextConfig = {
   output: "standalone",
   // Enable React strict mode — catches bugs in development
   reactStrictMode: true,
+  // Doctor photos request quality=90 (default allowed set is just [75]) —
+  // without this, Next.js 16 rejects the prop and silently falls back to 75.
+  images: {
+    qualities: [75, 90],
+  },
   // Security headers — protect against clickjacking, XSS, MIME sniffing, etc.
   // NOTE: CSP still allows 'unsafe-inline' for scripts because (a) Next.js
   // inline hydration scripts and (b) the JSON-LD <script type="application/ld+json">
