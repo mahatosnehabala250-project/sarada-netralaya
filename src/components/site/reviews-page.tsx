@@ -12,7 +12,7 @@ export function ReviewsPage() {
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Header */}
-      <header className="bg-[#0047AB] text-white">
+      <header className="bg-[#0047AB] text-white sticky top-0 z-40">
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 py-4 flex items-center justify-between">
           <Link href="/" className="inline-flex items-center gap-2 text-sm font-semibold text-white/80 hover:text-white">
             <ArrowLeft className="h-4 w-4" /> Back to Home

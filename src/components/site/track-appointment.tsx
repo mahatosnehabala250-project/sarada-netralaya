@@ -82,7 +82,7 @@ export function TrackAppointment() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#f0f9fb] to-white flex flex-col">
       {/* Header */}
-      <header className="bg-white border-b border-slate-200">
+      <header className="bg-white border-b border-slate-200 sticky top-0 z-40">
         <div className="mx-auto max-w-3xl px-4 sm:px-6 py-4 flex items-center justify-between">
           <Link href="/" className="inline-flex items-center gap-2 text-sm font-semibold text-[#003a8c] hover:text-[#0047AB]">
             <ArrowLeft className="h-4 w-4" /> Back to Home
